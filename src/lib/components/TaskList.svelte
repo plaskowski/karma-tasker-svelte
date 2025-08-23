@@ -56,7 +56,7 @@
 
 	// Group tasks by project for certain views
 	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday', 'scheduled'].includes(currentView));
-	const shouldGroupByTime = $derived(['project'].includes(currentView));
+	const shouldGroupByPerspective = $derived(['project'].includes(currentView));
 	
 	function groupTasksByProject(taskList: Task[]) {
 		if (!shouldGroupByProject) return { ungrouped: taskList };
@@ -76,65 +76,50 @@
 		return { grouped, ungrouped };
 	}
 
-	function groupTasksByTime(taskList: Task[]) {
-		if (!shouldGroupByTime) return { ungrouped: taskList };
+
+
+	function groupTasksByPerspective(taskList: Task[]) {
+		if (!shouldGroupByPerspective) return { ungrouped: taskList };
 		
-		const now = new Date();
-		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-		const tomorrow = new Date(today);
-		tomorrow.setDate(tomorrow.getDate() + 1);
-		const endOfWeek = new Date(today);
-		endOfWeek.setDate(endOfWeek.getDate() + (7 - today.getDay()));
-		
-		const timeGroups = {
-			overdue: [] as Task[],
-			today: [] as Task[],
-			tomorrow: [] as Task[],
-			thisWeek: [] as Task[],
-			later: [] as Task[]
+		const perspectiveGroups = {
+			inbox: [] as Task[],
+			next: [] as Task[],
+			waiting: [] as Task[],
+			scheduled: [] as Task[],
+			someday: [] as Task[]
 		};
 		
 		taskList.forEach(task => {
-			const dueDate = task.dueDate ? new Date(task.dueDate) : null;
-			
-			if (!dueDate) {
-				// Tasks without due dates go to "later"
-				timeGroups.later.push(task);
-				return;
-			}
-			
-			const taskDate = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
-			
-			if (taskDate < today) {
-				timeGroups.overdue.push(task);
-			} else if (taskDate.getTime() === today.getTime()) {
-				timeGroups.today.push(task);
-			} else if (taskDate.getTime() === tomorrow.getTime()) {
-				timeGroups.tomorrow.push(task);
-			} else if (taskDate <= endOfWeek) {
-				timeGroups.thisWeek.push(task);
-			} else {
-				timeGroups.later.push(task);
+			if (task.starred && !task.completed) {
+				perspectiveGroups.next.push(task);
+			} else if (task.dueDate && !task.completed) {
+				perspectiveGroups.scheduled.push(task);
+			} else if (!task.starred && !task.dueDate && !task.completed) {
+				// For now, put unscheduled, unstarred tasks in waiting
+				// This logic can be refined based on other criteria
+				perspectiveGroups.waiting.push(task);
+			} else if (!task.completed) {
+				perspectiveGroups.inbox.push(task);
 			}
 		});
 		
-		return timeGroups;
+		return perspectiveGroups;
 	}
 
 	const { grouped: groupedActiveTasks = {}, ungrouped: ungroupedActiveTasks = [] } = $derived(groupTasksByProject(activeTasks));
-	const timeGroupedActiveTasks = $derived(groupTasksByTime(activeTasks));
+	const perspectiveGroupedActiveTasks = $derived(groupTasksByPerspective(activeTasks));
 
 	function getProjectName(projectId: string): string {
 		return projects.find(p => p.id === projectId)?.name || projectId;
 	}
 
-	function getTimeGroupLabel(groupKey: string): string {
+	function getPerspectiveGroupLabel(groupKey: string): string {
 		switch (groupKey) {
-			case 'overdue': return 'Overdue';
-			case 'today': return 'Today';
-			case 'tomorrow': return 'Tomorrow';
-			case 'thisWeek': return 'This Week';
-			case 'later': return 'Later';
+			case 'inbox': return 'Inbox';
+			case 'next': return 'Next';
+			case 'waiting': return 'Waiting';
+			case 'scheduled': return 'Scheduled';
+			case 'someday': return 'Someday';
 			default: return groupKey;
 		}
 	}
@@ -197,7 +182,7 @@
 						onStar={onTaskStar}
 						onClick={onTaskClick}
 
-						showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
+						showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
 					/>
 				{/each}
 				{#if Object.keys(groupedActiveTasks).length > 0}
@@ -223,7 +208,7 @@
 								onStar={onTaskStar}
 								onClick={onTaskClick}
 		
-								showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
+								showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
 							/>
 						{/each}
 						<div class="py-4">
@@ -233,14 +218,14 @@
 				{/each}
 			{/if}
 
-				<!-- Time-grouped view (for project views) -->
-				{#if shouldGroupByTime}
-					{@const nonEmptyGroups = Object.entries(timeGroupedActiveTasks).filter(([_, tasks]) => tasks.length > 0)}
+				<!-- Perspective-grouped view (for project views) -->
+				{#if shouldGroupByPerspective}
+					{@const nonEmptyGroups = Object.entries(perspectiveGroupedActiveTasks).filter(([_, tasks]) => tasks.length > 0)}
 					{#each nonEmptyGroups as [groupKey, groupTasks], index}
 						<div class="mb-6">
 							<div class="mb-3">
 								<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-									<span>{getTimeGroupLabel(groupKey)}</span>
+									<span>{getPerspectiveGroupLabel(groupKey)}</span>
 									<span class="text-xs opacity-60">({groupTasks.length})</span>
 								</h3>
 							</div>
@@ -251,7 +236,7 @@
 									onStar={onTaskStar}
 									onClick={onTaskClick}
 			
-									showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
+									showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
 								/>
 							{/each}
 							{#if index < nonEmptyGroups.length - 1}
@@ -263,8 +248,8 @@
 					{/each}
 				{/if}
 
-				<!-- Non-grouped view (for focus, inbox views) -->
-				{#if !shouldGroupByProject && !shouldGroupByTime}
+				<!-- Non-grouped view (for focus view only) -->
+				{#if !shouldGroupByProject && !shouldGroupByPerspective}
 					{#each activeTasks as task (task.id)}
 						<TaskItem
 							{task}
@@ -272,7 +257,7 @@
 							onStar={onTaskStar}
 							onClick={onTaskClick}
 	
-							showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
+							showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
 						/>
 					{/each}
 				{/if}
@@ -294,7 +279,7 @@
 							onStar={onTaskStar}
 							onClick={onTaskClick}
 	
-							showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
+							showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
 						/>
 					{/each}
 				{/if}
