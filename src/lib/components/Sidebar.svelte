@@ -32,6 +32,7 @@
 
 	const sidebarItems = [
 		{ id: 'inbox', label: 'Inbox', icon: Inbox },
+		{ id: 'focus', label: 'Focus', icon: Star },
 		{ id: 'next', label: 'Next', icon: Clock },
 		{ id: 'waiting', label: 'Waiting', icon: Users },
 		{ id: 'scheduled', label: 'Scheduled', icon: Calendar },
@@ -71,20 +72,6 @@
 		</div>
 	</div>
 
-	<!-- Focus section -->
-	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
-		<button
-			onclick={() => onViewChange('focus')}
-			class="w-full flex items-center gap-3 px-3 py-2 rounded text-left transition-colors {currentView === 'focus' 
-				? 'bg-blue-500 text-white' 
-				: 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'}"
-		>
-			<Star class="w-4 h-4" />
-			<span class="flex-1">Focus</span>
-			<span class="text-sm text-current opacity-70">{focusTaskCount}</span>
-		</button>
-	</div>
-
 	<!-- Views section -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
 		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Views</h3>
@@ -93,11 +80,13 @@
 				<button
 					onclick={() => onViewChange(item.id as ViewType)}
 					class="w-full flex items-center gap-3 px-3 py-2 rounded text-left transition-colors {currentView === item.id 
-						? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100' 
-						: 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'}"
+						? (item.id === 'focus' ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100')
+						: (item.id === 'focus' ? 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100')}"
 				>
 					{#if item.icon === Inbox}
 						<Inbox class="w-4 h-4" />
+					{:else if item.icon === Star}
+						<Star class="w-4 h-4" />
 					{:else if item.icon === Clock}
 						<Clock class="w-4 h-4" />
 					{:else if item.icon === Users}
