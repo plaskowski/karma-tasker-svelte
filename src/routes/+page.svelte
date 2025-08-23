@@ -84,6 +84,18 @@
 		showNewTaskDialog = false;
 	}
 
+	// Handle cleanup action
+	function handleCleanup() {
+		// TODO: Implement cleanup functionality
+		console.log('Cleanup triggered');
+	}
+
+	// Handle refresh action
+	function handleRefresh() {
+		// TODO: Implement refresh functionality
+		console.log('Refresh triggered');
+	}
+
 	// Get current workspace name
 	const currentWorkspaceName = $derived($workspaces.find(w => w.isActive)?.name || 'Personal');
 </script>
@@ -117,6 +129,8 @@
 			onTaskClick={handleTaskClick}
 			onTagClick={handleTagClick}
 			showCompleted={true}
+			onCleanup={handleCleanup}
+			onRefresh={handleRefresh}
 		/>
 	</div>
 </div>

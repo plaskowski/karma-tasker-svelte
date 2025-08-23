@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Task, ViewType, Project } from '$lib/types';
-	import { Calendar } from 'lucide-svelte';
+	import { Calendar, RefreshCw, Zap } from 'lucide-svelte';
 	import TaskItem from './TaskItem.svelte';
 
 	interface Props {
@@ -12,6 +12,8 @@
 		onTaskClick: (task: Task) => void;
 		onTagClick?: (tag: string) => void;
 		showCompleted?: boolean;
+		onCleanup?: () => void;
+		onRefresh?: () => void;
 	}
 
 	let {
@@ -22,7 +24,9 @@
 		onTaskStar,
 		onTaskClick,
 		onTagClick,
-		showCompleted = false
+		showCompleted = false,
+		onCleanup,
+		onRefresh
 	}: Props = $props();
 
 	function getViewTitle() {
@@ -87,12 +91,26 @@
 				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{getViewTitle()}</h1>
 			</div>
 			
-			<div class="flex items-center gap-1.5 text-xs">
-				<button class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 px-1">
-					All
-				</button>
-				<span class="text-gray-500/60">focus</span>
-				<span class="text-gray-500/40">—</span>
+			<div class="flex items-center gap-2">
+				{#if onCleanup}
+					<button
+						onclick={onCleanup}
+						class="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center gap-2"
+					>
+						<Zap class="w-4 h-4" />
+						<span>Cleanup</span>
+					</button>
+				{/if}
+				
+				{#if onRefresh}
+					<button
+						onclick={onRefresh}
+						class="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center gap-2"
+					>
+						<RefreshCw class="w-4 h-4" />
+						<span>Refresh</span>
+					</button>
+				{/if}
 			</div>
 		</div>
 	</div>
