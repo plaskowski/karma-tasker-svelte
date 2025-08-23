@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Star, Inbox, Calendar, Clock, Users, Archive } from 'lucide-svelte';
+	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Plus, RefreshCw, Settings, Zap } from 'lucide-svelte';
 	import type { ViewType, Project } from '$lib/types';
 
 	interface Props {
@@ -12,6 +12,9 @@
 		inboxTaskCount: number;
 		nextTaskCount: number;
 		allTags: string[];
+		searchQuery: string;
+		onSearchChange: (query: string) => void;
+		onNewTask: () => void;
 	}
 
 	let { 
@@ -23,7 +26,10 @@
 		focusTaskCount, 
 		inboxTaskCount, 
 		nextTaskCount,
-		allTags 
+		allTags,
+		searchQuery,
+		onSearchChange,
+		onNewTask
 	}: Props = $props();
 
 	const sidebarItems = [
@@ -49,6 +55,33 @@
 </script>
 
 <div class="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
+	<!-- Header with branding -->
+	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
+		<div class="flex items-center gap-2 mb-4">
+			<span class="text-lg font-medium text-gray-900 dark:text-gray-100 tracking-wide">NIRVANA</span>
+		</div>
+		
+		<!-- Search bar -->
+		<div class="relative mb-3">
+			<Search class="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
+			<input
+				bind:value={searchQuery}
+				oninput={(e) => onSearchChange(e.currentTarget.value)}
+				placeholder="Search"
+				class="w-full pl-8 pr-3 py-2 text-sm bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/60 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 rounded focus:outline-none focus:border-blue-500"
+			/>
+		</div>
+		
+		<!-- New item button -->
+		<button
+			onclick={onNewTask}
+			class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+		>
+			<Plus class="w-4 h-4" />
+			<span>New item</span>
+		</button>
+	</div>
+
 	<!-- Focus section -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
 		<button
@@ -63,8 +96,9 @@
 		</button>
 	</div>
 
-	<!-- Standard views -->
+	<!-- Views section -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
+		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Views</h3>
 		<div class="space-y-1">
 			{#each sidebarItems as item}
 				<button
@@ -93,7 +127,7 @@
 
 	<!-- Projects -->
 	<div class="flex-1 p-4">
-		<h3 class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-3">Projects</h3>
+		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Projects</h3>
 		<div class="space-y-1">
 			{#each projects as project}
 				<button
@@ -112,15 +146,29 @@
 		</div>
 	</div>
 
-	<!-- Tags section -->
+	<!-- Bottom action buttons -->
 	<div class="p-4 border-t border-gray-200 dark:border-gray-700">
-		<h3 class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-3">Tags</h3>
-		<div class="flex flex-wrap gap-1">
-			{#each allTags.slice(0, 10) as tag}
-				<span class="px-2 py-1 text-xs bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 rounded">
-					{tag}
-				</span>
-			{/each}
+		<div class="space-y-1">
+			<button
+				class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+			>
+				<Zap class="w-4 h-4" />
+				<span>Cleanup</span>
+			</button>
+			
+			<button
+				class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+			>
+				<RefreshCw class="w-4 h-4" />
+				<span>Refresh</span>
+			</button>
+			
+			<button
+				class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+			>
+				<Settings class="w-4 h-4" />
+				<span>Settings</span>
+			</button>
 		</div>
 	</div>
 </div>

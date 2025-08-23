@@ -16,7 +16,6 @@
 		toggleTaskStar,
 		addTask
 	} from '$lib/stores/taskStore';
-	import TopBar from '$lib/components/TopBar.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';
 	import NewTaskDialog from '$lib/components/NewTaskDialog.svelte';
@@ -89,30 +88,25 @@
 	const currentWorkspaceName = $derived($workspaces.find(w => w.isActive)?.name || 'Personal');
 </script>
 
-<div class="h-full flex flex-col dark">
-	<!-- Top Bar -->
-	<TopBar
-		workspaceName={currentWorkspaceName}
+<div class="h-full flex dark">
+	<!-- Sidebar -->
+	<Sidebar
+		currentView={$currentView}
+		currentProjectId={$currentProjectId}
+		projects={$projects}
+		onViewChange={handleViewChange}
+		onProjectSelect={handleProjectSelect}
+		focusTaskCount={$focusTaskCount}
+		inboxTaskCount={$inboxTaskCount}
+		nextTaskCount={$nextTaskCount}
+		allTags={$allTags}
 		searchQuery={$searchQuery}
 		onSearchChange={handleSearchChange}
 		onNewTask={handleNewTask}
 	/>
 
 	<!-- Main Content Area -->
-	<div class="flex-1 flex overflow-hidden">
-		<!-- Sidebar -->
-		<Sidebar
-			currentView={$currentView}
-			currentProjectId={$currentProjectId}
-			projects={$projects}
-			onViewChange={handleViewChange}
-			onProjectSelect={handleProjectSelect}
-			focusTaskCount={$focusTaskCount}
-			inboxTaskCount={$inboxTaskCount}
-			nextTaskCount={$nextTaskCount}
-			allTags={$allTags}
-		/>
-
+	<div class="flex-1 overflow-hidden">
 		<!-- Task List -->
 		<TaskList
 			tasks={$filteredTasks}
