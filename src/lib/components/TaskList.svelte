@@ -260,18 +260,28 @@
 					{/each}
 				{/if}
 
-				<!-- Non-grouped view (for focus view only) -->
+				<!-- Non-grouped view (for focus view only) with fake single group -->
 				{#if !shouldGroupByProject && !shouldGroupByPerspective}
-					{#each activeTasks as task (task.id)}
-						<TaskItem
-							{task}
-							onToggle={onTaskToggle}
-							onStar={onTaskStar}
-							onClick={onTaskClick}
-	
-							showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
-						/>
-					{/each}
+					{#if activeTasks.length > 0}
+						<div class="mb-6">
+							<div class="mb-3">
+								<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
+									<span>What Matters Most</span>
+									<span class="text-xs opacity-60">({activeTasks.length})</span>
+								</h3>
+							</div>
+							{#each activeTasks as task (task.id)}
+								<TaskItem
+									{task}
+									onToggle={onTaskToggle}
+									onStar={onTaskStar}
+									onClick={onTaskClick}
+			
+									showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
+								/>
+							{/each}
+						</div>
+					{/if}
 				{/if}
 
 				<!-- Completed Tasks -->
