@@ -56,8 +56,8 @@
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
 	// Group tasks by project for certain views
-	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday'].includes(currentView));
-	const shouldGroupByTime = $derived(['project', 'scheduled'].includes(currentView));
+	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday', 'scheduled'].includes(currentView));
+	const shouldGroupByTime = $derived(['project'].includes(currentView));
 	
 	function groupTasksByProject(taskList: Task[]) {
 		if (!shouldGroupByProject) return { ungrouped: taskList };
@@ -140,16 +140,7 @@
 		}
 	}
 
-	function getTimeGroupIcon(groupKey: string): string {
-		switch (groupKey) {
-			case 'overdue': return '🔴';
-			case 'today': return '📅';
-			case 'tomorrow': return '🌅';
-			case 'thisWeek': return '📆';
-			case 'later': return '📋';
-			default: return '📝';
-		}
-	}
+
 </script>
 
 <div class="flex-1 flex flex-col h-full">
@@ -248,7 +239,6 @@
 							<div class="mb-6">
 								<div class="mb-3">
 									<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-										<span>{getTimeGroupIcon(groupKey)}</span>
 										<span>{getTimeGroupLabel(groupKey)}</span>
 										<span class="text-xs opacity-60">({groupTasks.length})</span>
 									</h3>
