@@ -56,8 +56,8 @@
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
 	// Group tasks by project for certain views
-	const shouldGroupByProject = $derived(['next', 'waiting', 'someday'].includes(currentView));
-	const shouldGroupByTime = $derived(currentView === 'project');
+	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday'].includes(currentView));
+	const shouldGroupByTime = $derived(['project', 'scheduled'].includes(currentView));
 	
 	function groupTasksByProject(taskList: Task[]) {
 		if (!shouldGroupByProject) return { ungrouped: taskList };
