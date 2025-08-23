@@ -46,14 +46,7 @@
 		}
 	}
 
-	function getViewSubtitle() {
-		switch (currentView) {
-			case 'focus':
-				return 'Today';
-			default:
-				return '';
-		}
-	}
+
 
 	const activeTasks = $derived(tasks.filter(task => !task.completed));
 	const completedTasks = $derived(tasks.filter(task => task.completed));
@@ -92,9 +85,6 @@
 		<div class="flex items-center justify-between">
 			<div>
 				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{getViewTitle()}</h1>
-				{#if getViewSubtitle()}
-					<p class="text-gray-500 dark:text-gray-400 text-xs mt-0.5">{getViewSubtitle()}</p>
-				{/if}
 			</div>
 			
 			<div class="flex items-center gap-1.5 text-xs">
