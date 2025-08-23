@@ -6,12 +6,12 @@
 		currentView,
 		currentProjectId,
 		searchQuery,
-		selectedTags,
+
 		filteredTasks,
 		focusTaskCount,
 		inboxTaskCount,
 		nextTaskCount,
-		allTags,
+
 		toggleTaskComplete,
 		toggleTaskStar,
 		addTask
@@ -115,15 +115,7 @@
 		console.log('Task clicked:', task.title);
 	}
 
-	function handleTagClick(tag: string) {
-		selectedTags.update(tags => {
-			if (tags.includes(tag)) {
-				return tags.filter(t => t !== tag);
-			} else {
-				return [...tags, tag];
-			}
-		});
-	}
+
 
 	// Handle new task creation
 	function handleNewTask() {
@@ -162,7 +154,7 @@
 		focusTaskCount={$focusTaskCount}
 		inboxTaskCount={$inboxTaskCount}
 		nextTaskCount={$nextTaskCount}
-		allTags={$allTags}
+
 		searchQuery={$searchQuery}
 		onSearchChange={handleSearchChange}
 		onNewTask={handleNewTask}
@@ -178,7 +170,7 @@
 			onTaskToggle={handleTaskToggle}
 			onTaskStar={handleTaskStar}
 			onTaskClick={handleTaskClick}
-			onTagClick={handleTagClick}
+
 			showCompleted={true}
 			onCleanup={handleCleanup}
 			onRefresh={handleRefresh}

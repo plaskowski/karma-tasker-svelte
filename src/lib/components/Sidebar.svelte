@@ -11,7 +11,7 @@
 		focusTaskCount: number;
 		inboxTaskCount: number;
 		nextTaskCount: number;
-		allTags: string[];
+
 		searchQuery: string;
 		onSearchChange: (query: string) => void;
 		onNewTask: () => void;
@@ -26,7 +26,7 @@
 		focusTaskCount, 
 		inboxTaskCount, 
 		nextTaskCount,
-		allTags,
+
 		searchQuery,
 		onSearchChange,
 		onNewTask
