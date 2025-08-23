@@ -195,28 +195,29 @@
 			</div>
 		{:else}
 			<div class="p-6 space-y-1">
-				<!-- Ungrouped Active Tasks (Actions section) -->
-				{#if ungroupedActiveTasks.length > 0}
-					<div class="mb-3">
-						<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Actions</h3>
+							<!-- Ungrouped Active Tasks (Actions section) - Only for project-grouped views -->
+			{#if shouldGroupByProject && ungroupedActiveTasks.length > 0}
+				<div class="mb-3">
+					<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Actions</h3>
+				</div>
+				{#each ungroupedActiveTasks as task (task.id)}
+					<TaskItem
+						{task}
+						onToggle={onTaskToggle}
+						onStar={onTaskStar}
+						onClick={onTaskClick}
+						{onTagClick}
+					/>
+				{/each}
+				{#if Object.keys(groupedActiveTasks).length > 0}
+					<div class="py-4">
+						<div class="border-t border-gray-200 dark:border-gray-700"></div>
 					</div>
-					{#each ungroupedActiveTasks as task (task.id)}
-						<TaskItem
-							{task}
-							onToggle={onTaskToggle}
-							onStar={onTaskStar}
-							onClick={onTaskClick}
-							{onTagClick}
-						/>
-					{/each}
-					{#if Object.keys(groupedActiveTasks).length > 0}
-						<div class="py-4">
-							<div class="border-t border-gray-200 dark:border-gray-700"></div>
-						</div>
-					{/if}
 				{/if}
+			{/if}
 
-				<!-- Grouped Active Tasks by Project -->
+							<!-- Grouped Active Tasks by Project - Only for project-grouped views -->
+			{#if shouldGroupByProject}
 				{#each Object.entries(groupedActiveTasks) as [projectId, projectTasks]}
 					<div>
 						<div class="mb-3">
@@ -238,6 +239,7 @@
 						</div>
 					</div>
 				{/each}
+			{/if}
 
 				<!-- Time-grouped view (for project views) -->
 				{#if shouldGroupByTime}
