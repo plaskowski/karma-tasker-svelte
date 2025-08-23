@@ -8,11 +8,11 @@
 		onToggle: (id: string) => void;
 		onStar: (id: string) => void;
 		onClick: (task: Task) => void;
-		onTagClick?: (tag: string) => void;
+
 		showProjectBadge?: boolean;
 	}
 
-	let { task, onToggle, onStar, onClick, onTagClick, showProjectBadge = true }: Props = $props();
+	let { task, onToggle, onStar, onClick, showProjectBadge = true }: Props = $props();
 </script>
 
 <div
@@ -52,23 +52,14 @@
 			</p>
 		{/if}
 
-		<!-- Tags and project -->
-		<div class="flex items-center gap-2 mt-1">
-			{#if task.projectId && showProjectBadge}
+		<!-- Project badge -->
+		{#if task.projectId && showProjectBadge}
+			<div class="flex items-center gap-2 mt-1">
 				<span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
 					{task.projectId}
 				</span>
-			{/if}
-			
-			{#each task.tags as tag}
-				<button
-					onclick={(e) => { e.stopPropagation(); onTagClick?.(tag); }}
-					class="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-				>
-					#{tag}
-				</button>
-			{/each}
-		</div>
+			</div>
+		{/if}
 	</div>
 
 	<!-- Star button -->

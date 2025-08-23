@@ -8,7 +8,7 @@ export const mockTasks: Task[] = [
     completed: false,
     starred: true,
     projectId: 'work',
-    tags: ['Work'],
+
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15'),
     dueDate: new Date(), // Today
@@ -20,7 +20,7 @@ export const mockTasks: Task[] = [
     completed: false,
     starred: true,
     projectId: 'personal',
-    tags: ['Personal'],
+
     createdAt: new Date('2024-01-16'),
     updatedAt: new Date('2024-01-16'),
     dueDate: (() => {
@@ -35,7 +35,7 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: true,
-    tags: ['Admin'],
+
     createdAt: new Date('2024-01-17'),
     updatedAt: new Date('2024-01-17'),
     dueDate: (() => {
@@ -51,7 +51,7 @@ export const mockTasks: Task[] = [
     completed: false,
     starred: true,
     projectId: 'personal',
-    tags: ['Finance'],
+
     createdAt: new Date('2024-01-18'),
     updatedAt: new Date('2024-01-18'),
     dueDate: (() => {
@@ -67,7 +67,7 @@ export const mockTasks: Task[] = [
     completed: false,
     starred: true,
     projectId: 'personal',
-    tags: ['Travel'],
+
     createdAt: new Date('2024-01-19'),
     updatedAt: new Date('2024-01-19'),
     dueDate: (() => {
@@ -83,7 +83,7 @@ export const mockTasks: Task[] = [
     completed: true,
     starred: false,
     projectId: 'work',
-    tags: ['Tech'],
+
     createdAt: new Date('2024-01-20'),
     updatedAt: new Date('2024-01-20'),
   },
@@ -94,7 +94,7 @@ export const mockTasks: Task[] = [
     completed: true,
     starred: false,
     projectId: 'personal',
-    tags: ['Learning'],
+
     createdAt: new Date('2024-01-21'),
     updatedAt: new Date('2024-01-21'),
   },
@@ -104,7 +104,7 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: false,
-    tags: ['Health'],
+
     createdAt: new Date('2024-01-22'),
     updatedAt: new Date('2024-01-22'),
   },
@@ -114,7 +114,7 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: false,
-    tags: ['Organization'],
+
     createdAt: new Date('2024-01-23'),
     updatedAt: new Date('2024-01-23'),
   },
@@ -124,7 +124,7 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: false,
-    tags: ['Work'],
+
     createdAt: new Date('2024-01-24'),
     updatedAt: new Date('2024-01-24'),
   },
@@ -135,7 +135,7 @@ export const mockTasks: Task[] = [
     completed: false,
     starred: false,
     projectId: 'personal',
-    tags: ['Learning'],
+
     createdAt: new Date('2024-01-25'),
     updatedAt: new Date('2024-01-25'),
   },
@@ -146,7 +146,7 @@ export const mockTasks: Task[] = [
     completed: false,
     starred: false,
     projectId: 'personal',
-    tags: ['Organization'],
+
     createdAt: new Date('2024-01-26'),
     updatedAt: new Date('2024-01-26'),
   },

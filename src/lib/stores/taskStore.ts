@@ -16,7 +16,7 @@ export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces)
 export const currentView = writable<ViewType>('focus');
 export const currentProjectId = writable<string | undefined>();
 export const searchQuery = writable('');
-export const selectedTags = writable<string[]>([]);
+
 export const showCompleted = writable(false);
 
 // Mock API functions with realistic delays
@@ -77,8 +77,8 @@ export async function toggleTaskComplete(id: string): Promise<void> {
 
 // Derived store for filtered tasks
 export const filteredTasks = derived(
-  [tasks, currentView, currentProjectId, searchQuery, selectedTags],
-  ([$tasks, $currentView, $currentProjectId, $searchQuery, $selectedTags]) => {
+  [tasks, currentView, currentProjectId, searchQuery],
+  ([$tasks, $currentView, $currentProjectId, $searchQuery]) => {
     let filtered = $tasks;
 
     // Filter by view
@@ -98,13 +98,13 @@ export const filteredTasks = derived(
         }
         break;
       case 'waiting':
-        filtered = filtered.filter(task => !task.completed && task.tags.includes('waiting'));
+        filtered = filtered.filter(task => !task.completed && !task.starred && !task.dueDate);
         break;
       case 'scheduled':
         filtered = filtered.filter(task => !task.completed && task.dueDate);
         break;
       case 'someday':
-        filtered = filtered.filter(task => !task.completed && task.tags.includes('someday'));
+        filtered = filtered.filter(task => !task.completed && !task.starred && !task.dueDate);
         break;
     }
 
@@ -117,25 +117,9 @@ export const filteredTasks = derived(
       );
     }
 
-    // Filter by tags
-    if ($selectedTags.length > 0) {
-      filtered = filtered.filter(task =>
-        $selectedTags.every(tag => task.tags.includes(tag))
-      );
-    }
-
     return filtered;
   }
 );
-
-// Derived store for all tags
-export const allTags = derived(tasks, ($tasks) => {
-  const tagSet = new Set<string>();
-  $tasks.forEach(task => {
-    task.tags.forEach(tag => tagSet.add(tag));
-  });
-  return Array.from(tagSet).sort();
-});
 
 // Task count derived stores for sidebar
 export const focusTaskCount = derived(tasks, ($tasks) => 

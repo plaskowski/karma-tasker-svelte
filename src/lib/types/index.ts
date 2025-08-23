@@ -7,7 +7,7 @@ export interface Task {
   dueDate?: Date;
   startDate?: Date;
   projectId?: string;
-  tags: string[];
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +42,6 @@ export interface AppState {
   currentView: ViewType;
   currentProjectId?: string;
   searchQuery: string;
-  selectedTags: string[];
+
   showCompleted: boolean;
 }

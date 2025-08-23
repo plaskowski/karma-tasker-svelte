@@ -10,7 +10,7 @@
 		onTaskToggle: (id: string) => void;
 		onTaskStar: (id: string) => void;
 		onTaskClick: (task: Task) => void;
-		onTagClick?: (tag: string) => void;
+
 		showCompleted?: boolean;
 		onCleanup?: () => void;
 		onRefresh?: () => void;
@@ -23,7 +23,6 @@
 		onTaskToggle,
 		onTaskStar,
 		onTaskClick,
-		onTagClick,
 		showCompleted = false,
 		onCleanup,
 		onRefresh
@@ -197,7 +196,7 @@
 						onToggle={onTaskToggle}
 						onStar={onTaskStar}
 						onClick={onTaskClick}
-						{onTagClick}
+
 						showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 					/>
 				{/each}
@@ -223,7 +222,7 @@
 								onToggle={onTaskToggle}
 								onStar={onTaskStar}
 								onClick={onTaskClick}
-								{onTagClick}
+		
 								showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 							/>
 						{/each}
@@ -251,7 +250,7 @@
 									onToggle={onTaskToggle}
 									onStar={onTaskStar}
 									onClick={onTaskClick}
-									{onTagClick}
+			
 									showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 								/>
 							{/each}
@@ -272,7 +271,7 @@
 							onToggle={onTaskToggle}
 							onStar={onTaskStar}
 							onClick={onTaskClick}
-							{onTagClick}
+	
 							showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 						/>
 					{/each}
@@ -294,7 +293,7 @@
 							onToggle={onTaskToggle}
 							onStar={onTaskStar}
 							onClick={onTaskClick}
-							{onTagClick}
+	
 							showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 						/>
 					{/each}
