@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Plus, Settings } from 'lucide-svelte';
+	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Settings } from 'lucide-svelte';
 	import type { ViewType, Project } from '$lib/types';
 
 	interface Props {
@@ -14,7 +14,6 @@
 
 		searchQuery: string;
 		onSearchChange: (query: string) => void;
-		onNewTask: () => void;
 	}
 
 	let { 
@@ -28,8 +27,7 @@
 		nextTaskCount,
 
 		searchQuery,
-		onSearchChange,
-		onNewTask
+		onSearchChange
 	}: Props = $props();
 
 	const sidebarItems = [
@@ -71,15 +69,6 @@
 				class="w-full pl-8 pr-3 py-2 text-sm bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/60 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 rounded focus:outline-none focus:border-blue-500"
 			/>
 		</div>
-		
-		<!-- New item button -->
-		<button
-			onclick={onNewTask}
-			class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-		>
-			<Plus class="w-4 h-4" />
-			<span>New item</span>
-		</button>
 	</div>
 
 	<!-- Focus section -->

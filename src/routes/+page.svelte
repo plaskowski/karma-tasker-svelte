@@ -157,7 +157,6 @@
 
 		searchQuery={$searchQuery}
 		onSearchChange={handleSearchChange}
-		onNewTask={handleNewTask}
 	/>
 
 	<!-- Main Content Area -->
@@ -172,6 +171,7 @@
 			onTaskClick={handleTaskClick}
 
 			showCompleted={true}
+			onNewTask={handleNewTask}
 			onCleanup={handleCleanup}
 			onRefresh={handleRefresh}
 		/>

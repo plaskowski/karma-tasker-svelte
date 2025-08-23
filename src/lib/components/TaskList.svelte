@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Task, ViewType, Project } from '$lib/types';
-	import { Calendar, RefreshCw, Zap } from 'lucide-svelte';
+	import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
 	import TaskItem from './TaskItem.svelte';
 
 	interface Props {
@@ -12,6 +12,7 @@
 		onTaskClick: (task: Task) => void;
 
 		showCompleted?: boolean;
+		onNewTask?: () => void;
 		onCleanup?: () => void;
 		onRefresh?: () => void;
 	}
@@ -24,6 +25,7 @@
 		onTaskStar,
 		onTaskClick,
 		showCompleted = false,
+		onNewTask,
 		onCleanup,
 		onRefresh
 	}: Props = $props();
@@ -136,6 +138,16 @@
 			</div>
 			
 			<div class="flex items-center gap-2">
+				{#if onNewTask}
+					<button
+						onclick={onNewTask}
+						class="px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors flex items-center gap-2"
+					>
+						<Plus class="w-4 h-4" />
+						<span>New Item</span>
+					</button>
+				{/if}
+				
 				{#if onCleanup}
 					<button
 						onclick={onCleanup}
