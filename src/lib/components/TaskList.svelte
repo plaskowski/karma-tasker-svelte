@@ -88,11 +88,11 @@
 		endOfWeek.setDate(endOfWeek.getDate() + (7 - today.getDay()));
 		
 		const timeGroups = {
+			overdue: [] as Task[],
 			today: [] as Task[],
 			tomorrow: [] as Task[],
 			thisWeek: [] as Task[],
-			later: [] as Task[],
-			overdue: [] as Task[]
+			later: [] as Task[]
 		};
 		
 		taskList.forEach(task => {
@@ -236,32 +236,31 @@
 
 				<!-- Time-grouped view (for project views) -->
 				{#if shouldGroupByTime}
-					{#each Object.entries(timeGroupedActiveTasks) as [groupKey, groupTasks]}
-						{#if groupTasks.length > 0}
-							<div class="mb-6">
-								<div class="mb-3">
-									<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-										<span>{getTimeGroupLabel(groupKey)}</span>
-										<span class="text-xs opacity-60">({groupTasks.length})</span>
-									</h3>
-								</div>
-								{#each groupTasks as task (task.id)}
-									<TaskItem
-										{task}
-										onToggle={onTaskToggle}
-										onStar={onTaskStar}
-										onClick={onTaskClick}
-										{onTagClick}
-										showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
-									/>
-								{/each}
-								{#if groupKey !== 'later'}
-									<div class="py-4">
-										<div class="border-t border-gray-200 dark:border-gray-700"></div>
-									</div>
-								{/if}
+					{@const nonEmptyGroups = Object.entries(timeGroupedActiveTasks).filter(([_, tasks]) => tasks.length > 0)}
+					{#each nonEmptyGroups as [groupKey, groupTasks], index}
+						<div class="mb-6">
+							<div class="mb-3">
+								<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
+									<span>{getTimeGroupLabel(groupKey)}</span>
+									<span class="text-xs opacity-60">({groupTasks.length})</span>
+								</h3>
 							</div>
-						{/if}
+							{#each groupTasks as task (task.id)}
+								<TaskItem
+									{task}
+									onToggle={onTaskToggle}
+									onStar={onTaskStar}
+									onClick={onTaskClick}
+									{onTagClick}
+									showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
+								/>
+							{/each}
+							{#if index < nonEmptyGroups.length - 1}
+								<div class="py-4">
+									<div class="border-t border-gray-200 dark:border-gray-700"></div>
+								</div>
+							{/if}
+						</div>
 					{/each}
 				{/if}
 
