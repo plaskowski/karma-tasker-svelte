@@ -57,6 +57,7 @@
 
 	// Group tasks by project for certain views
 	const shouldGroupByProject = $derived(['next', 'waiting', 'someday'].includes(currentView));
+	const shouldGroupByTime = $derived(currentView === 'project');
 	
 	function groupTasksByProject(taskList: Task[]) {
 		if (!shouldGroupByProject) return { ungrouped: taskList };
@@ -76,10 +77,78 @@
 		return { grouped, ungrouped };
 	}
 
+	function groupTasksByTime(taskList: Task[]) {
+		if (!shouldGroupByTime) return { ungrouped: taskList };
+		
+		const now = new Date();
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+		const tomorrow = new Date(today);
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		const endOfWeek = new Date(today);
+		endOfWeek.setDate(endOfWeek.getDate() + (7 - today.getDay()));
+		
+		const timeGroups = {
+			today: [] as Task[],
+			tomorrow: [] as Task[],
+			thisWeek: [] as Task[],
+			later: [] as Task[],
+			overdue: [] as Task[]
+		};
+		
+		taskList.forEach(task => {
+			const dueDate = task.dueDate ? new Date(task.dueDate) : null;
+			
+			if (!dueDate) {
+				// Tasks without due dates go to "later"
+				timeGroups.later.push(task);
+				return;
+			}
+			
+			const taskDate = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
+			
+			if (taskDate < today) {
+				timeGroups.overdue.push(task);
+			} else if (taskDate.getTime() === today.getTime()) {
+				timeGroups.today.push(task);
+			} else if (taskDate.getTime() === tomorrow.getTime()) {
+				timeGroups.tomorrow.push(task);
+			} else if (taskDate <= endOfWeek) {
+				timeGroups.thisWeek.push(task);
+			} else {
+				timeGroups.later.push(task);
+			}
+		});
+		
+		return timeGroups;
+	}
+
 	const { grouped: groupedActiveTasks = {}, ungrouped: ungroupedActiveTasks = [] } = $derived(groupTasksByProject(activeTasks));
+	const timeGroupedActiveTasks = $derived(groupTasksByTime(activeTasks));
 
 	function getProjectName(projectId: string): string {
 		return projects.find(p => p.id === projectId)?.name || projectId;
+	}
+
+	function getTimeGroupLabel(groupKey: string): string {
+		switch (groupKey) {
+			case 'overdue': return 'Overdue';
+			case 'today': return 'Today';
+			case 'tomorrow': return 'Tomorrow';
+			case 'thisWeek': return 'This Week';
+			case 'later': return 'Later';
+			default: return groupKey;
+		}
+	}
+
+	function getTimeGroupIcon(groupKey: string): string {
+		switch (groupKey) {
+			case 'overdue': return '🔴';
+			case 'today': return '📅';
+			case 'tomorrow': return '🌅';
+			case 'thisWeek': return '📆';
+			case 'later': return '📋';
+			default: return '📝';
+		}
 	}
 </script>
 
@@ -170,8 +239,39 @@
 					</div>
 				{/each}
 
-				<!-- Non-grouped view (for focus, inbox, project views) -->
-				{#if !shouldGroupByProject}
+				<!-- Time-grouped view (for project views) -->
+				{#if shouldGroupByTime}
+					{#each Object.entries(timeGroupedActiveTasks) as [groupKey, groupTasks]}
+						{#if groupTasks.length > 0}
+							<div class="mb-6">
+								<div class="mb-3">
+									<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
+										<span>{getTimeGroupIcon(groupKey)}</span>
+										<span>{getTimeGroupLabel(groupKey)}</span>
+										<span class="text-xs opacity-60">({groupTasks.length})</span>
+									</h3>
+								</div>
+								{#each groupTasks as task (task.id)}
+									<TaskItem
+										{task}
+										onToggle={onTaskToggle}
+										onStar={onTaskStar}
+										onClick={onTaskClick}
+										{onTagClick}
+									/>
+								{/each}
+								{#if groupKey !== 'later'}
+									<div class="py-4">
+										<div class="border-t border-gray-200 dark:border-gray-700"></div>
+									</div>
+								{/if}
+							</div>
+						{/if}
+					{/each}
+				{/if}
+
+				<!-- Non-grouped view (for focus, inbox views) -->
+				{#if !shouldGroupByProject && !shouldGroupByTime}
 					{#each activeTasks as task (task.id)}
 						<TaskItem
 							{task}

@@ -11,6 +11,7 @@ export const mockTasks: Task[] = [
     tags: ['Work'],
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15'),
+    dueDate: new Date(), // Today
   },
   {
     id: '2',
@@ -22,6 +23,11 @@ export const mockTasks: Task[] = [
     tags: ['Personal'],
     createdAt: new Date('2024-01-16'),
     updatedAt: new Date('2024-01-16'),
+    dueDate: (() => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return tomorrow;
+    })(), // Tomorrow
   },
   {
     id: '3',
@@ -32,6 +38,11 @@ export const mockTasks: Task[] = [
     tags: ['Admin'],
     createdAt: new Date('2024-01-17'),
     updatedAt: new Date('2024-01-17'),
+    dueDate: (() => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      return yesterday;
+    })(), // Overdue
   },
   {
     id: '4',
@@ -43,6 +54,11 @@ export const mockTasks: Task[] = [
     tags: ['Finance'],
     createdAt: new Date('2024-01-18'),
     updatedAt: new Date('2024-01-18'),
+    dueDate: (() => {
+      const thisWeek = new Date();
+      thisWeek.setDate(thisWeek.getDate() + 3);
+      return thisWeek;
+    })(), // This Week
   },
   {
     id: '5',
@@ -54,6 +70,11 @@ export const mockTasks: Task[] = [
     tags: ['Travel'],
     createdAt: new Date('2024-01-19'),
     updatedAt: new Date('2024-01-19'),
+    dueDate: (() => {
+      const nextMonth = new Date();
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      return nextMonth;
+    })(), // Later
   },
   {
     id: '6',
