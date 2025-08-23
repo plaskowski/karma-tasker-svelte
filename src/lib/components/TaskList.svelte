@@ -198,6 +198,7 @@
 						onStar={onTaskStar}
 						onClick={onTaskClick}
 						{onTagClick}
+						showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 					/>
 				{/each}
 				{#if Object.keys(groupedActiveTasks).length > 0}
@@ -223,6 +224,7 @@
 								onStar={onTaskStar}
 								onClick={onTaskClick}
 								{onTagClick}
+								showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 							/>
 						{/each}
 						<div class="py-4">
@@ -250,6 +252,7 @@
 										onStar={onTaskStar}
 										onClick={onTaskClick}
 										{onTagClick}
+										showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 									/>
 								{/each}
 								{#if groupKey !== 'later'}
@@ -271,6 +274,7 @@
 							onStar={onTaskStar}
 							onClick={onTaskClick}
 							{onTagClick}
+							showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 						/>
 					{/each}
 				{/if}
@@ -292,6 +296,7 @@
 							onStar={onTaskStar}
 							onClick={onTaskClick}
 							{onTagClick}
+							showProjectBadge={!shouldGroupByProject && !shouldGroupByTime}
 						/>
 					{/each}
 				{/if}

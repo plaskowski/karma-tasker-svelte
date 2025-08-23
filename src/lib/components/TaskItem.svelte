@@ -9,9 +9,10 @@
 		onStar: (id: string) => void;
 		onClick: (task: Task) => void;
 		onTagClick?: (tag: string) => void;
+		showProjectBadge?: boolean;
 	}
 
-	let { task, onToggle, onStar, onClick, onTagClick }: Props = $props();
+	let { task, onToggle, onStar, onClick, onTagClick, showProjectBadge = true }: Props = $props();
 </script>
 
 <div
@@ -53,7 +54,7 @@
 
 		<!-- Tags and project -->
 		<div class="flex items-center gap-2 mt-1">
-			{#if task.projectId}
+			{#if task.projectId && showProjectBadge}
 				<span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
 					{task.projectId}
 				</span>
