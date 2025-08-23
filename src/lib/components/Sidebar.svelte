@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Settings } from 'lucide-svelte';
+	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Settings, User, Gamepad2, Heart, Briefcase, Home, Activity, Building } from 'lucide-svelte';
 	import type { ViewType, Project } from '$lib/types';
 
 	interface Props {
@@ -49,6 +49,27 @@
 				return nextTaskCount;
 			default:
 				return 0;
+		}
+	}
+
+	function getProjectIcon(projectId: string) {
+		switch (projectId) {
+			case 'personal':
+				return User;
+			case 'entertainment':
+				return Gamepad2;
+			case 'family':
+				return Heart;
+			case 'work':
+				return Briefcase;
+			case 'home-life':
+				return Home;
+			case 'health':
+				return Activity;
+			case 'apartment':
+				return Building;
+			default:
+				return Briefcase; // Default fallback icon
 		}
 	}
 </script>
@@ -108,6 +129,7 @@
 		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Projects</h3>
 		<div class="space-y-1">
 			{#each projects as project}
+				{@const ProjectIcon = getProjectIcon(project.id)}
 				<button
 					onclick={() => {
 						onViewChange('project');
@@ -117,7 +139,7 @@
 						? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 						: 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100'}"
 				>
-					<div class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></div>
+					<ProjectIcon class="w-4 h-4" />
 					<span class="flex-1 truncate">{project.name}</span>
 				</button>
 			{/each}
