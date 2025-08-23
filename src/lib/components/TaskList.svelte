@@ -56,6 +56,19 @@
 	const activeTasks = $derived(tasks.filter(task => !task.completed));
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
+	// Rotating motivational headers for Focus view
+	const focusHeaders = [
+		"Go Get Them Tiger",
+		"Let's Roll",
+		"Time to Shine",
+		"Ready to Rock",
+		"Make It Happen",
+		"Go Crush These"
+	];
+	
+	// Pick random header on component initialization
+	const focusHeader = focusHeaders[Math.floor(Math.random() * focusHeaders.length)];
+
 	// Group tasks by project for certain views
 	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday', 'scheduled'].includes(currentView));
 	const shouldGroupByPerspective = $derived(['project'].includes(currentView));
@@ -266,7 +279,7 @@
 						<div class="mb-6">
 							<div class="mb-3">
 								<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-									<span>What Matters Most</span>
+									<span>{focusHeader}</span>
 									<span class="text-xs opacity-60">({activeTasks.length})</span>
 								</h3>
 							</div>
