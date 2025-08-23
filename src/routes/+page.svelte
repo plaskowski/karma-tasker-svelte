@@ -10,7 +10,6 @@
 		filteredTasks,
 		focusTaskCount,
 		inboxTaskCount,
-		nextTaskCount,
 
 		toggleTaskComplete,
 		toggleTaskStar,
@@ -153,7 +152,6 @@
 		onProjectSelect={handleProjectSelect}
 		focusTaskCount={$focusTaskCount}
 		inboxTaskCount={$inboxTaskCount}
-		nextTaskCount={$nextTaskCount}
 
 		searchQuery={$searchQuery}
 		onSearchChange={handleSearchChange}

@@ -10,7 +10,6 @@
 		onProjectSelect: (projectId: string) => void;
 		focusTaskCount: number;
 		inboxTaskCount: number;
-		nextTaskCount: number;
 
 		searchQuery: string;
 		onSearchChange: (query: string) => void;
@@ -23,8 +22,7 @@
 		onViewChange, 
 		onProjectSelect, 
 		focusTaskCount, 
-		inboxTaskCount, 
-		nextTaskCount,
+		inboxTaskCount,
 
 		searchQuery,
 		onSearchChange
@@ -45,10 +43,8 @@
 				return focusTaskCount;
 			case 'inbox':
 				return inboxTaskCount;
-			case 'next':
-				return nextTaskCount;
 			default:
-				return 0;
+				return null; // No counter for other views
 		}
 	}
 
@@ -118,7 +114,9 @@
 						<Archive class="w-4 h-4" />
 					{/if}
 					<span class="flex-1">{item.label}</span>
-					<span class="text-sm text-current opacity-70">{getTaskCount(item.id as ViewType)}</span>
+					{#if getTaskCount(item.id as ViewType) !== null}
+						<span class="text-sm text-current opacity-70">{getTaskCount(item.id as ViewType)}</span>
+					{/if}
 				</button>
 			{/each}
 		</div>

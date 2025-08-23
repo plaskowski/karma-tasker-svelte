@@ -130,6 +130,4 @@ export const inboxTaskCount = derived(tasks, ($tasks) =>
   $tasks.filter(task => !task.projectId && !task.completed).length
 );
 
-export const nextTaskCount = derived(tasks, ($tasks) => 
-  $tasks.filter(task => !task.completed).length
-);
+
