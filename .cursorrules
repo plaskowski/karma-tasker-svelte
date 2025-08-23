@@ -1,0 +1,31 @@
+# Cursor Rules for Karma Tasker Project
+
+## Development Workflow
+- **Always commit after completing any edit**: After making any code changes, immediately commit them with a descriptive message explaining what was changed and why.
+- **Use conventional commits**: Follow the format `type: description` where type is feat, fix, refactor, docs, style, test, chore, etc.
+- **Include benefits in commit messages**: Explain not just what changed, but the benefits and impact of the change.
+- **Test before committing**: Ensure there are no linter errors.
+
+## Code Quality
+- **Use TypeScript strictly**: All new code should be properly typed with no `any` types.
+- **Follow Svelte 5 patterns**: Use `$state()`, `$derived()`, and `onclick` instead of deprecated patterns.
+- **Clean up imports**: Remove unused imports and exports when refactoring.
+- **Maintain consistency**: Keep the same patterns, naming conventions, and structure throughout the codebase.
+
+## Architecture Guidelines  
+- **Component separation**: Keep TaskList (container/logic) and TaskItem (presentation) clearly separated.
+- **Store management**: Use Svelte stores for global state, local state for component-specific data.
+- **GTD principles**: Maintain Getting Things Done methodology in task organization and perspectives.
+- **MVP focus**: Keep features simple and essential, avoid complexity that doesn't serve core use cases.
+
+## UI/UX Standards
+- **Dark mode support**: All components should work properly in both light and dark themes.
+- **Responsive design**: Ensure components work on different screen sizes.
+- **Accessibility**: Use proper ARIA labels, keyboard navigation, and semantic HTML.
+- **Performance**: Use Svelte's reactivity efficiently, avoid unnecessary re-renders.
+
+## Project Specific
+- **No tags functionality**: Tags have been removed for MVP simplicity, don't add them back without discussion.
+- **GTD perspectives**: Use Inbox, Next, Waiting, Scheduled, Someday for task categorization.
+- **Mock data**: Currently using mock data with simulated API delays and failures for development.
+- **SvelteKit + Tailwind**: Stick to the current tech stack, avoid adding new dependencies without necessity.
