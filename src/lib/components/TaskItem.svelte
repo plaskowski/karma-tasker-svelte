@@ -51,16 +51,16 @@
 				{task.description}
 			</p>
 		{/if}
-
-		<!-- Project badge -->
-		{#if task.projectId && showProjectBadge}
-			<div class="flex items-center gap-2 mt-1">
-				<span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
-					{task.projectId}
-				</span>
-			</div>
-		{/if}
 	</div>
+
+	<!-- Project badge (right side) -->
+	{#if task.projectId && showProjectBadge}
+		<div class="flex-shrink-0 mr-2">
+			<span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+				{task.projectId}
+			</span>
+		</div>
+	{/if}
 
 	<!-- Star button -->
 	<button
