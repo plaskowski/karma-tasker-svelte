@@ -56,18 +56,18 @@
 	const activeTasks = $derived(tasks.filter(task => !task.completed));
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
-	// Rotating motivational headers for Focus view - inspired by movies & games
+	// Rotating motivational headers for Focus view - positive flow energy
 	const focusHeaders = [
 		"Let's Do This!",
-		"Game Time!",
-		"Bring It On!",
-		"Lock and Load!",
-		"It's Showtime!",
 		"Ready Player One!",
 		"Let's Roll!",
 		"Time to Rock!",
-		"Game On!",
-		"Let's Get Dangerous!"
+		"Here We Go!",
+		"Let's Flow!",
+		"Ready to Shine!",
+		"Smooth Moves!",
+		"Let's Cruise!",
+		"Time to Glow!"
 	];
 	
 	// Pick random header on component initialization
