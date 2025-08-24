@@ -6,8 +6,7 @@ export const mockTasks: Task[] = [
     title: 'Finalize client portal requirements',
     description: '',
     completed: false,
-    starred: true,
-    perspective: 'next',
+    perspective: 'first',
     projectId: 'client-portal',
     workspaceId: 'work',
 
@@ -19,8 +18,7 @@ export const mockTasks: Task[] = [
     title: 'Buy groceries',
     description: '',
     completed: false,
-    starred: true,
-    perspective: 'next',
+    perspective: 'first',
     projectId: 'household',
     workspaceId: 'personal',
 
@@ -32,8 +30,7 @@ export const mockTasks: Task[] = [
     title: 'Call insurance company',
     description: '',
     completed: false,
-    starred: true,
-    perspective: 'next',
+    perspective: 'first',
     projectId: 'personal-default',
     workspaceId: 'personal',
 
@@ -45,7 +42,7 @@ export const mockTasks: Task[] = [
     title: 'Review monthly budget',
     description: '',
     completed: false,
-    starred: true,
+    perspective: 'first',
     projectId: 'finances',
     workspaceId: 'personal',
 
@@ -62,7 +59,7 @@ export const mockTasks: Task[] = [
     title: 'Plan vacation',
     description: '',
     completed: false,
-    starred: true,
+    perspective: 'first',
     projectId: 'travel',
     workspaceId: 'personal',
 
@@ -79,7 +76,7 @@ export const mockTasks: Task[] = [
     title: 'Upgrade authentication library',
     description: '',
     completed: true,
-    starred: false,
+
     projectId: 'api-redesign',
     workspaceId: 'work',
 
@@ -91,7 +88,7 @@ export const mockTasks: Task[] = [
     title: 'Read book',
     description: '',
     completed: true,
-    starred: false,
+
     projectId: 'learning',
     workspaceId: 'personal',
 
@@ -103,7 +100,7 @@ export const mockTasks: Task[] = [
     title: 'Exercise routine',
     description: '',
     completed: false,
-    starred: false,
+
     projectId: 'health',
     workspaceId: 'personal',
 
@@ -115,7 +112,7 @@ export const mockTasks: Task[] = [
     title: 'Build Arduino robot',
     description: '',
     completed: false,
-    starred: false,
+
     projectId: 'electronics',
     workspaceId: 'hobby',
 
@@ -127,7 +124,7 @@ export const mockTasks: Task[] = [
     title: 'Team meeting',
     description: '',
     completed: false,
-    starred: false,
+
     projectId: 'work-default',
     workspaceId: 'work',
 
@@ -139,7 +136,7 @@ export const mockTasks: Task[] = [
     title: 'Learn new skill',
     description: '',
     completed: false,
-    starred: false,
+
     perspective: 'someday',
     projectId: 'learning',
     workspaceId: 'personal',
@@ -152,7 +149,7 @@ export const mockTasks: Task[] = [
     title: 'Clean workspace',
     description: '',
     completed: false,
-    starred: false,
+
     // No perspective = inbox
     projectId: 'household',
     workspaceId: 'personal',
@@ -165,7 +162,7 @@ export const mockTasks: Task[] = [
     title: 'Photography workshop',
     description: '',
     completed: false,
-    starred: true,
+    perspective: 'first',
     projectId: 'photography',
     workspaceId: 'hobby',
 
@@ -177,7 +174,7 @@ export const mockTasks: Task[] = [
     title: 'Document new API endpoints',
     description: '',
     completed: false,
-    starred: false,
+
     projectId: 'api-redesign',
     workspaceId: 'work',
 
@@ -211,40 +208,43 @@ export const mockProjects: Project[] = [
 export const mockAreas: Area[] = [];
 
 export const mockWorkspaces: Workspace[] = [
-  { 
-    id: 'personal', 
-    name: 'Personal', 
-    defaultProjectId: 'personal-default', 
+  {
+    id: 'personal',
+    name: 'Personal',
+    defaultProjectId: 'personal-default',
     perspectives: [
       { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
-      { id: 'next', name: 'Next', icon: 'clock', order: 2 },
-      { id: 'someday', name: 'Someday', icon: 'archive', order: 3 },
+      { id: 'first', name: 'First', icon: 'zap', order: 2 },
+      { id: 'next', name: 'Next', icon: 'clock', order: 3 },
+      { id: 'someday', name: 'Someday', icon: 'archive', order: 4 },
     ],
-    isActive: true, 
-    createdAt: new Date() 
+    isActive: true,
+    createdAt: new Date()
   },
-  { 
-    id: 'work', 
-    name: 'Work', 
-    defaultProjectId: 'work-default', 
+  {
+    id: 'work',
+    name: 'Work',
+    defaultProjectId: 'work-default',
     perspectives: [
       { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
-      { id: 'next', name: 'Next', icon: 'clock', order: 2 },
-      { id: 'review', name: 'Review', icon: 'users', order: 3 },
+      { id: 'first', name: 'First', icon: 'zap', order: 2 },
+      { id: 'next', name: 'Next', icon: 'clock', order: 3 },
+      { id: 'review', name: 'Review', icon: 'users', order: 4 },
     ],
-    isActive: false, 
-    createdAt: new Date() 
+    isActive: false,
+    createdAt: new Date()
   },
-  { 
-    id: 'hobby', 
-    name: 'Hobby', 
-    defaultProjectId: 'hobby-default', 
+  {
+    id: 'hobby',
+    name: 'Hobby',
+    defaultProjectId: 'hobby-default',
     perspectives: [
       { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
-      { id: 'next', name: 'Next', icon: 'clock', order: 2 },
-      { id: 'ideas', name: 'Ideas', icon: 'archive', order: 3 },
+      { id: 'first', name: 'First', icon: 'zap', order: 2 },
+      { id: 'next', name: 'Next', icon: 'clock', order: 3 },
+      { id: 'ideas', name: 'Ideas', icon: 'archive', order: 4 },
     ],
-    isActive: false, 
-    createdAt: new Date() 
+    isActive: false,
+    createdAt: new Date()
   },
 ];

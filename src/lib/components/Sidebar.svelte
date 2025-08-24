@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Star, Inbox, Calendar, Clock, Users, Archive, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
+	import { Zap, Inbox, Calendar, Clock, Users, Archive, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
 	import type { ViewType, Project, Workspace, PerspectiveConfig } from '$lib/types';
 
 	interface Props {
@@ -12,7 +12,7 @@
 		onViewChange: (view: ViewType) => void;
 		onProjectSelect: (projectId: string) => void;
 		onWorkspaceChange: (workspaceId: string) => void;
-		focusTaskCount: number;
+		firstTaskCount: number;
 		inboxTaskCount: number;
 	}
 
@@ -26,21 +26,22 @@
 		onViewChange, 
 		onProjectSelect,
 		onWorkspaceChange,
-		focusTaskCount, 
+		firstTaskCount, 
 		inboxTaskCount
 	}: Props = $props();
 
 	// Icon mapping for perspectives
 	const iconMap: Record<string, any> = {
 		inbox: Inbox,
+		zap: Zap,
 		clock: Clock,
 		archive: Archive,
 		users: Users,
 	};
 
-	// Dynamic sidebar items: Focus + configured perspectives
+	// Dynamic sidebar items: First + configured perspectives
 	const sidebarItems = $derived([
-		{ id: 'focus', label: 'Focus', icon: Star },
+		{ id: 'first', label: 'First', icon: Zap },
 		...perspectives.map(p => ({
 			id: p.id,
 			label: p.name,
@@ -50,8 +51,8 @@
 
 	function getTaskCount(view: ViewType) {
 		switch (view) {
-			case 'focus':
-				return focusTaskCount;
+			case 'first':
+				return firstTaskCount;
 			case 'inbox':
 				return inboxTaskCount;
 			default:
@@ -76,7 +77,7 @@
 			case 'meetings':
 				return Users;
 			case 'photography':
-				return Star;
+				return Heart;
 			case 'electronics':
 				return Activity;
 			case 'music':
@@ -182,11 +183,11 @@
 				<button
 					onclick={() => onViewChange(item.id as ViewType)}
 					class="w-full flex items-center gap-3 px-3 py-2 rounded text-left transition-colors {currentView === item.id 
-						? (item.id === 'focus' ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100')
-						: (item.id === 'focus' ? 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100')}"
+						? (item.id === 'first' ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100')
+						: (item.id === 'first' ? 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100')}"
 				>
-					{#if item.icon === Star}
-						<Star class="w-4 h-4" />
+					{#if item.icon === Zap}
+						<Zap class="w-4 h-4" />
 					{:else if item.icon === Inbox}
 						<Inbox class="w-4 h-4" />
 					{:else if item.icon === Clock}

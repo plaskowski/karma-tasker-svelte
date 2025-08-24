@@ -10,11 +10,11 @@
 		currentWorkspace,
 
 		filteredTasks,
-		focusTaskCount,
+		firstTaskCount,
 		inboxTaskCount,
 
 		toggleTaskComplete,
-		toggleTaskStar,
+
 		addTask,
 		migrateToWorkspaces,
 		addSampleWorkspaceTasks,
@@ -98,7 +98,7 @@
 			currentWorkspace.set(workspaceParam);
 		}
 
-		if (view && ['focus', 'inbox', 'next', 'waiting', 'scheduled', 'someday', 'project'].includes(view)) {
+		if (view && ['first', 'inbox', 'next', 'waiting', 'scheduled', 'someday', 'project'].includes(view)) {
 			currentView.set(view);
 			if (view === 'project' && project) {
 				// Validate project exists in current workspace
@@ -106,19 +106,19 @@
 				if (projectExists) {
 					currentProjectId.set(project);
 				} else {
-					// Project doesn't exist in current workspace, default to focus
-					currentView.set('focus');
+					// Project doesn't exist in current workspace, default to first
+					currentView.set('first');
 					currentProjectId.set(undefined);
-					updateURL('focus');
+					updateURL('first');
 				}
 			} else if (view !== 'project') {
 				currentProjectId.set(undefined);
 			}
 		} else {
-			// Invalid or missing view, default to focus
-			currentView.set('focus');
+			// Invalid or missing view, default to first
+			currentView.set('first');
 			currentProjectId.set(undefined);
-			updateURL('focus');
+			updateURL('first');
 		}
 
 		// Always update URL to ensure workspace is included
@@ -136,13 +136,7 @@
 		}
 	}
 
-	async function handleTaskStar(id: string) {
-		try {
-			await toggleTaskStar(id);
-		} catch (error) {
-			console.error('Failed to star task:', error);
-		}
-	}
+
 
 	function handleTaskClick(task: Task) {
 		// TODO: Open task details modal
@@ -172,7 +166,7 @@
 		// Reset app to initial state (temporary dev feature)
 		resetToInitialState();
 		// Update URL to reflect reset state
-		updateURL('focus', undefined, 'personal');
+		updateURL('first', undefined, 'personal');
 	}
 
 
@@ -190,7 +184,7 @@
 		onViewChange={handleViewChange}
 		onProjectSelect={handleProjectSelect}
 		onWorkspaceChange={handleWorkspaceChange}
-		focusTaskCount={$focusTaskCount}
+		firstTaskCount={$firstTaskCount}
 		inboxTaskCount={$inboxTaskCount}
 	/>
 
@@ -203,7 +197,7 @@
 			currentView={$currentView}
 			currentProjectId={$currentProjectId}
 			onTaskToggle={handleTaskToggle}
-			onTaskStar={handleTaskStar}
+
 			onTaskClick={handleTaskClick}
 
 			showCompleted={true}

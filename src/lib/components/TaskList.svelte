@@ -9,7 +9,6 @@
 		currentView: ViewType;
 		currentProjectId?: string;
 		onTaskToggle: (id: string) => void;
-		onTaskStar: (id: string) => void;
 		onTaskClick: (task: Task) => void;
 
 		showCompleted?: boolean;
@@ -24,7 +23,6 @@
 		currentView,
 		currentProjectId,
 		onTaskToggle,
-		onTaskStar,
 		onTaskClick,
 		showCompleted = false,
 		onNewTask,
@@ -34,8 +32,8 @@
 
 	function getViewTitle() {
 		switch (currentView) {
-			case 'focus':
-				return 'Focus';
+			case 'first':
+				return 'First';
 			case 'inbox':
 				return 'Inbox';
 			case 'next':
@@ -62,8 +60,8 @@
 	const activeTasks = $derived(tasks.filter(task => !task.completed));
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
-	// Rotating motivational headers for Focus view - diverse positive energy with nostalgia
-	const focusHeaders = [
+	// Rotating motivational headers for First view - diverse positive energy with nostalgia
+	const firstHeaders = [
 		"Let's Roll",
 		"In the Zone",
 		"Making Magic",
@@ -97,7 +95,7 @@
 	];
 	
 	// Pick random header on component initialization
-	const focusHeader = focusHeaders[Math.floor(Math.random() * focusHeaders.length)];
+	const firstHeader = firstHeaders[Math.floor(Math.random() * firstHeaders.length)];
 
 	// Group tasks by project for certain views
 	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday', 'scheduled'].includes(currentView));
@@ -128,25 +126,24 @@
 		
 		const perspectiveGroups = {
 			inbox: [] as Task[],
+			first: [] as Task[],
 			next: [] as Task[],
-			waiting: [] as Task[],
-			scheduled: [] as Task[],
-			someday: [] as Task[]
+			someday: [] as Task[],
+			review: [] as Task[],
+			ideas: [] as Task[]
 		};
 		
 		taskList.forEach(task => {
 			if (task.completed) return; // Skip completed tasks
 			
-			// Scheduled takes priority - if it has a due date, it goes here
-			if (task.dueDate) {
-				perspectiveGroups.scheduled.push(task);
-			}
-			// Next actions - starred items are priority actions
-			else if (task.starred) {
-				perspectiveGroups.next.push(task);
-			}
-			// Default unprocessed items go to inbox
-			else {
+			// Group by explicit perspective field
+			if (!task.perspective) {
+				// No perspective = inbox
+				perspectiveGroups.inbox.push(task);
+			} else if (perspectiveGroups[task.perspective as keyof typeof perspectiveGroups]) {
+				perspectiveGroups[task.perspective as keyof typeof perspectiveGroups].push(task);
+			} else {
+				// Unknown perspective, put in inbox
 				perspectiveGroups.inbox.push(task);
 			}
 		});
@@ -180,12 +177,12 @@
 			tasks: Task[];
 		}> = [];
 
-		// Focus view - single group
+		// First view - single group
 		if (!shouldGroupByProject && !shouldGroupByPerspective) {
 			if (activeTasks.length > 0) {
 				groups.push({
-					id: 'focus',
-					title: focusHeader,
+					id: 'first',
+					title: firstHeader,
 					tasks: activeTasks
 				});
 			}
@@ -297,7 +294,7 @@
 							<TaskItem
 								{task}
 								onToggle={onTaskToggle}
-								onStar={onTaskStar}
+		
 								onClick={onTaskClick}
 								{showProjectBadge}
 							/>
@@ -314,7 +311,7 @@
 						<TaskItem
 							{task}
 							onToggle={onTaskToggle}
-							onStar={onTaskStar}
+	
 							onClick={onTaskClick}
 							{showProjectBadge}
 						/>

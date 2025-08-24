@@ -61,12 +61,7 @@ export async function deleteTask(id: string): Promise<void> {
   tasks.update(taskList => taskList.filter(task => task.id !== id));
 }
 
-export async function toggleTaskStar(id: string): Promise<void> {
-  const task = get(tasks).find(t => t.id === id);
-  if (task) {
-    await updateTask(id, { starred: !task.starred });
-  }
-}
+
 
 export async function toggleTaskComplete(id: string): Promise<void> {
   const task = get(tasks).find(t => t.id === id);
@@ -86,9 +81,9 @@ export const filteredTasks = derived(
     });
 
     // Filter by view
-    if ($currentView === 'focus') {
-      // Focus: starred items from any perspective
-      filtered = filtered.filter(task => task.starred && !task.completed);
+    if ($currentView === 'first') {
+      // First: tasks with first perspective
+      filtered = filtered.filter(task => task.perspective === 'first' && !task.completed);
     } else if ($currentView === 'project') {
       // Project view: specific project tasks
       if ($currentProjectId) {
@@ -111,10 +106,10 @@ export const filteredTasks = derived(
 );
 
 // Task count derived stores for sidebar
-export const focusTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => 
+export const firstTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => 
   $tasks.filter(task => {
     const taskWorkspace = task.workspaceId || 'personal';
-    return taskWorkspace === $currentWorkspace && task.starred && !task.completed;
+    return taskWorkspace === $currentWorkspace && task.perspective === 'first' && !task.completed;
   }).length
 );
 
@@ -190,7 +185,7 @@ export function addSampleWorkspaceTasks() {
         title: 'Design user dashboard mockups',
         description: '',
         completed: false,
-        starred: true,
+
         projectId: 'client-portal',
         workspaceId: 'work',
         createdAt: new Date(),
@@ -202,7 +197,7 @@ export function addSampleWorkspaceTasks() {
         title: 'Weekly team standup',
         description: '',
         completed: false,
-        starred: false,
+
         projectId: 'meetings',
         workspaceId: 'work',
         createdAt: new Date(),
@@ -213,7 +208,7 @@ export function addSampleWorkspaceTasks() {
         title: 'Refactor authentication endpoints',
         description: '',
         completed: false,
-        starred: true,
+
         projectId: 'api-redesign',
         workspaceId: 'work',
         createdAt: new Date(),
@@ -224,7 +219,7 @@ export function addSampleWorkspaceTasks() {
         title: 'Update API documentation',
         description: '',
         completed: false,
-        starred: false,
+
         projectId: 'api-redesign',
         workspaceId: 'work',
         createdAt: new Date(),
@@ -240,7 +235,7 @@ export function addSampleWorkspaceTasks() {
         title: 'Photography workshop signup',
         description: '',
         completed: false,
-        starred: true,
+
         projectId: 'photography',
         workspaceId: 'hobby',
         createdAt: new Date(),
@@ -251,7 +246,7 @@ export function addSampleWorkspaceTasks() {
         title: 'Arduino project - LED matrix',
         description: '',
         completed: false,
-        starred: false,
+
         projectId: 'electronics',
         workspaceId: 'hobby',
         createdAt: new Date(),
@@ -262,7 +257,7 @@ export function addSampleWorkspaceTasks() {
         title: 'Practice guitar scales',
         description: '',
         completed: false,
-        starred: false,
+
         projectId: 'music',
         workspaceId: 'hobby',
         createdAt: new Date(),
@@ -284,7 +279,7 @@ export function resetToInitialState() {
   workspaces.set(mockWorkspaces);
   
   // Reset current state
-  currentView.set('focus');
+  currentView.set('first');
   currentProjectId.set(undefined);
   currentWorkspace.set('personal');
   showCompleted.set(false);

@@ -1,18 +1,16 @@
 <script lang="ts">
 	import type { Task } from '$lib/types';
-	import { Star } from 'lucide-svelte';
 	import { fly } from 'svelte/transition';
 
 	interface Props {
 		task: Task;
 		onToggle: (id: string) => void;
-		onStar: (id: string) => void;
 		onClick: (task: Task) => void;
 
 		showProjectBadge?: boolean;
 	}
 
-	let { task, onToggle, onStar, onClick, showProjectBadge = true }: Props = $props();
+	let { task, onToggle, onClick, showProjectBadge = true }: Props = $props();
 </script>
 
 <div
@@ -62,11 +60,5 @@
 		</div>
 	{/if}
 
-	<!-- Star button -->
-	<button
-		onclick={(e) => { e.stopPropagation(); onStar(task.id); }}
-		class="flex-shrink-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity {task.starred ? 'opacity-100 text-yellow-500' : 'text-gray-400 dark:text-gray-500 hover:text-yellow-500'}"
-	>
-		<Star class="w-4 h-4" fill={task.starred ? 'currentColor' : 'none'} />
-	</button>
+
 </div>

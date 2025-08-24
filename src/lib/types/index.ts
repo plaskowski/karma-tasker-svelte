@@ -3,7 +3,6 @@ export interface Task {
   title: string;
   description?: string;
   completed: boolean;
-  starred: boolean;
   perspective?: string; // undefined = inbox
   projectId: string;
   workspaceId: string;
