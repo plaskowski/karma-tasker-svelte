@@ -103,6 +103,23 @@
 		return workspaces.find(w => w.id === currentWorkspace)?.name || 'Personal';
 	}
 
+	// Get dynamic header title based on current context
+	function getHeaderTitle() {
+		// If we're in a specific project, show project name
+		if (currentView === 'project' && currentProjectId) {
+			const project = projects.find(p => p.id === currentProjectId);
+			return project ? `N › ${project.name}` : 'NIRVANA';
+		}
+		
+		// If we're in a workspace-specific view, show workspace
+		if (['inbox', 'next', 'waiting', 'scheduled', 'someday'].includes(currentView)) {
+			return `N › ${getCurrentWorkspaceName()}`;
+		}
+		
+		// For general views like Focus, show full app name
+		return 'NIRVANA';
+	}
+
 	// Close dropdown when clicking outside
 	function handleClickOutside(event: MouseEvent) {
 		if (workspaceDropdownRef && !workspaceDropdownRef.contains(event.target as Node)) {
@@ -125,7 +142,7 @@
 	<!-- Header with branding -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
 		<div class="flex items-center gap-2 mb-4">
-			<span class="text-lg font-medium text-gray-900 dark:text-gray-100 tracking-wide">NIRVANA</span>
+			<span class="text-lg font-medium text-gray-900 dark:text-gray-100 tracking-wide">{getHeaderTitle()}</span>
 		</div>
 
 		<!-- Workspace selector -->
