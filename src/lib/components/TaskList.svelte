@@ -231,17 +231,17 @@
 
 <div class="flex-1 flex flex-col h-full">
 	<!-- Header -->
-	<div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+	<div class="px-6 py-4 border-b border-surface-200">
 		<div class="flex items-center justify-between">
 			<div>
-				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{getViewTitle()}</h1>
+				<h1 class="text-lg font-medium text-surface-900">{getViewTitle()}</h1>
 			</div>
 			
 			<div class="flex items-center gap-2">
 				{#if onNewTask}
 					<button
 						onclick={onNewTask}
-						class="px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors flex items-center gap-2"
+						class="btn btn-sm bg-primary-500 text-white hover:bg-primary-600"
 					>
 						<Plus class="w-4 h-4" />
 						<span>New Item</span>
@@ -251,7 +251,7 @@
 				{#if onCleanup}
 					<button
 						onclick={onCleanup}
-						class="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center gap-2"
+						class="btn btn-sm bg-surface-200 text-surface-700 hover:bg-surface-300"
 					>
 						<Zap class="w-4 h-4" />
 						<span>Cleanup</span>
@@ -261,7 +261,7 @@
 				{#if onRefresh}
 					<button
 						onclick={onRefresh}
-						class="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center gap-2"
+						class="btn btn-sm bg-surface-200 text-surface-700 hover:bg-surface-300"
 					>
 						<RefreshCw class="w-4 h-4" />
 						<span>Refresh</span>
@@ -286,7 +286,7 @@
 				{#each taskGroups() as group}
 					<div class="mb-6">
 						<div class="mb-3">
-							<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
+							<h3 class="text-base font-medium text-surface-500 {group.id.startsWith('project-') ? 'capitalize' : ''}">
 								<span>{group.title}</span>
 							</h3>
 						</div>
@@ -305,7 +305,7 @@
 				<!-- Completed Tasks -->
 				{#if (showCompleted || completedTasks.length > 0) && completedTasks.length > 0}
 					<div class="mb-3">
-						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400">Done</h3>
+						<h3 class="text-base font-medium text-surface-500">Done</h3>
 					</div>
 					{#each completedTasks as task (task.id)}
 						<TaskItem
