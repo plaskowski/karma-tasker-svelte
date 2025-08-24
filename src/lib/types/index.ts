@@ -7,6 +7,7 @@ export interface Task {
   dueDate?: Date;
   startDate?: Date;
   projectId?: string;
+  workspaceId: string;
 
   createdAt: Date;
   updatedAt: Date;
@@ -17,6 +18,7 @@ export interface Project {
   name: string;
   color?: string;
   areaId?: string;
+  workspaceId: string;
   isCollapsed?: boolean;
   createdAt: Date;
 }

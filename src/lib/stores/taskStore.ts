@@ -15,6 +15,7 @@ export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces)
 // Current state stores
 export const currentView = writable<ViewType>('focus');
 export const currentProjectId = writable<string | undefined>();
+export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', 'personal');
 export const searchQuery = writable('');
 
 export const showCompleted = writable(false);
@@ -77,9 +78,10 @@ export async function toggleTaskComplete(id: string): Promise<void> {
 
 // Derived store for filtered tasks
 export const filteredTasks = derived(
-  [tasks, currentView, currentProjectId, searchQuery],
-  ([$tasks, $currentView, $currentProjectId, $searchQuery]) => {
-    let filtered = $tasks;
+  [tasks, currentView, currentProjectId, currentWorkspace, searchQuery],
+  ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $searchQuery]) => {
+    // Filter by current workspace first
+    let filtered = $tasks.filter(task => task.workspaceId === $currentWorkspace);
 
     // Filter by view
     switch ($currentView) {
@@ -122,12 +124,18 @@ export const filteredTasks = derived(
 );
 
 // Task count derived stores for sidebar
-export const focusTaskCount = derived(tasks, ($tasks) => 
-  $tasks.filter(task => task.starred && !task.completed).length
+export const focusTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => 
+  $tasks.filter(task => task.workspaceId === $currentWorkspace && task.starred && !task.completed).length
 );
 
-export const inboxTaskCount = derived(tasks, ($tasks) => 
-  $tasks.filter(task => !task.projectId && !task.completed).length
+export const inboxTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => 
+  $tasks.filter(task => task.workspaceId === $currentWorkspace && !task.projectId && !task.completed).length
+);
+
+// Derived store for workspace-filtered projects
+export const workspaceProjects = derived(
+  [projects, currentWorkspace],
+  ([$projects, $currentWorkspace]) => $projects.filter(project => project.workspaceId === $currentWorkspace)
 );
 
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addTask, projects } from '$lib/stores/taskStore';
+	import { addTask, workspaceProjects, currentWorkspace } from '$lib/stores/taskStore';
 	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
@@ -38,6 +38,7 @@
 				title: title.trim(),
 				description: description.trim() || undefined,
 				projectId: projectId || undefined,
+				workspaceId: $currentWorkspace,
 				completed: false,
 				starred: isStarred,
 				dueDate: dueDate,
@@ -117,7 +118,7 @@
 						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
 					>
 						<option value="">No project</option>
-						{#each $projects as project}
+						{#each $workspaceProjects as project}
 							<option value={project.id}>{project.name}</option>
 						{/each}
 					</select>

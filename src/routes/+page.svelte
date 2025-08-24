@@ -3,8 +3,10 @@
 		tasks,
 		projects,
 		workspaces,
+		workspaceProjects,
 		currentView,
 		currentProjectId,
+		currentWorkspace,
 		searchQuery,
 
 		filteredTasks,
@@ -60,6 +62,15 @@
 	function handleProjectSelect(projectId: string) {
 		currentProjectId.set(projectId);
 		updateURL('project', projectId);
+	}
+
+	// Handle workspace change
+	function handleWorkspaceChange(workspaceId: string) {
+		currentWorkspace.set(workspaceId);
+		// Reset to focus view when switching workspaces
+		currentView.set('focus');
+		currentProjectId.set(undefined);
+		updateURL('focus');
 	}
 
 	// Initialize view from URL parameters
@@ -138,8 +149,7 @@
 		console.log('Refresh triggered');
 	}
 
-	// Get current workspace name
-	const currentWorkspaceName = $derived($workspaces.find(w => w.isActive)?.name || 'Personal');
+
 </script>
 
 <div class="h-full flex dark">
@@ -147,9 +157,12 @@
 	<Sidebar
 		currentView={$currentView}
 		currentProjectId={$currentProjectId}
-		projects={$projects}
+		currentWorkspace={$currentWorkspace}
+		workspaces={$workspaces}
+		projects={$workspaceProjects}
 		onViewChange={handleViewChange}
 		onProjectSelect={handleProjectSelect}
+		onWorkspaceChange={handleWorkspaceChange}
 		focusTaskCount={$focusTaskCount}
 		inboxTaskCount={$inboxTaskCount}
 
@@ -162,7 +175,7 @@
 		<!-- Task List -->
 		<TaskList
 			tasks={$filteredTasks}
-			projects={$projects}
+			projects={$workspaceProjects}
 			currentView={$currentView}
 			currentProjectId={$currentProjectId}
 			onTaskToggle={handleTaskToggle}

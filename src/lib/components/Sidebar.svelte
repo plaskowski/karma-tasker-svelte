@@ -1,13 +1,16 @@
 <script lang="ts">
-	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Settings, User, Gamepad2, Heart, Briefcase, Home, Activity, Building } from 'lucide-svelte';
-	import type { ViewType, Project } from '$lib/types';
+	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Settings, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
+	import type { ViewType, Project, Workspace } from '$lib/types';
 
 	interface Props {
 		currentView: ViewType;
 		currentProjectId?: string;
+		currentWorkspace: string;
+		workspaces: Workspace[];
 		projects: Project[];
 		onViewChange: (view: ViewType) => void;
 		onProjectSelect: (projectId: string) => void;
+		onWorkspaceChange: (workspaceId: string) => void;
 		focusTaskCount: number;
 		inboxTaskCount: number;
 
@@ -17,10 +20,13 @@
 
 	let { 
 		currentView, 
-		currentProjectId, 
+		currentProjectId,
+		currentWorkspace,
+		workspaces,
 		projects, 
 		onViewChange, 
-		onProjectSelect, 
+		onProjectSelect,
+		onWorkspaceChange,
 		focusTaskCount, 
 		inboxTaskCount,
 
@@ -50,23 +56,50 @@
 
 	function getProjectIcon(projectId: string) {
 		switch (projectId) {
-			case 'personal':
-				return User;
-			case 'entertainment':
-				return Gamepad2;
-			case 'family':
-				return Heart;
-			case 'work':
-				return Briefcase;
-			case 'home-life':
+			case 'household':
 				return Home;
+			case 'finances':
+				return Building;
 			case 'health':
 				return Activity;
-			case 'apartment':
-				return Building;
+			case 'travel':
+				return Calendar;
+			case 'learning':
+				return User;
+			case 'work-projects':
+				return Briefcase;
+			case 'meetings':
+				return Users;
+			case 'photography':
+				return Star;
+			case 'electronics':
+				return Settings;
+			case 'music':
+				return Heart;
 			default:
 				return Briefcase; // Default fallback icon
 		}
+	}
+
+	function getWorkspaceIcon(workspaceId: string) {
+		switch (workspaceId) {
+			case 'personal':
+				return User;
+			case 'work':
+				return Briefcase;
+			case 'hobby':
+				return Gamepad2;
+			default:
+				return User;
+		}
+	}
+
+	// State for workspace selector dropdown
+	let isWorkspaceDropdownOpen = $state(false);
+	
+	// Get current workspace name
+	function getCurrentWorkspaceName() {
+		return workspaces.find(w => w.id === currentWorkspace)?.name || 'Personal';
 	}
 </script>
 
@@ -75,6 +108,53 @@
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
 		<div class="flex items-center gap-2 mb-4">
 			<span class="text-lg font-medium text-gray-900 dark:text-gray-100 tracking-wide">NIRVANA</span>
+		</div>
+
+		<!-- Workspace selector -->
+		<div class="relative mb-3">
+			<button
+				onclick={() => isWorkspaceDropdownOpen = !isWorkspaceDropdownOpen}
+				class="w-full flex items-center justify-between px-3 py-2 bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/60 rounded text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+			>
+				<div class="flex items-center gap-2">
+					{#if currentWorkspace === 'personal'}
+						<User class="w-4 h-4" />
+					{:else if currentWorkspace === 'work'}
+						<Briefcase class="w-4 h-4" />
+					{:else if currentWorkspace === 'hobby'}
+						<Gamepad2 class="w-4 h-4" />
+					{:else}
+						<User class="w-4 h-4" />
+					{/if}
+					<span>{getCurrentWorkspaceName()}</span>
+				</div>
+				<ChevronDown class="w-4 h-4 transition-transform {isWorkspaceDropdownOpen ? 'rotate-180' : ''}" />
+			</button>
+			
+			{#if isWorkspaceDropdownOpen}
+				<div class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-50">
+					{#each workspaces as workspace}
+						<button
+							onclick={() => {
+								onWorkspaceChange(workspace.id);
+								isWorkspaceDropdownOpen = false;
+							}}
+							class="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors {workspace.id === currentWorkspace ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'text-gray-900 dark:text-gray-100'}"
+						>
+							{#if workspace.id === 'personal'}
+								<User class="w-4 h-4" />
+							{:else if workspace.id === 'work'}
+								<Briefcase class="w-4 h-4" />
+							{:else if workspace.id === 'hobby'}
+								<Gamepad2 class="w-4 h-4" />
+							{:else}
+								<User class="w-4 h-4" />
+							{/if}
+							<span>{workspace.name}</span>
+						</button>
+					{/each}
+				</div>
+			{/if}
 		</div>
 		
 		<!-- Search bar -->
