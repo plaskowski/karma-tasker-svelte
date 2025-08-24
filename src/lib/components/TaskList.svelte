@@ -56,17 +56,26 @@
 	const activeTasks = $derived(tasks.filter(task => !task.completed));
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
-	// Rotating motivational headers for Focus view - diverse positive energy
+	// Rotating motivational headers for Focus view - diverse positive energy with nostalgia
 	const focusHeaders = [
-		"Ready Player One",
 		"Let's Roll",
-		"Smooth Operator",
 		"In the Zone",
 		"Making Magic",
 		"Pure Focus",
 		"Feeling Good",
 		"Ready to Shine",
-		"Somebody Stop Me"
+		"Somebody Stop Me",
+		"Legendary",
+		"Challenge Accepted",
+		"Bazinga",
+		"It's Morphin Time",
+		"Go Go Power Rangers",
+		"My Precious",
+		"For Frodo",
+		"You Have My Sword",
+		"Walking on Sunshine",
+		"You're a Wizard Harry",
+		"Expecto Patronum"
 	];
 	
 	// Pick random header on component initialization
