@@ -48,6 +48,11 @@
 - [x] Context-aware header titles (workspace/project names)
 - [x] Consistent icon usage throughout app
 
+## 🐛 Known Issues
+
+### UI/UX Bugs
+- [ ] **Header Alignment Issue**: Top left bar (sidebar) and top right bar (task list) are still not perfectly aligned despite both using `py-4` padding
+
 ## 🚀 Potential Future Enhancements
 
 ### Core Features
