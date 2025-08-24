@@ -272,3 +272,18 @@ export function addSampleWorkspaceTasks() {
   }
 }
 
+// Function to reset app to initial state (temporary for development)
+export function resetToInitialState() {
+  // Reset all stores to initial mock data
+  tasks.set(mockTasks);
+  projects.set(mockProjects);
+  workspaces.set(mockWorkspaces);
+  
+  // Reset current state
+  currentView.set('focus');
+  currentProjectId.set(undefined);
+  currentWorkspace.set('personal');
+  searchQuery.set('');
+  showCompleted.set(false);
+}
+

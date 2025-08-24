@@ -17,7 +17,8 @@
 		toggleTaskStar,
 		addTask,
 		migrateToWorkspaces,
-		addSampleWorkspaceTasks
+		addSampleWorkspaceTasks,
+		resetToInitialState
 	} from '$lib/stores/taskStore';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -165,8 +166,10 @@
 
 	// Handle refresh action
 	function handleRefresh() {
-		// TODO: Implement refresh functionality
-		console.log('Refresh triggered');
+		// Reset app to initial state (temporary dev feature)
+		resetToInitialState();
+		// Update URL to reflect reset state
+		updateURL('focus', undefined, 'personal');
 	}
 
 
