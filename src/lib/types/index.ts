@@ -6,7 +6,7 @@ export interface Task {
   starred: boolean;
   dueDate?: Date;
   startDate?: Date;
-  projectId?: string;
+  projectId: string;
   workspaceId: string;
 
   createdAt: Date;
@@ -33,6 +33,7 @@ export interface Area {
 export interface Workspace {
   id: string;
   name: string;
+  defaultProjectId: string;
   isActive: boolean;
   createdAt: Date;
 }

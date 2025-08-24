@@ -78,18 +78,22 @@ export async function toggleTaskComplete(id: string): Promise<void> {
 
 // Derived store for filtered tasks
 export const filteredTasks = derived(
-  [tasks, currentView, currentProjectId, currentWorkspace, searchQuery],
-  ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $searchQuery]) => {
+  [tasks, currentView, currentProjectId, currentWorkspace, searchQuery, workspaces],
+  ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $searchQuery, $workspaces]) => {
     // Filter by current workspace first (treat tasks without workspaceId as 'personal' for backward compatibility)
     let filtered = $tasks.filter(task => {
       const taskWorkspace = task.workspaceId || 'personal';
       return taskWorkspace === $currentWorkspace;
     });
 
+    // Get default project for current workspace
+    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
+    const defaultProjectId = currentWorkspaceData?.defaultProjectId;
+
     // Filter by view
     switch ($currentView) {
       case 'inbox':
-        filtered = filtered.filter(task => !task.projectId && !task.completed);
+        filtered = filtered.filter(task => task.projectId === defaultProjectId && !task.completed);
         break;
       case 'next':
         filtered = filtered.filter(task => !task.completed);
@@ -134,30 +138,44 @@ export const focusTaskCount = derived([tasks, currentWorkspace], ([$tasks, $curr
   }).length
 );
 
-export const inboxTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => 
-  $tasks.filter(task => {
+export const inboxTaskCount = derived([tasks, workspaces, currentWorkspace], ([$tasks, $workspaces, $currentWorkspace]) => {
+  const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
+  const defaultProjectId = currentWorkspaceData?.defaultProjectId;
+  
+  return $tasks.filter(task => {
     const taskWorkspace = task.workspaceId || 'personal';
-    return taskWorkspace === $currentWorkspace && !task.projectId && !task.completed;
-  }).length
-);
+    return taskWorkspace === $currentWorkspace && task.projectId === defaultProjectId && !task.completed;
+  }).length;
+});
 
-// Derived store for workspace-filtered projects
+// Derived store for workspace-filtered projects (excluding default projects)
 export const workspaceProjects = derived(
-  [projects, currentWorkspace],
-  ([$projects, $currentWorkspace]) => $projects.filter(project => {
-    const projectWorkspace = project.workspaceId || 'personal';
-    return projectWorkspace === $currentWorkspace;
-  })
+  [projects, workspaces, currentWorkspace],
+  ([$projects, $workspaces, $currentWorkspace]) => {
+    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
+    const defaultProjectId = currentWorkspaceData?.defaultProjectId;
+    
+    return $projects.filter(project => {
+      const projectWorkspace = project.workspaceId || 'personal';
+      return projectWorkspace === $currentWorkspace && project.id !== defaultProjectId;
+    });
+  }
 );
 
-// Migration function to add workspaceId to existing tasks/projects
+// Migration function to add workspaceId to existing tasks/projects and assign default projects
 export function migrateToWorkspaces() {
-  // Update tasks without workspaceId to use 'personal'
+  // Update tasks without workspaceId to use 'personal' and assign default project if missing
   tasks.update(taskList => 
-    taskList.map(task => ({
-      ...task,
-      workspaceId: task.workspaceId || 'personal'
-    }))
+    taskList.map(task => {
+      const finalWorkspaceId = task.workspaceId || 'personal';
+      const finalProjectId = task.projectId || `${finalWorkspaceId}-default`;
+      
+      return {
+        ...task,
+        workspaceId: finalWorkspaceId,
+        projectId: finalProjectId
+      };
+    })
   );
   
   // Update projects without workspaceId to use 'personal'

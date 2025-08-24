@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addTask, workspaceProjects, currentWorkspace } from '$lib/stores/taskStore';
+	import { addTask, workspaceProjects, currentWorkspace, workspaces } from '$lib/stores/taskStore';
 	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
@@ -34,15 +34,19 @@
 				// For now, just mark them differently or let user set due date separately
 			}
 
-			await addTask({
-				title: title.trim(),
-				description: description.trim() || undefined,
-				projectId: projectId || undefined,
-				workspaceId: $currentWorkspace,
-				completed: false,
-				starred: isStarred,
-				dueDate: dueDate,
-			});
+					// Get default project if no project selected
+		const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
+		const finalProjectId = projectId || currentWorkspaceData?.defaultProjectId || 'personal-default';
+
+		await addTask({
+			title: title.trim(),
+			description: description.trim() || undefined,
+			projectId: finalProjectId,
+			workspaceId: $currentWorkspace,
+			completed: false,
+			starred: isStarred,
+			dueDate: dueDate,
+		});
 
 			// Reset form
 			title = '';

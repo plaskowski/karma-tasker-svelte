@@ -37,6 +37,7 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: true,
+    projectId: 'personal-default',
     workspaceId: 'personal',
 
     createdAt: new Date('2024-01-17'),
@@ -135,6 +136,7 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: false,
+    projectId: 'work-default',
     workspaceId: 'work',
 
     createdAt: new Date('2024-01-24'),
@@ -192,6 +194,7 @@ export const mockTasks: Task[] = [
 
 export const mockProjects: Project[] = [
   // Personal workspace projects
+  { id: 'personal-default', name: 'Personal Actions', workspaceId: 'personal', createdAt: new Date() },
   { id: 'household', name: 'Household', workspaceId: 'personal', createdAt: new Date() },
   { id: 'finances', name: 'Finances', workspaceId: 'personal', createdAt: new Date() },
   { id: 'health', name: 'Health', workspaceId: 'personal', createdAt: new Date() },
@@ -199,11 +202,13 @@ export const mockProjects: Project[] = [
   { id: 'learning', name: 'Learning', workspaceId: 'personal', createdAt: new Date() },
 
   // Work workspace projects  
+  { id: 'work-default', name: 'Work Actions', workspaceId: 'work', createdAt: new Date() },
   { id: 'client-portal', name: 'Client Portal', workspaceId: 'work', createdAt: new Date() },
   { id: 'api-redesign', name: 'API Redesign', workspaceId: 'work', createdAt: new Date() },
   { id: 'meetings', name: 'Meetings', workspaceId: 'work', createdAt: new Date() },
   
   // Hobby workspace projects
+  { id: 'hobby-default', name: 'Hobby Actions', workspaceId: 'hobby', createdAt: new Date() },
   { id: 'photography', name: 'Photography', workspaceId: 'hobby', createdAt: new Date() },
   { id: 'electronics', name: 'Electronics', workspaceId: 'hobby', createdAt: new Date() },
   { id: 'music', name: 'Music', workspaceId: 'hobby', createdAt: new Date() },
@@ -212,7 +217,7 @@ export const mockProjects: Project[] = [
 export const mockAreas: Area[] = [];
 
 export const mockWorkspaces: Workspace[] = [
-  { id: 'personal', name: 'Personal', isActive: true, createdAt: new Date() },
-  { id: 'work', name: 'Work', isActive: false, createdAt: new Date() },
-  { id: 'hobby', name: 'Hobby', isActive: false, createdAt: new Date() },
+  { id: 'personal', name: 'Personal', defaultProjectId: 'personal-default', isActive: true, createdAt: new Date() },
+  { id: 'work', name: 'Work', defaultProjectId: 'work-default', isActive: false, createdAt: new Date() },
+  { id: 'hobby', name: 'Hobby', defaultProjectId: 'hobby-default', isActive: false, createdAt: new Date() },
 ];
