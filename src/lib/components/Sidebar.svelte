@@ -108,16 +108,11 @@
 		// If we're in a specific project, show project name
 		if (currentView === 'project' && currentProjectId) {
 			const project = projects.find(p => p.id === currentProjectId);
-			return project ? `N › ${project.name}` : 'NIRVANA';
+			return project ? `N › ${project.name}` : `N › ${getCurrentWorkspaceName()}`;
 		}
 		
-		// If we're in a workspace-specific view, show workspace
-		if (['inbox', 'next', 'waiting', 'scheduled', 'someday'].includes(currentView)) {
-			return `N › ${getCurrentWorkspaceName()}`;
-		}
-		
-		// For general views like Focus, show full app name
-		return 'NIRVANA';
+		// For all other views, always show workspace context
+		return `N › ${getCurrentWorkspaceName()}`;
 	}
 
 	// Close dropdown when clicking outside
