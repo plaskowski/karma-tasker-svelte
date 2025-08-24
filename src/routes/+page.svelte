@@ -34,9 +34,10 @@
 		searchQuery.set(query);
 	}
 
-	// Update URL based on current view/project
-	function updateURL(view: import('$lib/types').ViewType, projectId?: string) {
+	// Update URL based on current state
+	function updateURL(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
 		const params = new URLSearchParams();
+		params.set('workspace', workspaceId || $currentWorkspace);
 		params.set('view', view);
 		if (projectId && view === 'project') {
 			params.set('project', projectId);
@@ -68,10 +69,10 @@
 	// Handle workspace change
 	function handleWorkspaceChange(workspaceId: string) {
 		currentWorkspace.set(workspaceId);
-		// Reset to focus view when switching workspaces
-		currentView.set('focus');
+		// Keep current view but clear project (since projects are workspace-specific)
+		const currentViewValue = $currentView;
 		currentProjectId.set(undefined);
-		updateURL('focus');
+		updateURL(currentViewValue, undefined, workspaceId);
 	}
 
 	// Initialize view from URL parameters
@@ -80,18 +81,24 @@
 		migrateToWorkspaces();
 		
 		const urlParams = $page.url.searchParams;
+		const workspaceParam = urlParams.get('workspace');
 		const view = urlParams.get('view') as import('$lib/types').ViewType;
 		const project = urlParams.get('project');
+
+		// Set workspace from URL if valid, otherwise keep current
+		if (workspaceParam && $workspaces.some(w => w.id === workspaceParam)) {
+			currentWorkspace.set(workspaceParam);
+		}
 
 		if (view && ['focus', 'inbox', 'next', 'waiting', 'scheduled', 'someday', 'project'].includes(view)) {
 			currentView.set(view);
 			if (view === 'project' && project) {
-				// Validate project exists
-				const projectExists = $projects.some(p => p.id === project);
+				// Validate project exists in current workspace
+				const projectExists = $workspaceProjects.some(p => p.id === project);
 				if (projectExists) {
 					currentProjectId.set(project);
 				} else {
-					// Project doesn't exist, default to focus
+					// Project doesn't exist in current workspace, default to focus
 					currentView.set('focus');
 					currentProjectId.set(undefined);
 					updateURL('focus');
@@ -105,6 +112,11 @@
 			currentProjectId.set(undefined);
 			updateURL('focus');
 		}
+
+		// Always update URL to ensure workspace is included
+		const finalView = $currentView;
+		const finalProject = $currentProjectId;
+		updateURL(finalView, finalProject);
 	});
 
 	// Handle task interactions
