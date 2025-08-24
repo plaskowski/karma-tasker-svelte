@@ -277,28 +277,24 @@
 				{#if shouldGroupByPerspective}
 					{@const nonEmptyGroups = Object.entries(perspectiveGroupedActiveTasks).filter(([_, tasks]) => tasks.length > 0)}
 					{#each nonEmptyGroups as [groupKey, groupTasks], index}
-						<div class="mb-6">
-							<div class="mb-3">
-								<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-									<span>{getPerspectiveGroupLabel(groupKey)}</span>
-									<span class="text-xs opacity-60">({groupTasks.length})</span>
-								</h3>
-							</div>
-							{#each groupTasks as task (task.id)}
-								<TaskItem
-									{task}
-									onToggle={onTaskToggle}
-									onStar={onTaskStar}
-									onClick={onTaskClick}
-			
-									showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
-								/>
-							{/each}
-							{#if index < nonEmptyGroups.length - 1}
-								<div class="py-4">
-									<div class="border-t border-gray-200 dark:border-gray-700"></div>
-								</div>
-							{/if}
+						<div class="mb-3">
+							<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
+								<span>{getPerspectiveGroupLabel(groupKey)}</span>
+								<span class="text-xs opacity-60">({groupTasks.length})</span>
+							</h3>
+						</div>
+						{#each groupTasks as task (task.id)}
+							<TaskItem
+								{task}
+								onToggle={onTaskToggle}
+								onStar={onTaskStar}
+								onClick={onTaskClick}
+		
+								showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
+							/>
+						{/each}
+						<div class="py-4">
+							<div class="border-t border-gray-200 dark:border-gray-700"></div>
 						</div>
 					{/each}
 				{/if}
