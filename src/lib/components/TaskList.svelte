@@ -169,6 +169,70 @@
 		}
 	}
 
+	// Unified task groups for rendering
+	const taskGroups = $derived(() => {
+		const groups: Array<{
+			id: string;
+			title: string; 
+			tasks: Task[];
+			showCount?: boolean;
+			needsDivider?: boolean;
+		}> = [];
+
+		// Focus view - single group
+		if (!shouldGroupByProject && !shouldGroupByPerspective) {
+			if (activeTasks.length > 0) {
+				groups.push({
+					id: 'focus',
+					title: focusHeader,
+					tasks: activeTasks,
+					needsDivider: false
+				});
+			}
+		}
+		// Project-grouped views (Inbox, Next, Waiting, etc.)
+		else if (shouldGroupByProject) {
+			// Add Actions section if there are ungrouped tasks
+			if (ungroupedActiveTasks.length > 0) {
+				groups.push({
+					id: 'actions',
+					title: 'Actions',
+					tasks: ungroupedActiveTasks,
+					needsDivider: Object.keys(groupedActiveTasks).length > 0
+				});
+			}
+			
+			// Add project groups
+			Object.entries(groupedActiveTasks).forEach(([projectId, tasks]) => {
+				groups.push({
+					id: `project-${projectId}`,
+					title: getProjectName(projectId),
+					tasks,
+					needsDivider: true
+				});
+			});
+		}
+		// Perspective-grouped views (Project view)
+		else if (shouldGroupByPerspective) {
+			const nonEmptyGroups = Object.entries(perspectiveGroupedActiveTasks)
+				.filter(([_, tasks]) => tasks.length > 0);
+				
+			nonEmptyGroups.forEach(([groupKey, tasks]) => {
+				groups.push({
+					id: `perspective-${groupKey}`,
+					title: getPerspectiveGroupLabel(groupKey),
+					tasks,
+					showCount: true,
+					needsDivider: true
+				});
+			});
+		}
+
+		return groups;
+	});
+
+	const showProjectBadge = $derived(!shouldGroupByProject && !shouldGroupByPerspective);
+
 
 </script>
 
@@ -225,102 +289,31 @@
 			</div>
 		{:else}
 			<div class="p-6 space-y-1">
-							<!-- Ungrouped Active Tasks (Actions section) - Only for project-grouped views -->
-			{#if shouldGroupByProject && ungroupedActiveTasks.length > 0}
-				<div class="mb-3">
-					<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Actions</h3>
-				</div>
-				{#each ungroupedActiveTasks as task (task.id)}
-					<TaskItem
-						{task}
-						onToggle={onTaskToggle}
-						onStar={onTaskStar}
-						onClick={onTaskClick}
-
-						showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
-					/>
-				{/each}
-				{#if Object.keys(groupedActiveTasks).length > 0}
-					<div class="py-4">
-						<div class="border-t border-gray-200 dark:border-gray-700"></div>
+				<!-- Unified task group rendering -->
+				{#each taskGroups() as group}
+					<div class="mb-3">
+						<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''} {group.showCount ? 'flex items-center gap-2' : ''}">
+							<span>{group.title}</span>
+							{#if group.showCount}
+								<span class="text-xs opacity-60">({group.tasks.length})</span>
+							{/if}
+						</h3>
 					</div>
-				{/if}
-			{/if}
-
-							<!-- Grouped Active Tasks by Project - Only for project-grouped views -->
-			{#if shouldGroupByProject}
-				{#each Object.entries(groupedActiveTasks) as [projectId, projectTasks]}
-					<div>
-						<div class="mb-3">
-							<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 capitalize">
-								{getProjectName(projectId)}
-							</h3>
-						</div>
-						{#each projectTasks as task (task.id)}
-							<TaskItem
-								{task}
-								onToggle={onTaskToggle}
-								onStar={onTaskStar}
-								onClick={onTaskClick}
-		
-								showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
-							/>
-						{/each}
-						<div class="py-4">
-							<div class="border-t border-gray-200 dark:border-gray-700"></div>
-						</div>
-					</div>
-				{/each}
-			{/if}
-
-				<!-- Perspective-grouped view (for project views) -->
-				{#if shouldGroupByPerspective}
-					{@const nonEmptyGroups = Object.entries(perspectiveGroupedActiveTasks).filter(([_, tasks]) => tasks.length > 0)}
-					{#each nonEmptyGroups as [groupKey, groupTasks], index}
-						<div class="mb-3">
-							<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
-								<span>{getPerspectiveGroupLabel(groupKey)}</span>
-								<span class="text-xs opacity-60">({groupTasks.length})</span>
-							</h3>
-						</div>
-						{#each groupTasks as task (task.id)}
-							<TaskItem
-								{task}
-								onToggle={onTaskToggle}
-								onStar={onTaskStar}
-								onClick={onTaskClick}
-		
-								showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
-							/>
-						{/each}
-						<div class="py-4">
-							<div class="border-t border-gray-200 dark:border-gray-700"></div>
-						</div>
+					{#each group.tasks as task (task.id)}
+						<TaskItem
+							{task}
+							onToggle={onTaskToggle}
+							onStar={onTaskStar}
+							onClick={onTaskClick}
+							{showProjectBadge}
+						/>
 					{/each}
-				{/if}
-
-				<!-- Non-grouped view (for focus view only) with fake single group -->
-				{#if !shouldGroupByProject && !shouldGroupByPerspective}
-					{#if activeTasks.length > 0}
-						<div class="mb-6">
-							<div class="mb-3">
-								<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-									<span>{focusHeader}</span>
-								</h3>
-							</div>
-							{#each activeTasks as task (task.id)}
-								<TaskItem
-									{task}
-									onToggle={onTaskToggle}
-									onStar={onTaskStar}
-									onClick={onTaskClick}
-			
-									showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
-								/>
-							{/each}
+					{#if group.needsDivider}
+						<div class="py-4">
+							<div class="border-t border-gray-200 dark:border-gray-700"></div>
 						</div>
 					{/if}
-				{/if}
+				{/each}
 
 				<!-- Completed Tasks -->
 				{#if (showCompleted || completedTasks.length > 0) && completedTasks.length > 0}
@@ -338,8 +331,7 @@
 							onToggle={onTaskToggle}
 							onStar={onTaskStar}
 							onClick={onTaskClick}
-	
-							showProjectBadge={!shouldGroupByProject && !shouldGroupByPerspective}
+							{showProjectBadge}
 						/>
 					{/each}
 				{/if}
