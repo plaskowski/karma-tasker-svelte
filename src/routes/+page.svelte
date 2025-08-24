@@ -8,7 +8,6 @@
 		currentView,
 		currentProjectId,
 		currentWorkspace,
-		searchQuery,
 
 		filteredTasks,
 		focusTaskCount,
@@ -31,11 +30,6 @@
 
 	// Modal state
 	let showNewTaskDialog = $state(false);
-
-	// Handle search changes
-	function handleSearchChange(query: string) {
-		searchQuery.set(query);
-	}
 
 	// Update URL based on current state
 	function updateURL(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
@@ -198,9 +192,6 @@
 		onWorkspaceChange={handleWorkspaceChange}
 		focusTaskCount={$focusTaskCount}
 		inboxTaskCount={$inboxTaskCount}
-
-		searchQuery={$searchQuery}
-		onSearchChange={handleSearchChange}
 	/>
 
 	<!-- Main Content Area -->

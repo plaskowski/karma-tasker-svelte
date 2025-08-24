@@ -16,7 +16,6 @@ export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces)
 export const currentView = writable<ViewType>('focus');
 export const currentProjectId = writable<string | undefined>();
 export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', 'personal');
-export const searchQuery = writable('');
 
 export const showCompleted = writable(false);
 
@@ -78,8 +77,8 @@ export async function toggleTaskComplete(id: string): Promise<void> {
 
 // Derived store for filtered tasks
 export const filteredTasks = derived(
-  [tasks, currentView, currentProjectId, currentWorkspace, searchQuery, workspaces],
-  ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $searchQuery, $workspaces]) => {
+  [tasks, currentView, currentProjectId, currentWorkspace, workspaces],
+  ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $workspaces]) => {
     // Filter by current workspace first (treat tasks without workspaceId as 'personal' for backward compatibility)
     let filtered = $tasks.filter(task => {
       const taskWorkspace = task.workspaceId || 'personal';
@@ -105,15 +104,6 @@ export const filteredTasks = derived(
         // Other perspectives: tasks with matching perspective
         filtered = filtered.filter(task => task.perspective === perspectiveId && !task.completed);
       }
-    }
-
-    // Filter by search
-    if ($searchQuery) {
-      const query = $searchQuery.toLowerCase();
-      filtered = filtered.filter(task =>
-        task.title.toLowerCase().includes(query) ||
-        task.description?.toLowerCase().includes(query)
-      );
     }
 
     return filtered;
@@ -297,7 +287,6 @@ export function resetToInitialState() {
   currentView.set('focus');
   currentProjectId.set(undefined);
   currentWorkspace.set('personal');
-  searchQuery.set('');
   showCompleted.set(false);
 }
 

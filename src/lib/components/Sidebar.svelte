@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Settings, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
+	import { Star, Inbox, Calendar, Clock, Users, Archive, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
 	import type { ViewType, Project, Workspace, PerspectiveConfig } from '$lib/types';
 
 	interface Props {
@@ -14,9 +14,6 @@
 		onWorkspaceChange: (workspaceId: string) => void;
 		focusTaskCount: number;
 		inboxTaskCount: number;
-
-		searchQuery: string;
-		onSearchChange: (query: string) => void;
 	}
 
 	let { 
@@ -30,10 +27,7 @@
 		onProjectSelect,
 		onWorkspaceChange,
 		focusTaskCount, 
-		inboxTaskCount,
-
-		searchQuery,
-		onSearchChange
+		inboxTaskCount
 	}: Props = $props();
 
 	// Icon mapping for perspectives
@@ -84,7 +78,7 @@
 			case 'photography':
 				return Star;
 			case 'electronics':
-				return Settings;
+				return Activity;
 			case 'music':
 				return Heart;
 			default:
@@ -178,17 +172,6 @@
 				</div>
 			{/if}
 		</div>
-
-		<!-- Search bar -->
-		<div class="relative mb-3">
-			<Search class="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-			<input
-				bind:value={searchQuery}
-				oninput={(e) => onSearchChange(e.currentTarget.value)}
-				placeholder="Search"
-				class="w-full pl-8 pr-3 py-2 text-sm bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/60 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 rounded focus:outline-none focus:border-blue-500"
-			/>
-		</div>
 	</div>
 
 			<!-- Views section -->
@@ -244,15 +227,5 @@
 				</button>
 			{/each}
 		</div>
-	</div>
-
-	<!-- Bottom action buttons -->
-	<div class="p-4 border-t border-gray-200 dark:border-gray-700">
-		<button
-			class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-		>
-			<Settings class="w-4 h-4" />
-			<span>Settings</span>
-		</button>
 	</div>
 </div>
