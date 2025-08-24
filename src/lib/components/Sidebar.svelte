@@ -136,36 +136,20 @@
 <div class="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
 	<!-- Header with branding -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
-		<div class="flex items-center gap-3 mb-4">
+		<div class="flex items-center gap-3 mb-4 relative" bind:this={workspaceDropdownRef}>
 			<div class="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 shadow-sm">
 				<span class="text-sm font-semibold text-white">N</span>
 			</div>
-			<span class="text-lg font-medium text-gray-900 dark:text-gray-100 tracking-wide">{getHeaderTitle()}</span>
-		</div>
-
-		<!-- Workspace selector -->
-		<div class="relative mb-3" bind:this={workspaceDropdownRef}>
 			<button
 				onclick={() => isWorkspaceDropdownOpen = !isWorkspaceDropdownOpen}
-				class="w-full flex items-center justify-between px-3 py-2 bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/60 rounded text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+				class="flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-gray-100 tracking-wide hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
 			>
-				<div class="flex items-center gap-2">
-					{#if currentWorkspace === 'personal'}
-						<User class="w-4 h-4" />
-					{:else if currentWorkspace === 'work'}
-						<Briefcase class="w-4 h-4" />
-					{:else if currentWorkspace === 'hobby'}
-						<Gamepad2 class="w-4 h-4" />
-					{:else}
-						<User class="w-4 h-4" />
-					{/if}
-					<span>{getCurrentWorkspaceName()}</span>
-				</div>
+				<span>{getHeaderTitle()}</span>
 				<ChevronDown class="w-4 h-4 transition-transform {isWorkspaceDropdownOpen ? 'rotate-180' : ''}" />
 			</button>
 			
 			{#if isWorkspaceDropdownOpen}
-				<div class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-50">
+				<div class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-50">
 					{#each workspaces as workspace}
 						<button
 							onclick={() => {
@@ -189,7 +173,7 @@
 				</div>
 			{/if}
 		</div>
-		
+
 		<!-- Search bar -->
 		<div class="relative mb-3">
 			<Search class="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
