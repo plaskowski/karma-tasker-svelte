@@ -164,6 +164,7 @@
 			tasks={$filteredTasks}
 			projects={$projects}
 			currentView={$currentView}
+			currentProjectId={$currentProjectId}
 			onTaskToggle={handleTaskToggle}
 			onTaskStar={handleTaskStar}
 			onTaskClick={handleTaskClick}

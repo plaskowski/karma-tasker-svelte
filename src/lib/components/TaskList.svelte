@@ -7,6 +7,7 @@
 		tasks: Task[];
 		projects: Project[];
 		currentView: ViewType;
+		currentProjectId?: string;
 		onTaskToggle: (id: string) => void;
 		onTaskStar: (id: string) => void;
 		onTaskClick: (task: Task) => void;
@@ -21,6 +22,7 @@
 		tasks,
 		projects,
 		currentView,
+		currentProjectId,
 		onTaskToggle,
 		onTaskStar,
 		onTaskClick,
@@ -45,6 +47,10 @@
 			case 'someday':
 				return 'Someday';
 			case 'project':
+				if (currentProjectId) {
+					const project = projects.find(p => p.id === currentProjectId);
+					return project ? project.name : 'Project';
+				}
 				return 'Project';
 			default:
 				return 'Tasks';
