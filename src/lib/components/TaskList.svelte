@@ -65,7 +65,8 @@
 		"Making Magic",
 		"Pure Focus",
 		"Feeling Good",
-		"Ready to Shine"
+		"Ready to Shine",
+		"Somebody Stop Me"
 	];
 	
 	// Pick random header on component initialization
