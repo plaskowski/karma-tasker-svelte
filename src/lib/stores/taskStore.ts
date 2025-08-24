@@ -13,7 +13,7 @@ export const areas = persisted(STORAGE_KEY + '-areas', mockAreas);
 export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces);
 
 // Current state stores
-export const currentView = writable<ViewType>('focus');
+export const currentView = writable<ViewType>('first');
 export const currentProjectId = writable<string | undefined>();
 export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', 'personal');
 
@@ -283,5 +283,9 @@ export function resetToInitialState() {
   currentProjectId.set(undefined);
   currentWorkspace.set('personal');
   showCompleted.set(false);
+  
+  // Run migrations to ensure data consistency
+  migrateToWorkspaces();
+  addSampleWorkspaceTasks();
 }
 
