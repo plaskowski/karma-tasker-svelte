@@ -80,8 +80,11 @@ export async function toggleTaskComplete(id: string): Promise<void> {
 export const filteredTasks = derived(
   [tasks, currentView, currentProjectId, currentWorkspace, searchQuery],
   ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $searchQuery]) => {
-    // Filter by current workspace first
-    let filtered = $tasks.filter(task => task.workspaceId === $currentWorkspace);
+    // Filter by current workspace first (treat tasks without workspaceId as 'personal' for backward compatibility)
+    let filtered = $tasks.filter(task => {
+      const taskWorkspace = task.workspaceId || 'personal';
+      return taskWorkspace === $currentWorkspace;
+    });
 
     // Filter by view
     switch ($currentView) {
@@ -125,17 +128,44 @@ export const filteredTasks = derived(
 
 // Task count derived stores for sidebar
 export const focusTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => 
-  $tasks.filter(task => task.workspaceId === $currentWorkspace && task.starred && !task.completed).length
+  $tasks.filter(task => {
+    const taskWorkspace = task.workspaceId || 'personal';
+    return taskWorkspace === $currentWorkspace && task.starred && !task.completed;
+  }).length
 );
 
 export const inboxTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => 
-  $tasks.filter(task => task.workspaceId === $currentWorkspace && !task.projectId && !task.completed).length
+  $tasks.filter(task => {
+    const taskWorkspace = task.workspaceId || 'personal';
+    return taskWorkspace === $currentWorkspace && !task.projectId && !task.completed;
+  }).length
 );
 
 // Derived store for workspace-filtered projects
 export const workspaceProjects = derived(
   [projects, currentWorkspace],
-  ([$projects, $currentWorkspace]) => $projects.filter(project => project.workspaceId === $currentWorkspace)
+  ([$projects, $currentWorkspace]) => $projects.filter(project => {
+    const projectWorkspace = project.workspaceId || 'personal';
+    return projectWorkspace === $currentWorkspace;
+  })
 );
 
+// Migration function to add workspaceId to existing tasks/projects
+export function migrateToWorkspaces() {
+  // Update tasks without workspaceId to use 'personal'
+  tasks.update(taskList => 
+    taskList.map(task => ({
+      ...task,
+      workspaceId: task.workspaceId || 'personal'
+    }))
+  );
+  
+  // Update projects without workspaceId to use 'personal'
+  projects.update(projectList =>
+    projectList.map(project => ({
+      ...project,
+      workspaceId: project.workspaceId || 'personal'
+    }))
+  );
+}
 

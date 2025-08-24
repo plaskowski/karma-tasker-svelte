@@ -15,7 +15,8 @@
 
 		toggleTaskComplete,
 		toggleTaskStar,
-		addTask
+		addTask,
+		migrateToWorkspaces
 	} from '$lib/stores/taskStore';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -75,6 +76,9 @@
 
 	// Initialize view from URL parameters
 	onMount(() => {
+		// Run migration to ensure existing tasks/projects have workspaceId
+		migrateToWorkspaces();
+		
 		const urlParams = $page.url.searchParams;
 		const view = urlParams.get('view') as import('$lib/types').ViewType;
 		const project = urlParams.get('project');
