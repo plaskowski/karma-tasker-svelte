@@ -135,15 +135,18 @@
 		};
 		
 		taskList.forEach(task => {
-			if (task.starred && !task.completed) {
-				perspectiveGroups.next.push(task);
-			} else if (task.dueDate && !task.completed) {
+			if (task.completed) return; // Skip completed tasks
+			
+			// Scheduled takes priority - if it has a due date, it goes here
+			if (task.dueDate) {
 				perspectiveGroups.scheduled.push(task);
-			} else if (!task.starred && !task.dueDate && !task.completed) {
-				// For now, put unscheduled, unstarred tasks in waiting
-				// This logic can be refined based on other criteria
-				perspectiveGroups.waiting.push(task);
-			} else if (!task.completed) {
+			}
+			// Next actions - starred items are priority actions
+			else if (task.starred) {
+				perspectiveGroups.next.push(task);
+			}
+			// Default unprocessed items go to inbox
+			else {
 				perspectiveGroups.inbox.push(task);
 			}
 		});
@@ -217,13 +220,13 @@
 			const nonEmptyGroups = Object.entries(perspectiveGroupedActiveTasks)
 				.filter(([_, tasks]) => tasks.length > 0);
 				
-			nonEmptyGroups.forEach(([groupKey, tasks]) => {
+			nonEmptyGroups.forEach(([groupKey, tasks], index) => {
 				groups.push({
 					id: `perspective-${groupKey}`,
 					title: getPerspectiveGroupLabel(groupKey),
 					tasks,
 					showCount: true,
-					needsDivider: true
+					needsDivider: index < nonEmptyGroups.length - 1 // Only between groups, not after last
 				});
 			});
 		}
