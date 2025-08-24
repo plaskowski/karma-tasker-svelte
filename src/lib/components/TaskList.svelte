@@ -287,20 +287,22 @@
 			<div class="p-6 space-y-1">
 				<!-- Unified task group rendering -->
 				{#each taskGroups() as group}
-					<div class="mb-3">
-						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
-							<span>{group.title}</span>
-						</h3>
+					<div class="mb-6">
+						<div class="mb-3">
+							<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
+								<span>{group.title}</span>
+							</h3>
+						</div>
+						{#each group.tasks as task (task.id)}
+							<TaskItem
+								{task}
+								onToggle={onTaskToggle}
+								onStar={onTaskStar}
+								onClick={onTaskClick}
+								{showProjectBadge}
+							/>
+						{/each}
 					</div>
-					{#each group.tasks as task (task.id)}
-						<TaskItem
-							{task}
-							onToggle={onTaskToggle}
-							onStar={onTaskStar}
-							onClick={onTaskClick}
-							{showProjectBadge}
-						/>
-					{/each}
 				{/each}
 
 				<!-- Completed Tasks -->
