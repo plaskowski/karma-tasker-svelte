@@ -58,14 +58,14 @@
 
 	// Rotating motivational headers for Focus view - diverse positive energy
 	const focusHeaders = [
-		"Let's Do This!",
-		"Ready Player One!",
-		"Let's Roll!",
-		"Smooth Operator!",
-		"In the Zone!",
-		"Making Magic!",
-		"Pure Focus!",
-		"Feeling Good!"
+		"Ready Player One",
+		"Let's Roll",
+		"Smooth Operator",
+		"In the Zone",
+		"Making Magic",
+		"Pure Focus",
+		"Feeling Good",
+		"Ready to Shine"
 	];
 	
 	// Pick random header on component initialization
