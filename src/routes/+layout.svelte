@@ -9,6 +9,6 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="h-full bg-white dark:bg-gray-900 dark">
+<div class="h-full">
 	{@render children?.()}
 </div>
