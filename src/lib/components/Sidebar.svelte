@@ -108,11 +108,11 @@
 		// If we're in a specific project, show project name
 		if (currentView === 'project' && currentProjectId) {
 			const project = projects.find(p => p.id === currentProjectId);
-			return project ? `N › ${project.name}` : `N › ${getCurrentWorkspaceName()}`;
+			return project ? project.name : getCurrentWorkspaceName();
 		}
 		
 		// For all other views, always show workspace context
-		return `N › ${getCurrentWorkspaceName()}`;
+		return getCurrentWorkspaceName();
 	}
 
 	// Close dropdown when clicking outside
@@ -136,7 +136,10 @@
 <div class="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
 	<!-- Header with branding -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
-		<div class="flex items-center gap-2 mb-4">
+		<div class="flex items-center gap-3 mb-4">
+			<div class="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 shadow-sm">
+				<span class="text-sm font-semibold text-white">N</span>
+			</div>
 			<span class="text-lg font-medium text-gray-900 dark:text-gray-100 tracking-wide">{getHeaderTitle()}</span>
 		</div>
 
