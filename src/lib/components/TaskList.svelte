@@ -242,6 +242,7 @@
 					<button
 						onclick={onNewTask}
 						class="btn btn-sm bg-primary-500 text-white hover:bg-primary-600"
+						title="Create new task (N or Ctrl+N)"
 					>
 						<Plus class="w-4 h-4" />
 						<span>New Item</span>

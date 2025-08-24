@@ -143,20 +143,21 @@
 			<button
 				onclick={() => isWorkspaceDropdownOpen = !isWorkspaceDropdownOpen}
 				class="flex items-center gap-2 text-lg font-medium text-surface-900 tracking-wide hover:text-surface-600 transition-colors"
+				title="Switch workspace (Ctrl+1,2,3)"
 			>
 				<span>{getHeaderTitle()}</span>
 				<ChevronDown class="w-4 h-4 transition-transform {isWorkspaceDropdownOpen ? 'rotate-180' : ''}" />
 			</button>
 			
 			{#if isWorkspaceDropdownOpen}
-				<div class="absolute top-full left-0 right-0 mt-2 bg-surface-50 border border-surface-200 rounded shadow-lg z-50">
+				<div class="absolute top-full left-0 right-0 mt-2 bg-surface-50 border border-surface-200 rounded-lg shadow-xl z-50 overflow-hidden">
 					{#each workspaces as workspace}
 						<button
 							onclick={() => {
 								onWorkspaceChange(workspace.id);
 								isWorkspaceDropdownOpen = false;
 							}}
-							class="w-full btn btn-sm text-left {workspace.id === currentWorkspace ? 'bg-primary-100 text-primary-700' : 'bg-transparent text-surface-700 hover:bg-surface-100'}"
+							class="w-full btn btn-sm text-left rounded-none {workspace.id === currentWorkspace ? 'bg-primary-100 text-primary-700' : 'bg-transparent text-surface-700 hover:bg-surface-100'}"
 						>
 							{#if workspace.id === 'personal'}
 								<User class="w-4 h-4" />
@@ -177,7 +178,10 @@
 
 			<!-- Views section -->
 	<div class="p-4 border-b border-surface-200">
-		<h3 class="text-xs font-medium text-surface-500 mb-2 uppercase tracking-wide">Views</h3>
+		<h3 class="text-xs font-medium text-surface-500 mb-2 uppercase tracking-wide">
+			Views 
+			<span class="text-surface-400 normal-case font-normal">(1-9)</span>
+		</h3>
 		<div class="space-y-1">
 			{#each sidebarItems as item}
 				<button

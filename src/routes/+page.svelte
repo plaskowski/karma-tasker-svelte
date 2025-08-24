@@ -125,6 +125,13 @@
 		const finalView = $currentView;
 		const finalProject = $currentProjectId;
 		updateURL(finalView, finalProject);
+
+		// Add keyboard navigation
+		document.addEventListener('keydown', handleKeydown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeydown);
+		};
 	});
 
 	// Handle task interactions
@@ -167,6 +174,71 @@
 		resetToInitialState();
 		// Update URL to reflect reset state
 		updateURL('first', undefined, 'personal');
+	}
+
+	// Keyboard navigation
+	function handleKeydown(event: KeyboardEvent) {
+		// Don't interfere with typing in inputs
+		if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
+			return;
+		}
+
+		// Close modal on Escape
+		if (event.key === 'Escape') {
+			if (showNewTaskDialog) {
+				showNewTaskDialog = false;
+				event.preventDefault();
+			}
+			return;
+		}
+
+		// Workspace navigation (Ctrl+1, Ctrl+2, Ctrl+3)
+		if (event.ctrlKey || event.metaKey) {
+			const workspaceKeys = ['1', '2', '3'];
+			const keyIndex = workspaceKeys.indexOf(event.key);
+			if (keyIndex !== -1) {
+				const workspace = $workspaces[keyIndex];
+				if (workspace) {
+					handleWorkspaceChange(workspace.id);
+					event.preventDefault();
+				}
+				return;
+			}
+
+			// New task (Ctrl+N)
+			if (event.key === 'n' || event.key === 'N') {
+				showNewTaskDialog = true;
+				event.preventDefault();
+				return;
+			}
+		}
+
+		// Perspective navigation (1, 2, 3, 4...)
+		const perspectiveKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+		const perspectiveIndex = perspectiveKeys.indexOf(event.key);
+		if (perspectiveIndex !== -1) {
+			// First key is for 'first' perspective
+			if (perspectiveIndex === 0) {
+				handleViewChange('first');
+				event.preventDefault();
+				return;
+			}
+			
+			// Other keys map to workspace perspectives
+			const perspective = $workspacePerspectives[perspectiveIndex - 1];
+			if (perspective) {
+				handleViewChange(perspective.id);
+				event.preventDefault();
+			}
+			return;
+		}
+
+		// New task (N key)
+		if (event.key === 'n' || event.key === 'N') {
+			showNewTaskDialog = true;
+			event.preventDefault();
+			return;
+		}
 	}
 
 
