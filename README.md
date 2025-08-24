@@ -65,12 +65,21 @@ src/
 
 ## 📋 Project Philosophy
 
+### Why Build This?
+Created to address key limitations in existing GTD tools like Nirvana:
+
+- **Missing workspace support** - Need true context separation for Personal/Work/Hobby
+- **No collaboration features** - Want to share projects and tasks with family members (e.g., spouse)
+- **Inflexible perspectives** - Need configurable views per workspace context
+
+### GTD-Aligned Design
 Built around **Getting Things Done (GTD)** principles with modern productivity enhancements:
 
 - **Capture everything** in the Inbox
 - **Organize by context** using workspaces 
 - **Prioritize explicitly** with the First perspective
 - **Review regularly** using perspective-based views
+- **Collaborate seamlessly** with shared projects and tasks
 
 ## 📚 Documentation
 

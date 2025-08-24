@@ -1,5 +1,16 @@
 # Karma Tasker - Current TODO & Roadmap
 
+*Building what Nirvana couldn't deliver: true workspace separation and family collaboration for GTD workflows.*
+
+## 🎯 Core Motivations
+
+**Why not just use Nirvana or other GTD tools?**
+- ❌ **No workspace support** - Can't separate Personal/Work/Hobby contexts properly
+- ❌ **No collaboration** - Can't share projects with spouse or team members  
+- ❌ **Inflexible perspectives** - Fixed views don't adapt to different workspace needs
+
+**This project aims to solve these fundamental limitations.**
+
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
@@ -19,6 +30,16 @@
 - [ ] Project-specific perspective filtering
 - [ ] Areas/contexts for better organization
 - [ ] Task templates for common workflows
+
+### Collaboration & Sharing
+- [ ] User authentication and accounts
+- [ ] Shared workspaces with family/team members
+- [ ] Project sharing and collaboration
+- [ ] Task assignment to other users
+- [ ] Real-time updates and notifications
+- [ ] Permission levels (view, edit, admin)
+- [ ] Activity feed for shared projects
+- [ ] Comments and task discussions
 
 ### Data & Sync
 - [ ] Real backend API integration
