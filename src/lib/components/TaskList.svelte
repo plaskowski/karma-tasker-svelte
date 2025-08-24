@@ -79,7 +79,9 @@
 		"Work Work",
 		"My Life for Aiur",
 		"Like a Boss",
-		"High Five"
+		"High Five",
+		"Gotta Catch 'Em All",
+		"Pika pika?"
 	];
 	
 	// Pick random header on component initialization
