@@ -178,7 +178,6 @@
 			id: string;
 			title: string; 
 			tasks: Task[];
-			showCount?: boolean;
 			needsDivider?: boolean;
 		}> = [];
 
@@ -225,7 +224,6 @@
 					id: `perspective-${groupKey}`,
 					title: getPerspectiveGroupLabel(groupKey),
 					tasks,
-					showCount: true,
 					needsDivider: index < nonEmptyGroups.length - 1 // Only between groups, not after last
 				});
 			});
@@ -295,11 +293,8 @@
 				<!-- Unified task group rendering -->
 				{#each taskGroups() as group}
 					<div class="mb-3">
-						<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''} {group.showCount ? 'flex items-center gap-2' : ''}">
+						<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
 							<span>{group.title}</span>
-							{#if group.showCount}
-								<span class="text-xs opacity-60">({group.tasks.length})</span>
-							{/if}
 						</h3>
 					</div>
 					{#each group.tasks as task (task.id)}
