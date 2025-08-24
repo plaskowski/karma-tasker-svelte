@@ -96,11 +96,29 @@
 
 	// State for workspace selector dropdown
 	let isWorkspaceDropdownOpen = $state(false);
+	let workspaceDropdownRef: HTMLDivElement;
 	
 	// Get current workspace name
 	function getCurrentWorkspaceName() {
 		return workspaces.find(w => w.id === currentWorkspace)?.name || 'Personal';
 	}
+
+	// Close dropdown when clicking outside
+	function handleClickOutside(event: MouseEvent) {
+		if (workspaceDropdownRef && !workspaceDropdownRef.contains(event.target as Node)) {
+			isWorkspaceDropdownOpen = false;
+		}
+	}
+
+	// Add event listener for click outside
+	$effect(() => {
+		if (isWorkspaceDropdownOpen) {
+			document.addEventListener('click', handleClickOutside);
+			return () => {
+				document.removeEventListener('click', handleClickOutside);
+			};
+		}
+	});
 </script>
 
 <div class="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
@@ -111,7 +129,7 @@
 		</div>
 
 		<!-- Workspace selector -->
-		<div class="relative mb-3">
+		<div class="relative mb-3" bind:this={workspaceDropdownRef}>
 			<button
 				onclick={() => isWorkspaceDropdownOpen = !isWorkspaceDropdownOpen}
 				class="w-full flex items-center justify-between px-3 py-2 bg-white dark:bg-gray-900/50 border border-gray-300 dark:border-gray-600/60 rounded text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
