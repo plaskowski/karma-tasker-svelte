@@ -3,11 +3,11 @@ import type { Task, Project, Area, Workspace } from '$lib/types';
 export const mockTasks: Task[] = [
   {
     id: '1',
-    title: 'Complete project proposal',
+    title: 'Finalize client portal requirements',
     description: '',
     completed: false,
     starred: true,
-    projectId: 'work-projects',
+    projectId: 'client-portal',
     workspaceId: 'work',
 
     createdAt: new Date('2024-01-15'),
@@ -83,11 +83,11 @@ export const mockTasks: Task[] = [
   },
   {
     id: '6',
-    title: 'Update software',
+    title: 'Upgrade authentication library',
     description: '',
     completed: true,
     starred: false,
-    projectId: 'work-projects',
+    projectId: 'api-redesign',
     workspaceId: 'work',
 
     createdAt: new Date('2024-01-20'),
@@ -178,11 +178,11 @@ export const mockTasks: Task[] = [
   },
   {
     id: '14',
-    title: 'Quarterly review presentation',
+    title: 'Document new API endpoints',
     description: '',
     completed: false,
     starred: false,
-    projectId: 'work-projects',
+    projectId: 'api-redesign',
     workspaceId: 'work',
 
     createdAt: new Date('2024-01-28'),
@@ -199,7 +199,8 @@ export const mockProjects: Project[] = [
   { id: 'learning', name: 'Learning', workspaceId: 'personal', createdAt: new Date() },
 
   // Work workspace projects  
-  { id: 'work-projects', name: 'Projects', workspaceId: 'work', createdAt: new Date() },
+  { id: 'client-portal', name: 'Client Portal', workspaceId: 'work', createdAt: new Date() },
+  { id: 'api-redesign', name: 'API Redesign', workspaceId: 'work', createdAt: new Date() },
   { id: 'meetings', name: 'Meetings', workspaceId: 'work', createdAt: new Date() },
   
   // Hobby workspace projects

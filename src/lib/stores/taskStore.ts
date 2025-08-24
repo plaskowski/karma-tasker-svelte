@@ -183,11 +183,11 @@ export function addSampleWorkspaceTasks() {
     sampleTasks.push(
       {
         id: 'work-1',
-        title: 'Quarterly review presentation',
+        title: 'Design user dashboard mockups',
         description: '',
         completed: false,
         starred: true,
-        projectId: 'work-projects',
+        projectId: 'client-portal',
         workspaceId: 'work',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -195,7 +195,7 @@ export function addSampleWorkspaceTasks() {
       },
       {
         id: 'work-2', 
-        title: 'Team meeting preparation',
+        title: 'Weekly team standup',
         description: '',
         completed: false,
         starred: false,
@@ -206,10 +206,22 @@ export function addSampleWorkspaceTasks() {
       },
       {
         id: 'work-3',
-        title: 'Code review for new feature',
+        title: 'Refactor authentication endpoints',
         description: '',
         completed: false,
         starred: true,
+        projectId: 'api-redesign',
+        workspaceId: 'work',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'work-4',
+        title: 'Update API documentation',
+        description: '',
+        completed: false,
+        starred: false,
+        projectId: 'api-redesign',
         workspaceId: 'work',
         createdAt: new Date(),
         updatedAt: new Date()
