@@ -77,7 +77,9 @@
 		"You're a Wizard Harry",
 		"Expecto Patronum",
 		"Work Work",
-		"My Life for Aiur"
+		"My Life for Aiur",
+		"Like a Boss",
+		"High Five"
 	];
 	
 	// Pick random header on component initialization
