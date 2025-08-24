@@ -116,13 +116,7 @@
 
 	// Get dynamic header title based on current context
 	function getHeaderTitle() {
-		// If we're in a specific project, show project name
-		if (currentView === 'project' && currentProjectId) {
-			const project = projects.find(p => p.id === currentProjectId);
-			return project ? project.name : getCurrentWorkspaceName();
-		}
-		
-		// For all other views, always show workspace context
+		// Always show workspace context - projects are shown in TaskList header
 		return getCurrentWorkspaceName();
 	}
 
