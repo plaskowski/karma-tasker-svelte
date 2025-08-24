@@ -280,9 +280,8 @@
 					{#if activeTasks.length > 0}
 						<div class="mb-6">
 							<div class="mb-3">
-								<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
+								<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">
 									<span>{focusHeader}</span>
-									<span class="text-xs opacity-60">({activeTasks.length})</span>
 								</h3>
 							</div>
 							{#each activeTasks as task (task.id)}
