@@ -39,15 +39,14 @@
 		users: Users,
 	};
 
-	// Dynamic sidebar items: First + configured perspectives
-	const sidebarItems = $derived([
-		{ id: 'first', label: 'First', icon: Zap },
-		...perspectives.map(p => ({
+	// Dynamic sidebar items: configured perspectives only
+	const sidebarItems = $derived(
+		perspectives.map(p => ({
 			id: p.id,
 			label: p.name,
 			icon: iconMap[p.icon] || Clock
 		}))
-	]);
+	);
 
 	function getTaskCount(view: ViewType) {
 		switch (view) {
