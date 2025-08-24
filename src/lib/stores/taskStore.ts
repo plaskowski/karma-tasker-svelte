@@ -86,35 +86,25 @@ export const filteredTasks = derived(
       return taskWorkspace === $currentWorkspace;
     });
 
-    // Get default project for current workspace
-    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
-    const defaultProjectId = currentWorkspaceData?.defaultProjectId;
-
     // Filter by view
-    switch ($currentView) {
-      case 'inbox':
-        filtered = filtered.filter(task => task.projectId === defaultProjectId && !task.completed);
-        break;
-      case 'next':
-        filtered = filtered.filter(task => !task.completed);
-        break;
-      case 'focus':
-        filtered = filtered.filter(task => task.starred && !task.completed);
-        break;
-      case 'project':
-        if ($currentProjectId) {
-          filtered = filtered.filter(task => task.projectId === $currentProjectId);
-        }
-        break;
-      case 'waiting':
-        filtered = filtered.filter(task => !task.completed && !task.starred && !task.dueDate);
-        break;
-      case 'scheduled':
-        filtered = filtered.filter(task => !task.completed && task.dueDate);
-        break;
-      case 'someday':
-        filtered = filtered.filter(task => !task.completed && !task.starred && !task.dueDate);
-        break;
+    if ($currentView === 'focus') {
+      // Focus: starred items from any perspective
+      filtered = filtered.filter(task => task.starred && !task.completed);
+    } else if ($currentView === 'project') {
+      // Project view: specific project tasks
+      if ($currentProjectId) {
+        filtered = filtered.filter(task => task.projectId === $currentProjectId);
+      }
+    } else {
+      // Perspective view: filter by perspective
+      const perspectiveId = $currentView;
+      if (perspectiveId === 'inbox') {
+        // Inbox: tasks without perspective assigned
+        filtered = filtered.filter(task => !task.perspective && !task.completed);
+      } else {
+        // Other perspectives: tasks with matching perspective
+        filtered = filtered.filter(task => task.perspective === perspectiveId && !task.completed);
+      }
     }
 
     // Filter by search
@@ -138,13 +128,10 @@ export const focusTaskCount = derived([tasks, currentWorkspace], ([$tasks, $curr
   }).length
 );
 
-export const inboxTaskCount = derived([tasks, workspaces, currentWorkspace], ([$tasks, $workspaces, $currentWorkspace]) => {
-  const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
-  const defaultProjectId = currentWorkspaceData?.defaultProjectId;
-  
+export const inboxTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => {
   return $tasks.filter(task => {
     const taskWorkspace = task.workspaceId || 'personal';
-    return taskWorkspace === $currentWorkspace && task.projectId === defaultProjectId && !task.completed;
+    return taskWorkspace === $currentWorkspace && !task.perspective && !task.completed;
   }).length;
 });
 
@@ -159,6 +146,15 @@ export const workspaceProjects = derived(
       const projectWorkspace = project.workspaceId || 'personal';
       return projectWorkspace === $currentWorkspace && project.id !== defaultProjectId;
     });
+  }
+);
+
+// Derived store for current workspace perspectives
+export const workspacePerspectives = derived(
+  [workspaces, currentWorkspace],
+  ([$workspaces, $currentWorkspace]) => {
+    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
+    return currentWorkspaceData?.perspectives || [];
   }
 );
 

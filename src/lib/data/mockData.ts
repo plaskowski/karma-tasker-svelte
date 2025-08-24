@@ -7,12 +7,12 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: true,
+    perspective: 'next',
     projectId: 'client-portal',
     workspaceId: 'work',
 
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15'),
-    dueDate: new Date(), // Today
   },
   {
     id: '2',
@@ -20,16 +20,12 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: true,
+    perspective: 'next',
     projectId: 'household',
     workspaceId: 'personal',
 
     createdAt: new Date('2024-01-16'),
     updatedAt: new Date('2024-01-16'),
-    dueDate: (() => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      return tomorrow;
-    })(), // Tomorrow
   },
   {
     id: '3',
@@ -37,16 +33,12 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: true,
+    perspective: 'next',
     projectId: 'personal-default',
     workspaceId: 'personal',
 
     createdAt: new Date('2024-01-17'),
     updatedAt: new Date('2024-01-17'),
-    dueDate: (() => {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      return yesterday;
-    })(), // Overdue
   },
   {
     id: '4',
@@ -148,6 +140,7 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: false,
+    perspective: 'someday',
     projectId: 'learning',
     workspaceId: 'personal',
 
@@ -160,6 +153,7 @@ export const mockTasks: Task[] = [
     description: '',
     completed: false,
     starred: false,
+    // No perspective = inbox
     projectId: 'household',
     workspaceId: 'personal',
 
@@ -217,7 +211,40 @@ export const mockProjects: Project[] = [
 export const mockAreas: Area[] = [];
 
 export const mockWorkspaces: Workspace[] = [
-  { id: 'personal', name: 'Personal', defaultProjectId: 'personal-default', isActive: true, createdAt: new Date() },
-  { id: 'work', name: 'Work', defaultProjectId: 'work-default', isActive: false, createdAt: new Date() },
-  { id: 'hobby', name: 'Hobby', defaultProjectId: 'hobby-default', isActive: false, createdAt: new Date() },
+  { 
+    id: 'personal', 
+    name: 'Personal', 
+    defaultProjectId: 'personal-default', 
+    perspectives: [
+      { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
+      { id: 'next', name: 'Next', icon: 'clock', order: 2 },
+      { id: 'someday', name: 'Someday', icon: 'archive', order: 3 },
+    ],
+    isActive: true, 
+    createdAt: new Date() 
+  },
+  { 
+    id: 'work', 
+    name: 'Work', 
+    defaultProjectId: 'work-default', 
+    perspectives: [
+      { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
+      { id: 'next', name: 'Next', icon: 'clock', order: 2 },
+      { id: 'review', name: 'Review', icon: 'users', order: 3 },
+    ],
+    isActive: false, 
+    createdAt: new Date() 
+  },
+  { 
+    id: 'hobby', 
+    name: 'Hobby', 
+    defaultProjectId: 'hobby-default', 
+    perspectives: [
+      { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
+      { id: 'next', name: 'Next', icon: 'clock', order: 2 },
+      { id: 'ideas', name: 'Ideas', icon: 'archive', order: 3 },
+    ],
+    isActive: false, 
+    createdAt: new Date() 
+  },
 ];

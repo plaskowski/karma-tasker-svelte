@@ -4,8 +4,7 @@ export interface Task {
   description?: string;
   completed: boolean;
   starred: boolean;
-  dueDate?: Date;
-  startDate?: Date;
+  perspective?: string; // undefined = inbox
   projectId: string;
   workspaceId: string;
 
@@ -30,15 +29,23 @@ export interface Area {
   createdAt: Date;
 }
 
+export interface PerspectiveConfig {
+  id: string;
+  name: string;
+  icon: string;
+  order: number;
+}
+
 export interface Workspace {
   id: string;
   name: string;
   defaultProjectId: string;
+  perspectives: PerspectiveConfig[];
   isActive: boolean;
   createdAt: Date;
 }
 
-export type ViewType = 'inbox' | 'next' | 'waiting' | 'scheduled' | 'someday' | 'focus' | 'project';
+export type ViewType = 'focus' | 'project' | string; // string allows for configurable perspective views
 
 export interface AppState {
   currentWorkspace: string;
