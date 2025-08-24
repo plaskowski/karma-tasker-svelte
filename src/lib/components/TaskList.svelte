@@ -178,7 +178,6 @@
 			id: string;
 			title: string; 
 			tasks: Task[];
-			needsDivider?: boolean;
 		}> = [];
 
 		// Focus view - single group
@@ -187,8 +186,7 @@
 				groups.push({
 					id: 'focus',
 					title: focusHeader,
-					tasks: activeTasks,
-					needsDivider: false
+					tasks: activeTasks
 				});
 			}
 		}
@@ -199,8 +197,7 @@
 				groups.push({
 					id: 'actions',
 					title: 'Actions',
-					tasks: ungroupedActiveTasks,
-					needsDivider: Object.keys(groupedActiveTasks).length > 0
+					tasks: ungroupedActiveTasks
 				});
 			}
 			
@@ -209,8 +206,7 @@
 				groups.push({
 					id: `project-${projectId}`,
 					title: getProjectName(projectId),
-					tasks,
-					needsDivider: true
+					tasks
 				});
 			});
 		}
@@ -219,12 +215,11 @@
 			const nonEmptyGroups = Object.entries(perspectiveGroupedActiveTasks)
 				.filter(([_, tasks]) => tasks.length > 0);
 				
-			nonEmptyGroups.forEach(([groupKey, tasks], index) => {
+			nonEmptyGroups.forEach(([groupKey, tasks]) => {
 				groups.push({
 					id: `perspective-${groupKey}`,
 					title: getPerspectiveGroupLabel(groupKey),
-					tasks,
-					needsDivider: index < nonEmptyGroups.length - 1 // Only between groups, not after last
+					tasks
 				});
 			});
 		}
@@ -293,7 +288,7 @@
 				<!-- Unified task group rendering -->
 				{#each taskGroups() as group}
 					<div class="mb-3">
-						<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
+						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
 							<span>{group.title}</span>
 						</h3>
 					</div>
@@ -306,22 +301,12 @@
 							{showProjectBadge}
 						/>
 					{/each}
-					{#if group.needsDivider}
-						<div class="py-4">
-							<div class="border-t border-gray-200 dark:border-gray-700"></div>
-						</div>
-					{/if}
 				{/each}
 
 				<!-- Completed Tasks -->
 				{#if (showCompleted || completedTasks.length > 0) && completedTasks.length > 0}
-					{#if activeTasks.length > 0}
-						<div class="py-4">
-							<div class="border-t border-gray-200 dark:border-gray-700"></div>
-						</div>
-					{/if}
 					<div class="mb-3">
-						<h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Done</h3>
+						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400">Done</h3>
 					</div>
 					{#each completedTasks as task (task.id)}
 						<TaskItem
