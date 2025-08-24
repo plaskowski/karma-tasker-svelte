@@ -231,10 +231,10 @@
 
 <div class="flex-1 flex flex-col h-full">
 	<!-- Header -->
-	<div class="px-6 py-4 border-b border-surface-200">
+	<div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
 		<div class="flex items-center justify-between">
 			<div>
-				<h1 class="text-lg font-medium text-surface-900">{getViewTitle()}</h1>
+				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{getViewTitle()}</h1>
 			</div>
 			
 			<div class="flex items-center gap-2">
@@ -287,7 +287,7 @@
 				{#each taskGroups() as group}
 					<div class="mb-6">
 						<div class="mb-3">
-							<h3 class="text-base font-medium text-surface-500 {group.id.startsWith('project-') ? 'capitalize' : ''}">
+							<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
 								<span>{group.title}</span>
 							</h3>
 						</div>
@@ -306,7 +306,7 @@
 				<!-- Completed Tasks -->
 				{#if (showCompleted || completedTasks.length > 0) && completedTasks.length > 0}
 					<div class="mb-3">
-						<h3 class="text-base font-medium text-surface-500">Done</h3>
+						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400">Done</h3>
 					</div>
 					{#each completedTasks as task (task.id)}
 						<TaskItem

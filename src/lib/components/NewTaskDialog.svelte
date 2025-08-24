@@ -61,22 +61,22 @@
 
 {#if open}
 	<div class="modal-backdrop">
-		<div class="modal bg-surface-50 w-full max-w-md p-6 rounded-xl shadow-xl">
+		<div class="modal bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-xl shadow-xl">
 			<header class="modal-header mb-4">
-				<h2 class="text-xl font-semibold text-surface-900">New Task</h2>
+				<h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">New Task</h2>
 			</header>
 
 			<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }} class="space-y-4">
 				<!-- Title -->
 				<div>
-					<label for="title" class="block text-sm font-medium text-surface-700 mb-1">
+					<label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 						<span>Title *</span>
 					</label>
 					<input
 						id="title"
 						type="text"
 						bind:value={title}
-						class="w-full px-3 py-2 border border-surface-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-100 text-surface-900"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
 						placeholder="Enter task title"
 						required
 					/>
@@ -84,13 +84,13 @@
 
 				<!-- Description -->
 				<div>
-					<label for="description" class="block text-sm font-medium text-surface-700 mb-1">
+					<label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 						<span>Description</span>
 					</label>
 					<textarea
 						id="description"
 						bind:value={description}
-						class="w-full px-3 py-2 border border-surface-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-100 text-surface-900"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
 						placeholder="Optional description"
 						rows="3"
 					></textarea>
@@ -98,13 +98,13 @@
 
 				<!-- Project -->
 				<div>
-					<label for="project" class="block text-sm font-medium text-surface-700 mb-1">
+					<label for="project" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 						<span>Project</span>
 					</label>
 					<select
 						id="project"
 						bind:value={projectId}
-						class="w-full px-3 py-2 border border-surface-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-100 text-surface-900"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
 					>
 						<option value="">Default Project</option>
 						{#each $workspaceProjects as project}
@@ -115,13 +115,13 @@
 
 				<!-- Perspective -->
 				<div>
-					<label for="perspective" class="block text-sm font-medium text-surface-700 mb-1">
+					<label for="perspective" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
 						<span>Perspective</span>
 					</label>
 					<select
 						id="perspective"
 						bind:value={perspective}
-						class="w-full px-3 py-2 border border-surface-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-surface-100 text-surface-900"
+						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
 					>
 						<option value="">Inbox (Unprocessed)</option>
 						{#each $workspacePerspectives as p}
@@ -130,7 +130,7 @@
 							{/if}
 						{/each}
 					</select>
-					<p class="text-sm text-surface-500 mt-1">
+					<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
 						Choose how to categorize this task in your workflow
 					</p>
 				</div>
@@ -140,14 +140,14 @@
 					<button
 						type="button"
 						onclick={handleCancel}
-						class="btn btn-base bg-surface-200 text-surface-700 hover:bg-surface-300"
+						class="btn btn-base bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500"
 						disabled={submitting}
 					>
 						Cancel
 					</button>
 					<button
 						type="submit"
-						class="btn btn-base bg-primary-500 text-white hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
+						class="btn btn-base bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
 						disabled={submitting || !title.trim()}
 					>
 						{submitting ? 'Creating...' : 'Create Task'}
