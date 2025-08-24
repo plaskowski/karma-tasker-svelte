@@ -72,10 +72,18 @@
 	// Handle workspace change
 	function handleWorkspaceChange(workspaceId: string) {
 		currentWorkspace.set(workspaceId);
-		// Keep current view but clear project (since projects are workspace-specific)
-		const currentViewValue = $currentView;
-		currentProjectId.set(undefined);
-		updateURL(currentViewValue, undefined, workspaceId);
+		
+		// If we're in project view, switch to inbox since projects are workspace-specific
+		if ($currentView === 'project') {
+			currentView.set('inbox');
+			currentProjectId.set(undefined);
+			updateURL('inbox', undefined, workspaceId);
+		} else {
+			// Keep current view for perspective views (they exist in all workspaces)
+			const currentViewValue = $currentView;
+			currentProjectId.set(undefined);
+			updateURL(currentViewValue, undefined, workspaceId);
+		}
 	}
 
 	// Initialize view from URL parameters
