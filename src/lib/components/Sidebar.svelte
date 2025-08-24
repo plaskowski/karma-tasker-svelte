@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { Star, Inbox, Calendar, Clock, Users, Archive, Search, Settings, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
-	import type { ViewType, Project, Workspace } from '$lib/types';
+	import type { ViewType, Project, Workspace, PerspectiveConfig } from '$lib/types';
 
 	interface Props {
 		currentView: ViewType;
 		currentProjectId?: string;
 		currentWorkspace: string;
 		workspaces: Workspace[];
+		perspectives: PerspectiveConfig[];
 		projects: Project[];
 		onViewChange: (view: ViewType) => void;
 		onProjectSelect: (projectId: string) => void;
@@ -23,6 +24,7 @@
 		currentProjectId,
 		currentWorkspace,
 		workspaces,
+		perspectives,
 		projects, 
 		onViewChange, 
 		onProjectSelect,
@@ -34,14 +36,23 @@
 		onSearchChange
 	}: Props = $props();
 
-	const sidebarItems = [
-		{ id: 'inbox', label: 'Inbox', icon: Inbox },
+	// Icon mapping for perspectives
+	const iconMap: Record<string, any> = {
+		inbox: Inbox,
+		clock: Clock,
+		archive: Archive,
+		users: Users,
+	};
+
+	// Dynamic sidebar items: Focus + configured perspectives
+	const sidebarItems = $derived([
 		{ id: 'focus', label: 'Focus', icon: Star },
-		{ id: 'next', label: 'Next', icon: Clock },
-		{ id: 'waiting', label: 'Waiting', icon: Users },
-		{ id: 'scheduled', label: 'Scheduled', icon: Calendar },
-		{ id: 'someday', label: 'Someday', icon: Archive },
-	];
+		...perspectives.map(p => ({
+			id: p.id,
+			label: p.name,
+			icon: iconMap[p.icon] || Clock
+		}))
+	]);
 
 	function getTaskCount(view: ViewType) {
 		switch (view) {
@@ -50,7 +61,7 @@
 			case 'inbox':
 				return inboxTaskCount;
 			default:
-				return null; // No counter for other views
+				return null; // No counter for other perspectives yet
 		}
 	}
 
@@ -186,7 +197,7 @@
 		</div>
 	</div>
 
-	<!-- Views section -->
+			<!-- Views section -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
 		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Views</h3>
 		<div class="space-y-1">
@@ -197,18 +208,18 @@
 						? (item.id === 'focus' ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100')
 						: (item.id === 'focus' ? 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100')}"
 				>
-					{#if item.icon === Inbox}
-						<Inbox class="w-4 h-4" />
-					{:else if item.icon === Star}
+					{#if item.icon === Star}
 						<Star class="w-4 h-4" />
+					{:else if item.icon === Inbox}
+						<Inbox class="w-4 h-4" />
 					{:else if item.icon === Clock}
 						<Clock class="w-4 h-4" />
-					{:else if item.icon === Users}
-						<Users class="w-4 h-4" />
-					{:else if item.icon === Calendar}
-						<Calendar class="w-4 h-4" />
 					{:else if item.icon === Archive}
 						<Archive class="w-4 h-4" />
+					{:else if item.icon === Users}
+						<Users class="w-4 h-4" />
+					{:else}
+						<Clock class="w-4 h-4" />
 					{/if}
 					<span class="flex-1">{item.label}</span>
 					{#if getTaskCount(item.id as ViewType) !== null}

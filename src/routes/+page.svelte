@@ -4,6 +4,7 @@
 		projects,
 		workspaces,
 		workspaceProjects,
+		workspacePerspectives,
 		currentView,
 		currentProjectId,
 		currentWorkspace,
@@ -182,6 +183,7 @@
 		currentProjectId={$currentProjectId}
 		currentWorkspace={$currentWorkspace}
 		workspaces={$workspaces}
+		perspectives={$workspacePerspectives}
 		projects={$workspaceProjects}
 		onViewChange={handleViewChange}
 		onProjectSelect={handleProjectSelect}
