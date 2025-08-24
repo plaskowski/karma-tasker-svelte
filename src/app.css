@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import '@skeletonlabs/skeleton';
-@import '@skeletonlabs/skeleton/themes/skeleton';
+@import '@skeletonlabs/skeleton/themes/wintry';
 
 html, body { 
   height: 100vh;
