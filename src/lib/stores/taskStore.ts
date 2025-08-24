@@ -169,3 +169,94 @@ export function migrateToWorkspaces() {
   );
 }
 
+// Function to add sample tasks to Work and Hobby workspaces (for demo purposes)
+export function addSampleWorkspaceTasks() {
+  const currentTasks = get(tasks);
+  
+  // Check if Work/Hobby workspaces already have tasks
+  const hasWorkTasks = currentTasks.some(task => task.workspaceId === 'work');
+  const hasHobbyTasks = currentTasks.some(task => task.workspaceId === 'hobby');
+  
+  const sampleTasks: Task[] = [];
+  
+  if (!hasWorkTasks) {
+    sampleTasks.push(
+      {
+        id: 'work-1',
+        title: 'Quarterly review presentation',
+        description: '',
+        completed: false,
+        starred: true,
+        projectId: 'work-projects',
+        workspaceId: 'work',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // 2 days from now
+      },
+      {
+        id: 'work-2', 
+        title: 'Team meeting preparation',
+        description: '',
+        completed: false,
+        starred: false,
+        projectId: 'meetings',
+        workspaceId: 'work',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'work-3',
+        title: 'Code review for new feature',
+        description: '',
+        completed: false,
+        starred: true,
+        workspaceId: 'work',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    );
+  }
+  
+  if (!hasHobbyTasks) {
+    sampleTasks.push(
+      {
+        id: 'hobby-1',
+        title: 'Photography workshop signup',
+        description: '',
+        completed: false,
+        starred: true,
+        projectId: 'photography',
+        workspaceId: 'hobby',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'hobby-2',
+        title: 'Arduino project - LED matrix',
+        description: '',
+        completed: false,
+        starred: false,
+        projectId: 'electronics',
+        workspaceId: 'hobby',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'hobby-3',
+        title: 'Practice guitar scales',
+        description: '',
+        completed: false,
+        starred: false,
+        projectId: 'music',
+        workspaceId: 'hobby',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    );
+  }
+  
+  if (sampleTasks.length > 0) {
+    tasks.update(taskList => [...taskList, ...sampleTasks]);
+  }
+}
+

@@ -16,7 +16,8 @@
 		toggleTaskComplete,
 		toggleTaskStar,
 		addTask,
-		migrateToWorkspaces
+		migrateToWorkspaces,
+		addSampleWorkspaceTasks
 	} from '$lib/stores/taskStore';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -79,6 +80,9 @@
 	onMount(() => {
 		// Run migration to ensure existing tasks/projects have workspaceId
 		migrateToWorkspaces();
+		
+		// Add sample tasks to Work and Hobby workspaces if they're empty
+		addSampleWorkspaceTasks();
 		
 		const urlParams = $page.url.searchParams;
 		const workspaceParam = urlParams.get('workspace');
