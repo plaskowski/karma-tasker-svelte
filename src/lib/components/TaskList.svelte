@@ -81,7 +81,11 @@
 		"Like a Boss",
 		"High Five",
 		"Gotta Catch 'Em All",
-		"Pika pika?"
+		"Pika pika?",
+		"Avengers Assemble",
+		"I Am Iron Man",
+		"We Have a Hulk",
+		"Use the Force"
 	];
 	
 	// Pick random header on component initialization
