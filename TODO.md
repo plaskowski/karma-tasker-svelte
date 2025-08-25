@@ -15,16 +15,16 @@ Next focus: begin Core Features below.
 
 ### Core Features
 - [ ] Task editing and detailed view
-- [ ] Task due dates and scheduling
 - [ ] Task notes/descriptions support
 - [ ] Drag & drop task reordering
-- [ ] Bulk task operations
 
 ### Advanced Organization
 - [ ] Custom perspective creation per workspace
 - [ ] Project-specific perspective filtering
 - [ ] Areas/contexts for better organization
 - [ ] Task templates for common workflows
+- [ ] Task due dates and scheduling
+- [ ] Bulk task operations
 
 ### Collaboration & Sharing
 - [ ] User authentication and accounts
