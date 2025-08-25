@@ -231,7 +231,7 @@
 
 <div class="flex-1 flex flex-col h-full">
 	<!-- Header -->
-	<div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+	<div class="px-6 py-3 border-b border-gray-200 dark:border-gray-700">
 		<div class="flex items-center justify-between">
 			<div>
 				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{getViewTitle()}</h1>
