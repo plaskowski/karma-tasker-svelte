@@ -157,8 +157,8 @@
 	</div>
 
 	{#if isWorkspaceDropdownOpen}
-		<div class="px-6 py-2 border-b border-gray-200 dark:border-gray-700" bind:this={workspaceDropdownContainerRef}>
-			<div class="rounded-lg overflow-hidden">
+		<div class="py-2 border-b border-gray-200 dark:border-gray-700" bind:this={workspaceDropdownContainerRef}>
+			<div class="rounded-none overflow-hidden">
 				{#each workspaces as workspace}
 					<button
 						onclick={() => {
