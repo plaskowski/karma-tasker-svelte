@@ -72,9 +72,9 @@
 			</div>
 		</div>
 
-		<!-- Right column: meta fields -->
-		<div class="md:col-span-1 space-y-3">
-			<div>
+		<!-- Right column: meta fields + actions -->
+		<div class="md:col-span-1 flex flex-col">
+			<div class="mb-3">
 				<select
 					id={projectIdId}
 					bind:value={projectId}
@@ -88,7 +88,7 @@
 					{/each}
 				</select>
 			</div>
-			<div>
+			<div class="mb-3">
 				<select
 					id={perspectiveId}
 					bind:value={perspective}
@@ -102,11 +102,12 @@
 					{/each}
 				</select>
 			</div>
-		</div>
-	</div>
 
-	<div class="flex items-center justify-end gap-2 pt-2">
-		<button type="button" class="btn btn-sm bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300" onclick={handleCancel} disabled={submitting}>Cancel</button>
-		<button type="submit" class="btn btn-sm bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50" disabled={submitting || !title.trim()}>Save</button>
+			<!-- Actions aligned bottom on md+ -->
+			<div class="flex items-center justify-end gap-2 mt-2 md:mt-auto">
+				<button type="button" class="btn btn-sm bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300" onclick={handleCancel} disabled={submitting}>Cancel</button>
+				<button type="submit" class="btn btn-sm bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50" disabled={submitting || !title.trim()}>Save</button>
+			</div>
+		</div>
 	</div>
 </form>
