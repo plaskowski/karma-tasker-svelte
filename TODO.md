@@ -6,7 +6,13 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-<!-- Moved completed items to RESOLVED.md -->
+- [ ] in task editor the dropdown carret is to close to field border
+- [ ] when task has description the bullet should be aligned to the task title
+- [ ] pressing escape should cancel editing
+- [ ] use the editor for new task flow
+- [ ] a task with description has some strange indicator after the title
+- [ ] project badge should be aligned with item title line
+- [ ] when closing editor the task line should not use in animation
 
 ## 🚀 Active Development Roadmap
 
