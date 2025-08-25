@@ -157,7 +157,7 @@
 	</div>
 
 	{#if isWorkspaceDropdownOpen}
-		<div class="py-2 border-b border-gray-200 dark:border-gray-700" bind:this={workspaceDropdownContainerRef}>
+		<div class="py-0 border-b border-gray-200 dark:border-gray-700" bind:this={workspaceDropdownContainerRef}>
 			<div class="rounded-none overflow-hidden">
 				{#each workspaces as workspace}
 					<button
@@ -165,16 +165,16 @@
 							onWorkspaceChange(workspace.id);
 							isWorkspaceDropdownOpen = false;
 						}}
-						class="w-full btn btn-sm text-left rounded-none {workspace.id === currentWorkspace ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
+						class="w-full btn btn-base text-base text-left rounded-none {workspace.id === currentWorkspace ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 					>
 						{#if workspace.id === 'personal'}
-							<User class="w-4 h-4" />
+							<User class="w-5 h-5" />
 						{:else if workspace.id === 'work'}
-							<Briefcase class="w-4 h-4" />
+							<Briefcase class="w-5 h-5" />
 						{:else if workspace.id === 'hobby'}
-							<Gamepad2 class="w-4 h-4" />
+							<Gamepad2 class="w-5 h-5" />
 						{:else}
-							<User class="w-4 h-4" />
+							<User class="w-5 h-5" />
 						{/if}
 						<span>{workspace.name}</span>
 					</button>
