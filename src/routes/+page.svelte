@@ -26,10 +26,13 @@
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';
 	import NewTaskDialog from '$lib/components/NewTaskDialog.svelte';
+	import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
 	import type { Task } from '$lib/types';
 
 	// Modal state
 	let showNewTaskDialog = $state(false);
+	let showTaskDetailsDialog = $state(false);
+	let selectedTask: Task | null = $state(null);
 
 	// Update URL based on current state
 	function updateURL(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
@@ -146,8 +149,8 @@
 
 
 	function handleTaskClick(task: Task) {
-		// TODO: Open task details modal
-		console.log('Task clicked:', task.title);
+		selectedTask = task;
+		showTaskDetailsDialog = true;
 	}
 
 
@@ -160,6 +163,11 @@
 	// Handle modal close
 	function handleModalClose() {
 		showNewTaskDialog = false;
+	}
+
+	function handleTaskDetailsClose() {
+		showTaskDetailsDialog = false;
+		selectedTask = null;
 	}
 
 	// Handle cleanup action
@@ -282,3 +290,6 @@
 
 <!-- New Task Modal -->
 <NewTaskDialog open={showNewTaskDialog} on:close={handleModalClose} />
+
+<!-- Task Details Modal -->
+<TaskDetailsDialog open={showTaskDetailsDialog} task={selectedTask} on:close={handleTaskDetailsClose} />
