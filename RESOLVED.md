@@ -7,6 +7,9 @@
 - [x] Increase group header font size from `text-sm` to `text-base`
 - [x] Add consistent padding (`mb-6`) between task groups
 - [x] Align header heights - both sidebar and task list use `py-4` (16px padding)
+ - [x] Sidebar and task list header alignment refined; reduced header height to `py-3`
+ - [x] Workspace dropdown rendered inline below header and spans full sidebar width
+ - [x] Removed numbers from "Views" header in sidebar
 
 ### Workspace System
 - [x] Implement workspace architecture (Personal, Work, Hobby)

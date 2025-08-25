@@ -6,9 +6,7 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-- [x] **Header Alignment Issue**: Sidebar and task list headers aligned by normalizing padding and margins
-- [x] **Project Dropdown Visual Fit**: Dropdown rendered inline below header for better visual fit
-- [x] remove numbers from VIEWS header
+<!-- Moved completed items to RESOLVED.md -->
 
 ## 🚀 Active Development Roadmap
 
