@@ -2,6 +2,8 @@
 	import type { Task, ViewType, Project } from '$lib/types';
 	import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
 	import TaskItem from './TaskItem.svelte';
+	import TaskInlineEditor from './TaskInlineEditor.svelte';
+	import { workspacePerspectives } from '$lib/stores/taskStore';
 
 	interface Props {
 		tasks: Task[];
@@ -58,6 +60,13 @@
 
 
 	const activeTasks = $derived(tasks.filter(task => !task.completed));
+
+	// Inline editor state
+	let inlineEditingTaskId: string | null = $state(null);
+
+	function toggleInlineEditor(taskId: string) {
+		inlineEditingTaskId = inlineEditingTaskId === taskId ? null : taskId;
+	}
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
 	// Rotating motivational headers for First view - diverse positive energy with nostalgia
@@ -295,10 +304,12 @@
 							<TaskItem
 								{task}
 								onToggle={onTaskToggle}
-		
-								onClick={onTaskClick}
+								onClick={() => toggleInlineEditor(task.id)}
 								{showProjectBadge}
 							/>
+							{#if inlineEditingTaskId === task.id}
+								<TaskInlineEditor task={task} projects={projects} perspectives={$workspacePerspectives} on:close={() => inlineEditingTaskId = null} />
+							{/if}
 						{/each}
 					</div>
 				{/each}
