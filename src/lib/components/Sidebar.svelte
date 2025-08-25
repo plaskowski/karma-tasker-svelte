@@ -102,6 +102,7 @@
 	// State for workspace selector dropdown
 	let isWorkspaceDropdownOpen = $state(false);
 	let workspaceDropdownRef: HTMLDivElement;
+	let workspaceDropdownContainerRef = $state<HTMLDivElement | null>(null);
 	
 	// Get current workspace name
 	function getCurrentWorkspaceName() {
@@ -114,9 +115,12 @@
 		return getCurrentWorkspaceName();
 	}
 
-	// Close dropdown when clicking outside
+	// Close dropdown when clicking outside header and inline dropdown container
 	function handleClickOutside(event: MouseEvent) {
-		if (workspaceDropdownRef && !workspaceDropdownRef.contains(event.target as Node)) {
+		const targetNode = event.target as Node;
+		const clickedInsideHeader = workspaceDropdownRef?.contains(targetNode);
+		const clickedInsideInlineDropdown = workspaceDropdownContainerRef && workspaceDropdownContainerRef.contains(targetNode);
+		if (!clickedInsideHeader && !clickedInsideInlineDropdown) {
 			isWorkspaceDropdownOpen = false;
 		}
 	}
@@ -153,7 +157,7 @@
 	</div>
 
 	{#if isWorkspaceDropdownOpen}
-		<div class="px-6 py-2 border-b border-gray-200 dark:border-gray-700">
+		<div class="px-6 py-2 border-b border-gray-200 dark:border-gray-700" bind:this={workspaceDropdownContainerRef}>
 			<div class="rounded-lg overflow-hidden">
 				{#each workspaces as workspace}
 					<button
