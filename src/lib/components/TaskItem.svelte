@@ -33,12 +33,12 @@
 
 	<!-- Task content -->
 	<div class="flex-1 min-w-0">
-		<div class="flex items-center gap-2">
-			<span class="text-sm text-gray-900 dark:text-gray-100 {task.completed ? 'line-through opacity-50' : ''}">
+		<div class="flex items-baseline gap-2">
+			<span class="text-sm leading-5 text-gray-900 dark:text-gray-100 {task.completed ? 'line-through opacity-50' : ''}">
 				{task.title}
 			</span>
 			{#if task.description}
-				<span class="text-xs text-gray-500 dark:text-gray-400">•</span>
+				<span class="text-xs leading-5 text-gray-500 dark:text-gray-400">•</span>
 			{/if}
 		</div>
 		
@@ -51,8 +51,8 @@
 
 	<!-- Project badge (right side) -->
 	{#if task.projectId && showProjectBadge}
-		<div class="flex-shrink-0 mr-2">
-			<span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+		<div class="flex-shrink-0 mr-2 self-baseline">
+			<span class="text-xs leading-5 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
 				{task.projectId}
 			</span>
 		</div>
