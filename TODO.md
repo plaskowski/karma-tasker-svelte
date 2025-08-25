@@ -6,9 +6,9 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-- [ ] **Header Alignment Issue**: Top left bar (sidebar) and top right bar (task list) are still not perfectly aligned despite both using `py-4` padding
-- [ ] **Project Dropdown Visual Fit**: Project dropdown doesn't fit visually well - consider changing to expandable section under the top left bar
-- [ ] remove numbers from VIEWS header
+- [x] **Header Alignment Issue**: Sidebar and task list headers aligned by normalizing padding and margins
+- [x] **Project Dropdown Visual Fit**: Dropdown rendered inline below header for better visual fit
+- [x] remove numbers from VIEWS header
 
 ## 🚀 Active Development Roadmap
 
