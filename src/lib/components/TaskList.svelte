@@ -301,14 +301,20 @@
 							</h3>
 						</div>
 						{#each group.tasks as task (task.id)}
-							<TaskItem
-								{task}
-								onToggle={onTaskToggle}
-								onClick={() => toggleInlineEditor(task.id)}
-								{showProjectBadge}
-							/>
 							{#if inlineEditingTaskId === task.id}
-								<TaskInlineEditor task={task} projects={projects} perspectives={$workspacePerspectives} on:close={() => inlineEditingTaskId = null} />
+								<TaskInlineEditor
+									{task}
+									projects={projects}
+									perspectives={$workspacePerspectives}
+									on:close={() => inlineEditingTaskId = null}
+								/>
+							{:else}
+								<TaskItem
+									{task}
+									onToggle={onTaskToggle}
+									onClick={(t) => toggleInlineEditor(t.id)}
+									{showProjectBadge}
+								/>
 							{/if}
 						{/each}
 					</div>
