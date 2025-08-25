@@ -51,6 +51,16 @@
 - [x] Context-aware header titles (workspace/project names)
 - [x] Consistent icon usage throughout app
 
+### Design System & Components
+- [x] Integrate Skeleton UI components for accessibility and theming
+- [x] Configure Skeleton in Tailwind setup
+- [x] Replace NewTaskDialog with Skeleton Modal (ARIA, keyboard support)
+- [x] Migrate custom Tailwind styling to Skeleton design system
+- [x] Implement built-in dark/light theme switching
+- [x] Add keyboard navigation support across the app
+- [x] Upgrade buttons, forms, and inputs to Skeleton components
+- Benefits: Improved accessibility (ARIA, screen readers), consistent design system, easier theming
+
 ## 📊 Implementation Summary
 
 ### Major Architectural Changes

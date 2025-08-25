@@ -11,16 +11,7 @@
 ## 🚀 Active Development Roadmap
 
 ### Next Major Features
-- [x] **Integrate Skeleton UI Components** - Completed for accessibility, theming, and consistency
-  - [x] Configure Skeleton in tailwind.config.ts
-  - [x] Replace NewTaskDialog with Skeleton Modal (better accessibility, ARIA support)
-  - [x] Replace workspace dropdown with Skeleton Popup/Menu (proper positioning, click-outside)
-  - [x] Implement built-in dark/light theme switching (replace manual dark mode)
-  - [x] Add keyboard navigation support throughout app
-  - [x] Upgrade buttons, forms, and inputs to Skeleton components
-  - Benefits realized: Better accessibility (ARIA, screen readers), consistent design system, easier theming
-  
-  Next focus: begin Core Features below.
+Next focus: begin Core Features below.
 
 ### Core Features
 - [ ] Task editing and detailed view
