@@ -67,6 +67,10 @@
 	function toggleInlineEditor(taskId: string) {
 		inlineEditingTaskId = inlineEditingTaskId === taskId ? null : taskId;
 	}
+
+	function closeInlineEditor() {
+		inlineEditingTaskId = null;
+	}
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
 	// Rotating motivational headers for First view - diverse positive energy with nostalgia
