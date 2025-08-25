@@ -134,8 +134,8 @@
 
 <div class="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full">
 	<!-- Header with branding -->
-	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
-		<div class="flex items-center gap-3 mb-4 relative" bind:this={workspaceDropdownRef}>
+	<div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700" bind:this={workspaceDropdownRef}>
+		<div class="flex items-center gap-3">
 			<div class="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 shadow-sm">
 				<span class="text-sm font-semibold text-white">N</span>
 			</div>
@@ -148,39 +148,40 @@
 				<ChevronDown class="w-4 h-4 transition-transform {isWorkspaceDropdownOpen ? 'rotate-180' : ''}" />
 			</button>
 			
-			{#if isWorkspaceDropdownOpen}
-				<div class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 overflow-hidden">
-					{#each workspaces as workspace}
-						<button
-							onclick={() => {
-								onWorkspaceChange(workspace.id);
-								isWorkspaceDropdownOpen = false;
-							}}
-							class="w-full btn btn-sm text-left rounded-none {workspace.id === currentWorkspace ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
-						>
-							{#if workspace.id === 'personal'}
-								<User class="w-4 h-4" />
-							{:else if workspace.id === 'work'}
-								<Briefcase class="w-4 h-4" />
-							{:else if workspace.id === 'hobby'}
-								<Gamepad2 class="w-4 h-4" />
-							{:else}
-								<User class="w-4 h-4" />
-							{/if}
-							<span>{workspace.name}</span>
-						</button>
-					{/each}
-				</div>
-			{/if}
+
 		</div>
 	</div>
 
+	{#if isWorkspaceDropdownOpen}
+		<div class="px-6 py-2 border-b border-gray-200 dark:border-gray-700">
+			<div class="rounded-lg overflow-hidden">
+				{#each workspaces as workspace}
+					<button
+						onclick={() => {
+							onWorkspaceChange(workspace.id);
+							isWorkspaceDropdownOpen = false;
+						}}
+						class="w-full btn btn-sm text-left rounded-none {workspace.id === currentWorkspace ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
+					>
+						{#if workspace.id === 'personal'}
+							<User class="w-4 h-4" />
+						{:else if workspace.id === 'work'}
+							<Briefcase class="w-4 h-4" />
+						{:else if workspace.id === 'hobby'}
+							<Gamepad2 class="w-4 h-4" />
+						{:else}
+							<User class="w-4 h-4" />
+						{/if}
+						<span>{workspace.name}</span>
+					</button>
+				{/each}
+			</div>
+		</div>
+	{/if}
+
 			<!-- Views section -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
-		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">
-			Views 
-			<span class="text-gray-400 dark:text-gray-500 normal-case font-normal">(1-9)</span>
-		</h3>
+		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Views</h3>
 		<div class="space-y-1">
 			{#each sidebarItems as item}
 				<button
