@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Task } from '$lib/types';
-	import { fly } from 'svelte/transition';
 
 	interface Props {
 		task: Task;
@@ -19,7 +18,6 @@
 	onkeydown={(e) => e.key === 'Enter' && onClick(task)}
 	role="button"
 	tabindex="0"
-	transition:fly={{ y: -10, duration: 200 }}
 >
 	<!-- Completion checkbox -->
 	<button
