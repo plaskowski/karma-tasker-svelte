@@ -64,6 +64,7 @@
 	// Inline editor state
 	let inlineEditingTaskId: string | null = $state(null);
 	let editorStartHeight: number | null = $state(null);
+	let isClosing: boolean = $state(false);
 	const rowRefs: Record<string, HTMLDivElement | undefined> = $state({});
 
 	function toggleInlineEditor(taskId: string) {
@@ -77,9 +78,14 @@
 		inlineEditingTaskId = taskId;
 	}
 
-	function closeInlineEditor() {
+	function requestCloseInlineEditor() {
+		isClosing = true;
 		inlineEditingTaskId = null;
+	}
+
+	function handleEditorClosed() {
 		editorStartHeight = null;
+		isClosing = false;
 	}
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
@@ -321,16 +327,19 @@
 									projects={projects}
 									perspectives={$workspacePerspectives}
 									startHeight={editorStartHeight || undefined}
-									on:close={closeInlineEditor}
+									on:close={requestCloseInlineEditor}
+									on:closed={handleEditorClosed}
 								/>
 							{:else}
 								<div bind:this={rowRefs[task.id]}>
-									<TaskItem
+									{#if !isClosing}
+										<TaskItem
 										{task}
 										onToggle={onTaskToggle}
 										onClick={(t) => toggleInlineEditor(t.id)}
 										{showProjectBadge}
 									/>
+									{/if}
 								</div>
 							{/if}
 						{/each}
