@@ -6,8 +6,10 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-- [ ] use the editor for new task flow
+- [x] use the editor for new task flow
+- [ ] validate new task pane when a lot of items
 - [ ] put focus into title input when editing/creating task
+- [ ] make all buttons little bigger
 - [ ] default project name ...
   - how do we know which one is the default? 
 

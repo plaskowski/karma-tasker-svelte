@@ -34,6 +34,7 @@
     let showTaskDetailsDialog = $state(false);
 	let selectedTask: Task | null = $state(null);
     let showCreateEditor = $state(false);
+    let createEditorEl = $state<HTMLElement | null>(null);
 
 	// Update URL based on current state
 	function updateURL(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
@@ -192,6 +193,14 @@
 			return;
 		}
 
+    // Ensure inline create editor is visible when opened (when many items exist)
+    $effect(() => {
+        if (showCreateEditor && createEditorEl) {
+            // Scroll the editor into view at the bottom of the main panel
+            createEditorEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    });
+
         // Close create editor on Escape
         if (event.key === 'Escape') {
             if (showCreateEditor) {
@@ -288,7 +297,7 @@
         />
 
         {#if showCreateEditor}
-            <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+            <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4" bind:this={createEditorEl}>
                 <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
                     <TaskEditorForm
                         task={{
