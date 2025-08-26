@@ -7,6 +7,7 @@
 
 ### UI/UX Bugs
 - [ ] use the editor for new task flow
+- [ ] put focus into title input when editing/creating task
 - [ ] default project name ...
   - how do we know which one is the default? 
 
