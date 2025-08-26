@@ -5,6 +5,7 @@
 		workspaces,
 		workspacePerspectives,
 		currentView,
+		currentPerspectiveId,
 		currentProjectId,
 		currentWorkspace,
 
@@ -34,10 +35,13 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
     let createEditorEl = $state<HTMLElement | null>(null);
 
     // Update URL based on current state
-    function updateURL(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
+    function updateURL(view: import('$lib/types').ViewType, perspectiveId?: string, projectId?: string, workspaceId?: string) {
         const params = new URLSearchParams();
         params.set('workspace', workspaceId || $currentWorkspace);
         params.set('view', view);
+        if (perspectiveId && view === 'perspective') {
+            params.set('perspective', perspectiveId);
+        }
         if (projectId && view === 'project') {
             params.set('project', projectId);
         }
@@ -45,10 +49,13 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
     }
 
     // Only update URL if it would change (avoid remount on initial load)
-    function updateURLIfChanged(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
+    function updateURLIfChanged(view: import('$lib/types').ViewType, perspectiveId?: string, projectId?: string, workspaceId?: string) {
         const params = new URLSearchParams();
         params.set('workspace', workspaceId || $currentWorkspace);
         params.set('view', view);
+        if (perspectiveId && view === 'perspective') {
+            params.set('perspective', perspectiveId);
+        }
         if (projectId && view === 'project') {
             params.set('project', projectId);
         }
@@ -60,16 +67,23 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
     }
 
 	// Handle view changes
-	function handleViewChange(view: import('$lib/types').ViewType) {
+	function handleViewChange(view: import('$lib/types').ViewType, perspectiveId?: string) {
 		currentView.set(view);
-		if (view !== 'project') {
+		if (view === 'perspective' && perspectiveId) {
+			currentPerspectiveId.set(perspectiveId);
+			currentProjectId.set(undefined);
+			updateURL(view, perspectiveId);
+		} else if (view === 'all') {
 			currentProjectId.set(undefined);
 			updateURL(view);
-		} else {
+		} else if (view === 'project-all') {
+			currentProjectId.set(undefined);
+			updateURL(view);
+		} else if (view === 'project') {
 			// Keep current project if switching to project view
 			const projectId = $currentProjectId;
 			if (projectId) {
-				updateURL(view, projectId);
+				updateURL(view, undefined, projectId);
 			}
 		}
 	}
@@ -78,7 +92,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 	function handleProjectSelect(projectId: string | undefined) {
 		currentProjectId.set(projectId);
 		if (projectId) {
-			updateURL('project', projectId);
+			updateURL('project', undefined, projectId);
 		}
 	}
 
@@ -86,16 +100,30 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 	function handleWorkspaceChange(workspaceId: string) {
 		currentWorkspace.set(workspaceId);
 		
-		// If we're in project view, switch to inbox since projects are workspace-specific
-		if ($currentView === 'project') {
-			currentView.set('inbox');
-			currentProjectId.set(undefined);
-			updateURL('inbox', undefined, workspaceId);
+		// If we're in project view, switch to first perspective since projects are workspace-specific
+		if ($currentView === 'project' || $currentView === 'project-all') {
+			const firstPerspective = $workspacePerspectivesOrdered[0];
+			if (firstPerspective) {
+				currentView.set('perspective');
+				currentPerspectiveId.set(firstPerspective.id);
+				currentProjectId.set(undefined);
+				updateURL('perspective', firstPerspective.id, undefined, workspaceId);
+			}
+		} else if ($currentView === 'perspective') {
+			// Keep current perspective if it exists in new workspace, otherwise use first
+			const perspectiveExists = $workspacePerspectivesOrdered.some(p => p.id === $currentPerspectiveId);
+			if (!perspectiveExists) {
+				const firstPerspective = $workspacePerspectivesOrdered[0];
+				if (firstPerspective) {
+					currentPerspectiveId.set(firstPerspective.id);
+					updateURL('perspective', firstPerspective.id, undefined, workspaceId);
+				}
+			} else {
+				updateURL('perspective', $currentPerspectiveId, undefined, workspaceId);
+			}
 		} else {
-			// Keep current view for perspective views (they exist in all workspaces)
-			const currentViewValue = $currentView;
-			currentProjectId.set(undefined);
-			updateURL(currentViewValue, undefined, workspaceId);
+			// Keep current view for 'all' view
+			updateURL($currentView, undefined, undefined, workspaceId);
 		}
 	}
 
@@ -107,6 +135,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		const urlParams = $page.url.searchParams;
 		const workspaceParam = urlParams.get('workspace');
 		const view = urlParams.get('view') as import('$lib/types').ViewType;
+		const perspective = urlParams.get('perspective');
 		const project = urlParams.get('project');
 
 		// Set workspace from URL if valid, otherwise keep current
@@ -114,34 +143,55 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 			currentWorkspace.set(workspaceParam);
 		}
 
-    if (view && ['project', 'project-all', 'all', ...$workspacePerspectivesOrdered.map(p => p.id)].includes(view)) {
+		if (view && ['perspective', 'project', 'project-all', 'all'].includes(view)) {
 			currentView.set(view);
-			if (view === 'project' && project) {
+			
+			if (view === 'perspective') {
+				// Validate perspective exists in current workspace
+				if (perspective && $workspacePerspectivesOrdered.some(p => p.id === perspective)) {
+					currentPerspectiveId.set(perspective);
+				} else {
+					// Use first perspective as fallback
+					const firstPerspective = $workspacePerspectivesOrdered[0];
+					if (firstPerspective) {
+						currentPerspectiveId.set(firstPerspective.id);
+						updateURL('perspective', firstPerspective.id);
+					}
+				}
+			} else if (view === 'project' && project) {
 				// Validate project exists in current workspace
-                const projectExists = $workspaceProjects.some(p => p.id === project);
+				const projectExists = $workspaceProjects.some(p => p.id === project);
 				if (projectExists) {
 					currentProjectId.set(project);
 				} else {
-					// Project doesn't exist in current workspace, default to first workspace perspective
-					const defaultPerspective = $workspacePerspectivesOrdered[0]?.id || 'project';
-					currentView.set(defaultPerspective);
-					currentProjectId.set(undefined);
-					updateURL(defaultPerspective);
+					// Project doesn't exist, default to first perspective
+					const firstPerspective = $workspacePerspectivesOrdered[0];
+					if (firstPerspective) {
+						currentView.set('perspective');
+						currentPerspectiveId.set(firstPerspective.id);
+						currentProjectId.set(undefined);
+						updateURL('perspective', firstPerspective.id);
+					}
 				}
-            } else if (view !== 'project') {
+			} else if (view === 'project-all' || view === 'all') {
 				currentProjectId.set(undefined);
 			}
 		} else {
 			// Invalid or missing view, default to first workspace perspective
-            currentView.set($workspacePerspectivesOrdered[0]?.id || 'project');
-			currentProjectId.set(undefined);
-            updateURL($workspacePerspectivesOrdered[0]?.id || 'project');
+			const firstPerspective = $workspacePerspectivesOrdered[0];
+			if (firstPerspective) {
+				currentView.set('perspective');
+				currentPerspectiveId.set(firstPerspective.id);
+				currentProjectId.set(undefined);
+				updateURL('perspective', firstPerspective.id);
+			}
 		}
 
 		// Always update URL to ensure workspace is included
-        const finalView = $currentView;
+		const finalView = $currentView;
+		const finalPerspective = $currentPerspectiveId;
 		const finalProject = $currentProjectId;
-        updateURLIfChanged(finalView, finalProject);
+		updateURLIfChanged(finalView, finalPerspective, finalProject);
 
         // Add keyboard navigation
         window.addEventListener('keydown', handleKeydown);
@@ -199,7 +249,12 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 			throw new Error('No workspaces defined. At least one workspace is required.');
 		}
 		const firstWorkspaceId = $workspaces[0].id;
-        updateURL($workspacePerspectivesOrdered[0]?.id || 'project', undefined, firstWorkspaceId);
+		const firstPerspective = $workspacePerspectivesOrdered[0];
+		if (firstPerspective) {
+			currentView.set('perspective');
+			currentPerspectiveId.set(firstPerspective.id);
+			updateURL('perspective', firstPerspective.id, undefined, firstWorkspaceId);
+		}
 	}
 
     // Auto-scroll the create editor into view whenever it opens
@@ -211,8 +266,9 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 
     // Close inline/create editors when navigating away from the current view
     $effect(() => {
-        // React to currentView or currentProjectId changes
+        // React to currentView, currentPerspectiveId or currentProjectId changes
         const v = $currentView;
+        const persp = $currentPerspectiveId;
         const p = $currentProjectId;
         // When these change, ensure creation editor is closed
         showCreateEditor = false;
@@ -259,20 +315,9 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		const perspectiveKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 		const perspectiveIndex = perspectiveKeys.indexOf(event.key);
 		if (perspectiveIndex !== -1) {
-			// First key maps to the first perspective in current workspace
-			if (perspectiveIndex === 0) {
-				const firstPerspective = $workspacePerspectivesOrdered[0];
-				if (firstPerspective) {
-					handleViewChange(firstPerspective.id);
-					event.preventDefault();
-				}
-				return;
-			}
-			
-			// Other keys map to workspace perspectives
-            const perspective = $workspacePerspectivesOrdered[perspectiveIndex - 1];
+			const perspective = $workspacePerspectivesOrdered[perspectiveIndex];
 			if (perspective) {
-				handleViewChange(perspective.id);
+				handleViewChange('perspective', perspective.id);
 				event.preventDefault();
 			}
 			return;
@@ -293,6 +338,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 	<!-- Sidebar -->
         <Sidebar
 		currentView={$currentView}
+		currentPerspectiveId={$currentPerspectiveId}
 		currentProjectId={$currentProjectId}
 		currentWorkspace={$currentWorkspace}
 		workspaces={$workspaces}
@@ -310,6 +356,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
             tasks={$filteredTasks}
             projects={$workspaceProjects}
             currentView={$currentView}
+            currentPerspectiveId={$currentPerspectiveId}
             currentProjectId={$currentProjectId}
             onTaskToggle={handleTaskToggle}
 

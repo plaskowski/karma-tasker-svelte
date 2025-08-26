@@ -33,7 +33,7 @@ export interface Workspace {
   createdAt: Date;
 }
 
-export type ViewType = 'project' | string; // string allows for configurable perspective views
+export type ViewType = 'perspective' | 'project' | 'project-all' | 'all';
 
 // Draft payload shape used when creating a new task
 export type TaskDraft = Omit<Task, 'id' | 'createdAt' | 'updatedAt'>;

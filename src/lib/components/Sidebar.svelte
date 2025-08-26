@@ -4,18 +4,20 @@
 
 	interface Props {
 		currentView: ViewType;
+		currentPerspectiveId?: string;
 		currentProjectId?: string;
 		currentWorkspace: string;
 		workspaces: Workspace[];
 		perspectives: PerspectiveConfig[];
 		projects: Project[];
-		onViewChange: (view: ViewType) => void;
+		onViewChange: (view: ViewType, perspectiveId?: string) => void;
 		onProjectSelect: (projectId: string | undefined) => void;
 		onWorkspaceChange: (workspaceId: string) => void;
 	}
 
 	let { 
 		currentView, 
+		currentPerspectiveId,
 		currentProjectId,
 		currentWorkspace,
 		workspaces,
@@ -160,8 +162,8 @@
 		<div class="space-y-1">
             {#each sidebarItems as item}
 				<button
-					onclick={() => onViewChange(item.id as ViewType)}
-					class="w-full btn btn-base text-left {currentView === item.id 
+					onclick={() => onViewChange(item.id === 'all' ? 'all' : 'perspective', item.id === 'all' ? undefined : item.id)}
+					class="w-full btn btn-base text-left {(currentView === 'perspective' && currentPerspectiveId === item.id) || (currentView === 'all' && item.id === 'all')
 					? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 						: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 				>

@@ -12,8 +12,9 @@ export const projects = persisted(STORAGE_KEY + '-projects', mockProjects);
 export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces);
 
 // Current state stores
-// Default to the first perspective; will be set on mount based on workspace config
-export const currentView = writable<ViewType>('inbox');
+// Default to perspective view; will be set on mount based on workspace config
+export const currentView = writable<ViewType>('perspective');
+export const currentPerspectiveId = writable<string>('inbox');
 export const currentProjectId = writable<string | undefined>();
 // Use first workspace as default
 if (!mockWorkspaces[0]?.id) {
@@ -84,15 +85,21 @@ export const workspacePerspectivesOrdered = derived(
 );
 
 export const filteredTasks = derived(
-  [tasks, currentView, currentProjectId, currentWorkspace, workspacePerspectivesOrdered],
-  ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $workspacePerspectivesOrdered]) => {
+  [tasks, currentView, currentPerspectiveId, currentProjectId, currentWorkspace, workspacePerspectivesOrdered],
+  ([$tasks, $currentView, $currentPerspectiveId, $currentProjectId, $currentWorkspace, $workspacePerspectivesOrdered]) => {
     // Filter by current workspace first
     let filtered = $tasks.filter(task => {
       return task.workspaceId === $currentWorkspace;
     });
 
     // Filter by view
-    if ($currentView === 'project') {
+    if ($currentView === 'perspective') {
+      // Perspective view: filter by perspective id
+      const perspectiveId = $currentPerspectiveId;
+      const isKnownPerspective = $workspacePerspectivesOrdered.some(p => p.id === perspectiveId);
+      const effectivePerspective = isKnownPerspective ? perspectiveId : $workspacePerspectivesOrdered[0]?.id;
+      filtered = filtered.filter(task => task.perspective === effectivePerspective && !task.completed);
+    } else if ($currentView === 'project') {
       // Project view: specific project tasks
       if ($currentProjectId) {
         filtered = filtered.filter(task => task.projectId === $currentProjectId);
@@ -103,12 +110,6 @@ export const filteredTasks = derived(
     } else if ($currentView === 'all') {
       // All view: keep all tasks for current workspace (both active and completed)
       // No additional filtering
-    } else {
-      // Perspective view: filter by perspective id
-      const perspectiveId = $currentView;
-      const isKnownPerspective = $workspacePerspectivesOrdered.some(p => p.id === perspectiveId);
-      const effectivePerspective = isKnownPerspective ? perspectiveId : $workspacePerspectivesOrdered[0]?.id;
-      filtered = filtered.filter(task => task.perspective === effectivePerspective && !task.completed);
     }
 
     return filtered;
@@ -265,9 +266,14 @@ export function resetToInitialState() {
   if (!mockWorkspaces[0]?.id) {
     throw new Error('No workspaces defined. At least one workspace is required.');
   }
-  currentView.set('inbox');
-  currentProjectId.set(undefined);
   currentWorkspace.set(mockWorkspaces[0].id);
+  const ws = mockWorkspaces[0];
+  const firstPerspective = ws.perspectives?.[0];
+  if (firstPerspective) {
+    currentView.set('perspective');
+    currentPerspectiveId.set(firstPerspective.id);
+  }
+  currentProjectId.set(undefined);
   showCompleted.set(false);
   
   // Add sample tasks for other workspaces

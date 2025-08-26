@@ -9,6 +9,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 		tasks: Task[];
 		projects: Project[];
 		currentView: ViewType;
+		currentPerspectiveId?: string;
 		currentProjectId?: string;
 		onTaskToggle: (id: string) => void;
 		onTaskClick: (task: Task) => void;
@@ -23,6 +24,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 		tasks,
 		projects,
 		currentView,
+		currentPerspectiveId,
 		currentProjectId,
 		onTaskToggle,
 		onTaskClick,
@@ -47,10 +49,12 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 			}
 			return 'Project';
 		}
-		
-		// Look up perspective name
-		const perspective = $workspacePerspectives.find(p => p.id === currentView);
-		return perspective?.name || 'Tasks';
+		if (currentView === 'perspective') {
+			// Look up perspective name
+			const perspective = $workspacePerspectives.find(p => p.id === currentPerspectiveId);
+			return perspective?.name || 'Tasks';
+		}
+		return 'Tasks';
 	}
 
 
@@ -77,8 +81,8 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
 	// Group tasks by project for certain views
-	const shouldGroupByProject = $derived(['inbox', 'first', 'next', 'waiting', 'someday', 'scheduled', 'all'].includes(currentView));
-	const shouldGroupByPerspective = $derived(['project'].includes(currentView));
+	const shouldGroupByProject = $derived(currentView === 'perspective' || currentView === 'all');
+	const shouldGroupByPerspective = $derived(currentView === 'project');
 	const shouldGroupByPerspectiveThenProject = $derived(currentView === 'project-all');
 	
 	function groupTasksByProject(taskList: Task[]) {
