@@ -6,10 +6,6 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-- [x] remove "personal" magic value
-- [ ] write a claude rule - no need for backward compatibility, the app is not released yet
-- [ ] find any other magic values or special logic
-- [ ] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label
 - [ ] icons - both project and perspective should have an icon property, remove hardcoded icon mappings
 - [ ] drop counters from sidebar, they brings anxiety
 

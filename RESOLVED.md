@@ -14,6 +14,10 @@
 - [x] "All" view should use standard perspective view (the one that groups by project, it should sort the items by persperctive order within project group)
 - [x] Close editor when leaving the view
 - [x] Why "first" perspective is lowercase in list group header?
+- [x] Remove "personal" magic value from codebase
+- [x] Write a claude rule - no need for backward compatibility, the app is not released yet
+- [x] Find any other magic values or special logic
+- [x] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label
 - [x] Use the editor for new task flow (inline at bottom of main panel)
 - [x] Auto-scroll inline create editor into view when opened
 - [x] Autofocus title input on create/edit
@@ -64,11 +68,14 @@
 - [x] View preservation during workspace changes
 - [x] Prevent broken navigation states
 
-### Code Cleanup
+### Code Cleanup & Refactoring
 - [x] Remove search functionality and UI
 - [x] Remove settings functionality and UI  
 - [x] Clean up unused imports and code
 - [x] Simplified component interfaces
+- [x] Removed all unused fields from data models (Area interface, Project.color, Project.areaId, Project.isCollapsed, Workspace.isActive, AppState.searchQuery, Task.dueDate)
+- [x] Removed backward compatibility code and migration functions
+- [x] Created development guideline rules (no-backward-compatibility)
 
 ### Branding & Polish
 - [x] Styled "N" badge with gradient background
