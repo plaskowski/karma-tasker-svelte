@@ -1,0 +1,12 @@
+---
+name: No Backward Compatibility
+scopes:
+  - "*"
+visibility: project
+priority: high
+---
+
+- **No backward compatibility needed**: The app is not released yet, so there's no need to maintain backward compatibility.
+- **Remove legacy code**: Delete migration functions, fallbacks, and compatibility checks.
+- **Fail fast**: Throw errors explicitly rather than silently falling back to default values.
+- **Clean breaks**: When refactoring, make clean breaks without preserving old data structures.
