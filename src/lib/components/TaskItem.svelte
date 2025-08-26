@@ -43,7 +43,7 @@
 		</div>
 		
 		{#if task.description}
-			<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 {task.completed ? 'line-through opacity-50' : ''}">
+			<p class="text-xs leading-5 text-gray-500 dark:text-gray-400 mt-0.5 {task.completed ? 'line-through opacity-50' : ''}">
 				{task.description}
 			</p>
 		{/if}
