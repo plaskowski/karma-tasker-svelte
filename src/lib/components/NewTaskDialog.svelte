@@ -13,9 +13,19 @@
 	// Form state
 	let title = $state('');
 	let description = $state('');
-	let projectId = $state('');
+    let projectId = $state('');
 	let perspective = $state('');
 	let submitting = $state(false);
+
+    // Preselect first project in current workspace when dialog opens
+    $effect(() => {
+        if (open) {
+            const firstId = $workspaceProjects[0]?.id;
+            if (!projectId && firstId) {
+                projectId = firstId;
+            }
+        }
+    });
 
 	async function handleSubmit() {
 		if (!title.trim()) return;
