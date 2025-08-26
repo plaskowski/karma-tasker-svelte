@@ -1,3 +1,7 @@
+<!-- MIGRATION: This is mostly a presentation component with some icon mapping logic
+     - Move to lib/components/navigation/Sidebar.svelte
+     - Icon mapping could move to lib/utils/icons.ts
+-->
 <script lang="ts">
 	import { Zap, Inbox, Calendar, Clock, Users, Archive, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
 	import type { ViewType, Project, Workspace, PerspectiveConfig } from '$lib/types';

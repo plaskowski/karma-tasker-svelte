@@ -1,3 +1,8 @@
+<!-- MIGRATION: This component should be split:
+     - TaskList.svelte stays as container component (lib/components/tasks/TaskList.svelte)
+     - Grouping logic moves to lib/domain/task/logic.ts
+     - View title logic moves to a view service or helper
+-->
 <script lang="ts">
 	import type { Task, ViewType, Project } from '$lib/types';
 	import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
@@ -34,6 +39,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 		onRefresh
 	}: Props = $props();
 
+	// MIGRATION: Move to lib/services/viewService.ts or lib/domain/view/logic.ts
 	function getViewTitle() {
 		// Special views
 		if (currentView === 'all') {
@@ -80,6 +86,8 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	});
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
+	// MIGRATION: All grouping logic should move to lib/domain/task/logic.ts
+	// as pure functions like groupTasksByProject(), groupTasksByPerspective()
 	// Group tasks by project for certain views
 	const shouldGroupByProject = $derived(currentView === 'perspective' || currentView === 'all');
 	const shouldGroupByPerspective = $derived(currentView === 'project');

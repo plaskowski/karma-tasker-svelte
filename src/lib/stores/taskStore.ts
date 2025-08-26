@@ -1,3 +1,9 @@
+// ARCHITECTURE MIGRATION: This file needs to be split into multiple parts:
+// - Stores (stays here but simplified): Just state containers
+// - Services (lib/services/): Business logic for tasks, projects, workspaces
+// - Repositories (lib/server/repositories/): Data persistence layer
+// - Domain logic (lib/domain/): Business rules and validations
+
 import { writable, derived, get } from 'svelte/store';
 import { persisted } from 'svelte-persisted-store';
 import type { Task, Project, Workspace, ViewType } from '$lib/types';
@@ -6,11 +12,16 @@ import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 // Storage key for persistence
 const STORAGE_KEY = 'karma-tasks';
 
+// MIGRATION: These persisted stores should move to repositories
+// lib/server/repositories/taskRepository.ts
+// lib/server/repositories/projectRepository.ts
+// lib/server/repositories/workspaceRepository.ts
 // Core data stores with persistence
 export const tasks = persisted(STORAGE_KEY + '-tasks', mockTasks);
 export const projects = persisted(STORAGE_KEY + '-projects', mockProjects);
 export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces);
 
+// MIGRATION: UI state stores - these can stay here or move to lib/stores/uiStore.ts
 // Current state stores
 // Default to perspective view; will be set on mount based on workspace config
 export const currentView = writable<ViewType>('perspective');
@@ -27,8 +38,11 @@ export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', moc
 
 export const showCompleted = writable(false);
 
+// MIGRATION: These functions should move to lib/services/taskService.ts
+// The service will handle business logic and call the repository for persistence
 // Mock API functions with realistic delays
 export async function addTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>): Promise<Task> {
+  // MIGRATION: Delay simulation moves to repository layer
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 500));
   
@@ -37,6 +51,7 @@ export async function addTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updated
     throw new Error('Network error');
   }
 
+  // MIGRATION: Order calculation logic moves to lib/domain/task/logic.ts
   // Calculate the next order value for this project
   const currentTasks = get(tasks);
   const projectTasks = currentTasks.filter(t => t.projectId === taskData.projectId);
@@ -54,6 +69,7 @@ export async function addTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updated
   return newTask;
 }
 
+// MIGRATION: Move to lib/services/taskService.ts
 export async function updateTask(id: string, updates: Partial<Task>): Promise<Task> {
   await new Promise(resolve => setTimeout(resolve, 200));
   
@@ -69,6 +85,7 @@ export async function updateTask(id: string, updates: Partial<Task>): Promise<Ta
   return updatedTask;
 }
 
+// MIGRATION: Move to lib/services/taskService.ts
 export async function deleteTask(id: string): Promise<void> {
   await new Promise(resolve => setTimeout(resolve, 300));
   
@@ -76,7 +93,7 @@ export async function deleteTask(id: string): Promise<void> {
 }
 
 
-
+// MIGRATION: Move to lib/services/taskService.ts
 export async function toggleTaskComplete(id: string): Promise<void> {
   const task = get(tasks).find(t => t.id === id);
   if (task) {
@@ -84,6 +101,7 @@ export async function toggleTaskComplete(id: string): Promise<void> {
   }
 }
 
+// MIGRATION: Derived stores stay here but filtering logic could move to lib/domain/task/logic.ts
 // Derived store for filtered tasks
 export const workspacePerspectivesOrdered = derived(
   [workspaces, currentWorkspace],
@@ -93,6 +111,8 @@ export const workspacePerspectivesOrdered = derived(
   }
 );
 
+// MIGRATION: Complex filtering logic could be extracted to lib/domain/task/logic.ts
+// as pure functions like filterTasksByView(tasks, view, perspectiveId, projectId, workspaceId)
 export const filteredTasks = derived(
   [tasks, currentView, currentPerspectiveId, currentProjectId, currentWorkspace, workspacePerspectivesOrdered],
   ([$tasks, $currentView, $currentPerspectiveId, $currentProjectId, $currentWorkspace, $workspacePerspectivesOrdered]) => {
@@ -156,6 +176,8 @@ export const workspacePerspectives = derived(
 
 
 
+// MIGRATION: This function should move to a development utility service
+// lib/services/devService.ts or lib/utils/dev.ts
 // Function to reset app to initial state (temporary for development)
 export function resetToInitialState() {
   // Reset all stores to initial mock data

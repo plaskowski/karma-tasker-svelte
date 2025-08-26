@@ -1,3 +1,5 @@
+<!-- MIGRATION: This is a pure presentation component - can stay mostly as-is
+     Move to lib/components/tasks/TaskItem.svelte -->
 <script lang="ts">
 	import type { Task } from '$lib/types';
 

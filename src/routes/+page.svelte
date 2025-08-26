@@ -1,3 +1,9 @@
+<!-- MIGRATION: This route component should be simplified:
+     - Move all business logic to services
+     - Extract URL management to a navigation service
+     - Keep only view orchestration and event handling
+     - Consider splitting into smaller sub-components
+-->
 <script lang="ts">
 	import {
 		tasks,
@@ -33,6 +39,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
     let showCreateEditor = $state(false);
     let createEditorEl = $state<HTMLElement | null>(null);
 
+    // MIGRATION: URL management should move to lib/services/navigationService.ts
     // Update URL based on current state
     function updateURL(view: import('$lib/types').ViewType, perspectiveId?: string, projectId?: string, workspaceId?: string) {
         const params = new URLSearchParams();
