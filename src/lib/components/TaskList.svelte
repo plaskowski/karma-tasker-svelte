@@ -254,7 +254,7 @@
                 {#if onNewTask}
                     <button
                         onclick={onNewTask}
-                        class="btn btn-base bg-blue-500 text-white hover:bg-blue-600"
+                        class="btn btn-sm btn-outline"
                         title="Create new task (N or Ctrl+N)"
                     >
 						<Plus class="w-4 h-4" />
@@ -265,7 +265,7 @@
                 {#if onCleanup}
                     <button
                         onclick={onCleanup}
-                        class="btn btn-base bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500"
+                        class="btn btn-sm btn-outline"
                     >
 						<Zap class="w-4 h-4" />
 						<span>Cleanup</span>
@@ -275,7 +275,7 @@
                 {#if onRefresh}
                     <button
                         onclick={onRefresh}
-                        class="btn btn-base bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500"
+                        class="btn btn-sm btn-outline"
                     >
 						<RefreshCw class="w-4 h-4" />
 						<span>Refresh</span>
