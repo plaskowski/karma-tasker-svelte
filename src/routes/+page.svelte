@@ -195,7 +195,10 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		// Reset app to initial state (temporary dev feature)
 		resetToInitialState();
 		// Update URL to reflect reset state - use first workspace
-		const firstWorkspaceId = $workspaces[0]?.id || 'personal';
+		if (!$workspaces[0]?.id) {
+			throw new Error('No workspaces defined. At least one workspace is required.');
+		}
+		const firstWorkspaceId = $workspaces[0].id;
         updateURL($workspacePerspectivesOrdered[0]?.id || 'project', undefined, firstWorkspaceId);
 	}
 

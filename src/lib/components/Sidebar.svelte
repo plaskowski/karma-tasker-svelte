@@ -88,7 +88,7 @@
 	}
 
 	function getWorkspaceIcon(workspaceId: string) {
-		// Map workspace IDs to icons
+		// Map workspace IDs to icons (for demo workspaces)
 		const iconMap: Record<string, any> = {
 			'personal': User,
 			'work': Briefcase,

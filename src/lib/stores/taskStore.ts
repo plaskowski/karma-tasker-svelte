@@ -17,7 +17,10 @@ export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces)
 export const currentView = writable<ViewType>('inbox');
 export const currentProjectId = writable<string | undefined>();
 // Use first workspace as default
-export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', mockWorkspaces[0]?.id || 'personal');
+if (!mockWorkspaces[0]?.id) {
+  throw new Error('No workspaces defined. At least one workspace is required.');
+}
+export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', mockWorkspaces[0].id);
 
 export const showCompleted = writable(false);
 
@@ -287,9 +290,12 @@ export function resetToInitialState() {
   workspaces.set(mockWorkspaces);
   
   // Reset current state to first workspace
+  if (!mockWorkspaces[0]?.id) {
+    throw new Error('No workspaces defined. At least one workspace is required.');
+  }
   currentView.set('inbox');
   currentProjectId.set(undefined);
-  currentWorkspace.set(mockWorkspaces[0]?.id || 'personal');
+  currentWorkspace.set(mockWorkspaces[0].id);
   showCompleted.set(false);
   
   // Add sample tasks for other workspaces
