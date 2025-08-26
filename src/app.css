@@ -9,3 +9,23 @@ html, body {
   overflow: hidden;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
+
+@layer components {
+  /* Base button styles */
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-md transition-colors whitespace-nowrap select-none;
+  }
+
+  /* Slightly larger sizes by default */
+  .btn-sm {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .btn-base {
+    @apply px-4 py-2.5 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-5 py-3 text-base;
+  }
+}

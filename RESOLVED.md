@@ -8,6 +8,7 @@
 - [x] Autofocus title input on create/edit
 - [x] Global N/Cmd/Ctrl+N shortcut opens inline new task
 - [x] Escape closes inline/create editor even when typing in inputs
+- [x] Make all buttons slightly larger for better touch targets
 - [x] Remove visual dividers between task groups for cleaner look
 - [x] Increase group header font size from `text-sm` to `text-base`
 - [x] Add consistent padding (`mb-6`) between task groups
