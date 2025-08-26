@@ -20,6 +20,7 @@
 - [x] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label
 - [x] Icons - both project and perspective should have an icon property, remove hardcoded icon mappings
 - [x] Drop counters from sidebar, they bring anxiety
+- [x] Task notes/descriptions support (already implemented - textarea in editor, display in TaskItem)
 - [x] Use the editor for new task flow (inline at bottom of main panel)
 - [x] Auto-scroll inline create editor into view when opened
 - [x] Autofocus title input on create/edit
