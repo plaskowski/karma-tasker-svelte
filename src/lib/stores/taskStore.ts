@@ -107,7 +107,7 @@ export const filteredTasks = derived(
       const perspectiveId = $currentPerspectiveId;
       const isKnownPerspective = $workspacePerspectivesOrdered.some(p => p.id === perspectiveId);
       const effectivePerspective = isKnownPerspective ? perspectiveId : $workspacePerspectivesOrdered[0]?.id;
-      filtered = filtered.filter(task => task.perspective === effectivePerspective && !task.completed);
+      filtered = filtered.filter(task => task.perspective === effectivePerspective);
     } else if ($currentView === 'project') {
       // Project view: specific project tasks
       if ($currentProjectId) {

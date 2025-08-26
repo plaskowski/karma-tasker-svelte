@@ -25,7 +25,7 @@ Next focus: begin Core Features below.
 - [x] define tasks order within the project and apply it in all views
 - [x] why we have both mockData and sampleData? move sampleData out of store file
 - [x] make the project badge have same look as perspective badge
-- [ ] why Inbox does not show completed items
+- [x] why Inbox does not show completed items (fixed - removed completed filter from perspective view)
 - [ ] the "All" view should obey the project order when showing groups
 
 ### Advanced Organization
