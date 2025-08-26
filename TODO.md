@@ -22,6 +22,9 @@ Next focus: begin Core Features below.
 - [ ] Drag & drop task reordering
 
 ### Advanced Organization
+- [ ] special markup support in description
+  - link in first line
+  - checklist
 - [ ] Custom perspective creation per workspace
 - [ ] Project-specific perspective filtering
 - [ ] Areas/contexts for better organization
