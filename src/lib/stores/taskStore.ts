@@ -132,13 +132,13 @@ export const firstPerspectiveId = derived([workspaces, currentWorkspace], ([$wor
 });
 
 
-// Derived store for workspace-filtered projects
+// Derived store for workspace-filtered projects (sorted by order)
 export const workspaceProjects = derived(
   [projects, currentWorkspace],
   ([$projects, $currentWorkspace]) => {
-    return $projects.filter(project => {
-      return project.workspaceId === $currentWorkspace;
-    });
+    return $projects
+      .filter(project => project.workspaceId === $currentWorkspace)
+      .sort((a, b) => a.order - b.order);
   }
 );
 

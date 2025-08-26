@@ -180,15 +180,16 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 			perspectiveGroups[perspectiveId].push(task);
 		});
 		
-		// Sort tasks within each perspective group by project name, then by order within project
+		// Sort tasks within each perspective group by project order, then by task order within project
 		Object.values(perspectiveGroups).forEach(tasks => {
 			tasks.sort((a, b) => {
-				// First sort by project name
-				const projectA = projects.find(p => p.id === a.projectId)?.name || '';
-				const projectB = projects.find(p => p.id === b.projectId)?.name || '';
-				const projectCompare = projectA.localeCompare(projectB);
-				if (projectCompare !== 0) return projectCompare;
-				// Then sort by order field within same project
+				// First sort by project order
+				const projectA = projects.find(p => p.id === a.projectId);
+				const projectB = projects.find(p => p.id === b.projectId);
+				const orderA = projectA?.order ?? Number.MAX_SAFE_INTEGER;
+				const orderB = projectB?.order ?? Number.MAX_SAFE_INTEGER;
+				if (orderA !== orderB) return orderA - orderB;
+				// Then sort by task order within same project
 				return a.order - b.order;
 			});
 		});

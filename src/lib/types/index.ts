@@ -17,6 +17,7 @@ export interface Project {
   name: string;
   icon?: string;
   workspaceId: string;
+  order: number;
   createdAt: Date;
 }
 
