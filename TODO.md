@@ -17,6 +17,7 @@
 - [ ] close editor when leaving the view
 - [ ] why "first" perspective is lowercase in list group header?
 - [ ] remove "personal" magic value
+- [ ] find any other magic values or special logic
 
 ## 🚀 Active Development Roadmap
 
