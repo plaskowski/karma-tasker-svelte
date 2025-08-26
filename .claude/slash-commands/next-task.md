@@ -1,10 +1,10 @@
-# Next TODO Command
+# Next Task Command
 
 ## Command
-`/next-todo` or `/nt`
+`/next-task` or `/nt`
 
 ## Description
-Instructs Claude to take and work on the first uncompleted item from TODO.md
+Instructs Claude to take and work on the first uncompleted task from TODO.md
 
 ## Prompt
 Please take the first uncompleted item (marked with `[ ]`) from @TODO.md and start working on it. Follow these steps:

@@ -4,8 +4,8 @@ Custom slash commands for this project to streamline development workflow.
 
 ## Available Commands
 
-### `/next-todo` or `/nt`
-Takes the first uncompleted item from TODO.md and starts working on it.
+### `/next-task` or `/nt`
+Takes the first uncompleted task from TODO.md and starts working on it.
 
 ### `/resolve-todos` 
 Moves all completed items (marked with `[x]`) from TODO.md to RESOLVED.md.
