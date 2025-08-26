@@ -2,7 +2,7 @@
 
 ## Overview
 
-Karma Tasker follows a **Domain-Organized MVC Pattern** with **ViewModels** for complex components. This architecture provides clear separation of concerns, excellent testability, and maintains the simplicity that SvelteKit promotes.
+Karma Tasker follows a **Domain-Organized MVC Pattern** with **ViewModels** for complex components. The application uses Supabase for data persistence and real-time synchronization. This architecture provides clear separation of concerns, excellent testability, and maintains the simplicity that SvelteKit promotes.
 
 ## Architecture Principles
 
@@ -17,9 +17,9 @@ Karma Tasker follows a **Domain-Organized MVC Pattern** with **ViewModels** for 
 ```
 src/
 ├── lib/
-│   ├── server/              # Server-only code (future backend)
-│   │   ├── repositories/   # Data persistence layer
-│   │   └── services/       # Server-side business logic
+│   ├── repositories/       # Data persistence layer (Supabase)
+│   │   ├── taskRepository.ts
+│   │   └── projectRepository.ts
 │   ├── domain/             # Domain models and business logic
 │   │   ├── task/
 │   │   │   ├── model.ts   # Task entity definition
@@ -27,7 +27,7 @@ src/
 │   │   ├── project/
 │   │   ├── workspace/
 │   │   └── perspective/
-│   ├── services/           # Client-side services
+│   ├── services/           # Business services
 │   │   ├── taskService.ts # Task operations
 │   │   └── navigationService.ts
 │   ├── stores/             # State management
@@ -57,15 +57,6 @@ src/
 - Business calculations and transformations
 
 ```typescript
-// lib/domain/task/model.ts
-export interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-  order: number;
-  // ...
-}
-
 // lib/domain/task/logic.ts
 export function calculateNextOrder(tasks: Task[]): number {
   return Math.max(...tasks.map(t => t.order), 0) + 1;
@@ -80,36 +71,13 @@ export function calculateNextOrder(tasks: Task[]): number {
 - Manage transactions
 - Call repositories for data
 
-```typescript
-// lib/services/taskService.ts
-export class TaskService {
-  async createTask(data: TaskDraft): Promise<Task> {
-    const order = calculateNextOrder(existingTasks);
-    const task = createTaskEntity(data, order);
-    return await taskRepository.save(task);
-  }
-}
-```
+### Repository Layer (`lib/repositories/`)
+**Purpose**: Abstract data persistence (currently mock, future Supabase)
 
-### Repository Layer (`lib/server/repositories/`)
-**Purpose**: Abstract data persistence
-
-- Data access logic
-- API calls or database queries
-- Caching strategies
-- Data transformation for storage
-
-```typescript
-// lib/server/repositories/taskRepository.ts
-export class TaskRepository {
-  async save(task: Task): Promise<Task> {
-    // Currently uses localStorage
-    // Future: API call or database operation
-    const stored = localStorage.setItem(`task-${task.id}`, JSON.stringify(task));
-    return task;
-  }
-}
-```
+- Data access logic  
+- Mock data for development
+- Future: Supabase client interactions
+- Future: Real-time subscriptions
 
 ### Store Layer (`lib/stores/`)
 **Purpose**: Manage application state
@@ -118,17 +86,6 @@ export class TaskRepository {
 - Derived stores for computed values
 - No business logic - just state
 - Bridge between services and components
-
-```typescript
-// lib/stores/taskStore.ts
-export const tasks = writable<Task[]>([]);
-export const currentView = writable<ViewType>('perspective');
-
-// Derived stores for computed state
-export const activeTasks = derived(tasks, 
-  $tasks => $tasks.filter(t => !t.completed)
-);
-```
 
 ### Component Layer (`lib/components/`)
 **Purpose**: User interface and interaction
@@ -203,6 +160,16 @@ User Action → Component → Service → Domain Logic → Repository → Store 
 - Multiple computed properties
 - Data transformation for display
 
+## Supabase Integration (Future)
+
+The application is designed to use Supabase for data persistence. Currently using mock data, but the repository layer abstracts this so switching to Supabase will be straightforward.
+
+### Planned Features
+- Real-time synchronization across devices
+- User authentication and workspaces
+- Optimistic updates for better UX
+- Offline support with sync queue
+
 ## Testing Strategy
 
 ### Unit Tests
@@ -212,7 +179,7 @@ User Action → Component → Service → Domain Logic → Repository → Store 
 
 ### Integration Tests
 - **Components + ViewModels**: Test together
-- **Services + Repositories**: Test data flow
+- **Services + Repositories**: Test data flow with mock Supabase client
 - **Stores + Services**: Test state management
 
 ### E2E Tests
@@ -251,7 +218,7 @@ Currently migrating from a monolithic structure. See [Migration Plan](../MIGRATI
 1. **Define the domain model** in `lib/domain/[feature]/model.ts`
 2. **Add business logic** in `lib/domain/[feature]/logic.ts`
 3. **Create a service** in `lib/services/[feature]Service.ts`
-4. **Add repository** if needed in `lib/server/repositories/`
+4. **Add repository** if needed in `lib/repositories/`
 5. **Create store** for state in `lib/stores/`
 6. **Build components** in `lib/components/[feature]/`
 7. **Add ViewModel** if component is complex
@@ -276,11 +243,12 @@ Only add architectural complexity when:
 
 ### Potential Enhancements
 
-- **API Layer**: When moving from mock to real backend
+- **Optimistic Updates**: Update UI before Supabase confirms
+- **Offline Support**: Queue changes when offline
 - **Caching Layer**: For performance optimization
 - **Event Bus**: For complex inter-component communication
 - **State Machines**: For complex UI workflows
-- **Validation Layer**: For complex form validation
+- **Validation Layer**: For complex form validation with Zod
 
 ## Summary
 

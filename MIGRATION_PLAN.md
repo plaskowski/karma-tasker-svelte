@@ -8,15 +8,16 @@ This document outlines where each piece of the current codebase should be reloca
 ```
 src/
 ├── lib/
-│   ├── server/              # Server-only code (future backend)
-│   │   ├── repositories/   # Data persistence layer
-│   │   └── services/       # Business logic services
+│   ├── repositories/       # Data persistence layer (Supabase)
+│   │   ├── taskRepository.ts
+│   │   ├── projectRepository.ts
+│   │   └── workspaceRepository.ts
 │   ├── domain/             # Domain models and business logic
 │   │   ├── task/
 │   │   ├── project/
 │   │   ├── workspace/
 │   │   └── perspective/
-│   ├── services/           # Client-side services
+│   ├── services/           # Business services
 │   ├── stores/             # Simplified state management
 │   ├── components/         # UI components organized by feature
 │   │   ├── tasks/
@@ -48,10 +49,9 @@ src/
   - `deleteTask()`
   - `toggleTaskComplete()`
 
-- **lib/server/repositories/taskRepository.ts** - Data persistence
-  - localStorage persistence logic
-  - Mock delay simulation
-  - Future API calls
+- **lib/repositories/taskRepository.ts** - Data persistence
+  - Mock data for now
+  - Future: Supabase integration
 
 - **lib/domain/task/logic.ts** - Pure business logic
   - `calculateNextOrder()`
@@ -106,7 +106,7 @@ src/
 
 ### 10. `/src/lib/data/mockData.ts`
 **Move to:**
-- **lib/server/repositories/mockData.ts** - Mock data for development
+- **lib/repositories/mockData.ts** - Mock data for development
 
 ## Implementation Phases
 
