@@ -3,6 +3,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { updateTask } from '$lib/stores/taskStore';
     import { ChevronDown } from 'lucide-svelte';
+    import { onMount } from 'svelte';
 
     type SaveFields = {
         title: string;
@@ -21,7 +22,7 @@
 
     let { task, projects, perspectives, save }: Props = $props();
 
-	const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher();
 
 	let title = $state(task.title);
 	let description = $state(task.description ?? '');
@@ -29,10 +30,16 @@
 	let perspective = $state(task.perspective ?? '');
 	let submitting = $state(false);
 
-	const titleId = `title-${task.id}`;
+    const titleId = `title-${task.id}`;
 	const descId = `desc-${task.id}`;
 	const projectIdId = `project-${task.id}`;
 	const perspectiveId = `perspective-${task.id}`;
+
+    // Autofocus the title input when the editor mounts (create or edit)
+    let titleInput = $state<HTMLInputElement | null>(null);
+    onMount(() => {
+        titleInput?.focus();
+    });
 
     async function handleSave() {
 		if (!title.trim()) return;
@@ -75,10 +82,11 @@
 		<!-- Left column: main fields -->
 		<div class="md:col-span-3 space-y-3">
 			<div>
-				<input
+                <input
 					id={titleId}
 					type="text"
 					bind:value={title}
+                    bind:this={titleInput}
 					onkeydown={onKeyDown}
 					class="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
 					placeholder="Title *"
