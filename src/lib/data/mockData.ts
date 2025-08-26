@@ -276,7 +276,7 @@ export const mockTasks: Task[] = [
     title: 'Yoga class registration',
     description: '',
     completed: false,
-    perspective: 'first',
+    // No perspective = inbox
     projectId: 'health',
     workspaceId: 'personal',
     order: 3,
@@ -300,7 +300,7 @@ export const mockTasks: Task[] = [
     title: 'Deep clean garage',
     description: '',
     completed: false,
-    perspective: 'next',
+    // No perspective = inbox
     projectId: 'household',
     workspaceId: 'personal',
     order: 4,
@@ -336,7 +336,7 @@ export const mockTasks: Task[] = [
     title: 'Research investment options',
     description: 'Look into index funds and ETFs',
     completed: false,
-    perspective: 'someday',
+    // No perspective = inbox
     projectId: 'finances',
     workspaceId: 'personal',
     order: 4,
@@ -360,7 +360,7 @@ export const mockTasks: Task[] = [
     title: 'Research hotels in Barcelona',
     description: 'Compare prices and locations',
     completed: false,
-    perspective: 'first',
+    // No perspective = inbox
     projectId: 'travel',
     workspaceId: 'personal',
     order: 3,
@@ -384,7 +384,7 @@ export const mockTasks: Task[] = [
     title: 'Complete online course on investing',
     description: '',
     completed: false,
-    perspective: 'next',
+    // No perspective = inbox
     projectId: 'learning',
     workspaceId: 'personal',
     order: 4,
@@ -408,7 +408,7 @@ export const mockTasks: Task[] = [
     title: 'Update emergency contact list',
     description: '',
     completed: false,
-    perspective: 'next',
+    // No perspective = inbox
     projectId: 'personal-default',
     workspaceId: 'personal',
     order: 3,
