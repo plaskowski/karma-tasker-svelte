@@ -76,45 +76,8 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	});
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
-	// Rotating motivational headers for First view - diverse positive energy with nostalgia
-	const firstHeaders = [
-		"Let's Roll",
-		"In the Zone",
-		"Making Magic",
-		"Pure Focus",
-		"Feeling Good",
-		"Ready to Shine",
-		"Somebody Stop Me",
-		"Legendary",
-		"Challenge Accepted",
-		"Bazinga",
-		"It's Morphin Time",
-		"Go Go Power Rangers",
-		"My Precious",
-		"For Frodo",
-		"You Have My Sword",
-		"Walking on Sunshine",
-		"You're a Wizard Harry",
-		"Expecto Patronum",
-		"Work Work",
-		"My Life for Aiur",
-		"Like a Boss",
-		"High Five",
-		"Gotta Catch 'Em All",
-		"Pika pika?",
-		"Avengers Assemble",
-		"I Am Iron Man",
-		"We Have a Hulk",
-		"Use the Force",
-		"Nobody Expects the Spanish Inquisition",
-		"I am dancing in the rain"
-	];
-	
-	// Pick random header on component initialization
-	const firstHeader = firstHeaders[Math.floor(Math.random() * firstHeaders.length)];
-
 	// Group tasks by project for certain views
-	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday', 'scheduled', 'all'].includes(currentView));
+	const shouldGroupByProject = $derived(['inbox', 'first', 'next', 'waiting', 'someday', 'scheduled', 'all'].includes(currentView));
 	const shouldGroupByPerspective = $derived(['project'].includes(currentView));
 	const shouldGroupByPerspectiveThenProject = $derived(currentView === 'project-all');
 	
@@ -243,10 +206,10 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 			tasks: Task[];
 		}> = [];
 
-		// First view - single group of active tasks
+		// Single ungrouped view (for views that don't match any grouping criteria)
 		if (!shouldGroupByProject && !shouldGroupByPerspective && !shouldGroupByPerspectiveThenProject) {
 			if (activeTasks.length > 0) {
-				groups.push({ id: 'first', title: firstHeader, tasks: activeTasks });
+				groups.push({ id: 'ungrouped', title: 'Tasks', tasks: activeTasks });
 			}
 		}
 		// Project-grouped views (Inbox, Next, Waiting, etc.)
