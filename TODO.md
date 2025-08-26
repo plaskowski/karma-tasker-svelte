@@ -8,6 +8,7 @@
 ### UI/UX Bugs
 - [ ] use the editor for new task flow
 - [ ] default project name ...
+  - how do we know which one is the default? 
 
 ## 🚀 Active Development Roadmap
 
