@@ -9,8 +9,8 @@
 - [x] use the editor for new task flow
 - [x] validate new task pane when a lot of items
 - [x] put focus into title input when editing/creating task
-- [ ] 'N' shortcut stopped working
-- [ ] escape does not work when focus in in new item title field
+- [x] 'N' shortcut stopped working
+- [x] escape does not work when focus in in new item title field
 - [ ] make all buttons little bigger
 - [ ] add new item should inherit project or perspective from current view
 - [ ] default project name ...
