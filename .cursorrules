@@ -5,6 +5,7 @@
 - **Use conventional commits**: Follow the format `type: description` where type is feat, fix, refactor, docs, style, test, chore, etc.
 - **Include benefits in commit messages**: Explain not just what changed, but the benefits and impact of the change.
 - **Test before committing**: Ensure there are no linter errors.
+- **Immediately cross out completed TODOs and move to RESOLVED**: When you complete an item in `TODO.md`, mark it `- [x]` and move it to `RESOLVED.md` in the same commit.
 
 ## Code Quality
 - **Use TypeScript strictly**: All new code should be properly typed with no `any` types.
