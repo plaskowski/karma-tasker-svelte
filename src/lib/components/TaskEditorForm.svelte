@@ -69,12 +69,17 @@
 		dispatch('close');
 	}
 
-	function onKeyDown(e: KeyboardEvent) {
-		if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-			e.preventDefault();
-			if (!submitting) handleSave();
-		}
-	}
+    function onKeyDown(e: KeyboardEvent) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            dispatch('close');
+            return;
+        }
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+            e.preventDefault();
+            if (!submitting) handleSave();
+        }
+    }
 </script>
 
 <form onsubmit={(e) => { e.preventDefault(); handleSave(); }} class="space-y-3">
