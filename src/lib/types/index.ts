@@ -9,8 +9,6 @@ export interface Task {
 
   createdAt: Date;
   updatedAt: Date;
-  /** Optional due date for scheduling or reminders */
-  dueDate?: Date;
 }
 
 export interface Project {

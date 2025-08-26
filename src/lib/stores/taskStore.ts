@@ -193,8 +193,7 @@ export function addSampleWorkspaceTasks() {
         projectId: 'client-portal',
         workspaceId: 'work',
         createdAt: new Date(),
-        updatedAt: new Date(),
-        dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // 2 days from now
+        updatedAt: new Date()
       },
       {
         id: 'work-2', 

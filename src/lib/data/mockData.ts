@@ -48,11 +48,6 @@ export const mockTasks: Task[] = [
 
     createdAt: new Date('2024-01-18'),
     updatedAt: new Date('2024-01-18'),
-    dueDate: (() => {
-      const thisWeek = new Date();
-      thisWeek.setDate(thisWeek.getDate() + 3);
-      return thisWeek;
-    })(), // This Week
   },
   {
     id: '5',
@@ -65,11 +60,6 @@ export const mockTasks: Task[] = [
 
     createdAt: new Date('2024-01-19'),
     updatedAt: new Date('2024-01-19'),
-    dueDate: (() => {
-      const nextMonth = new Date();
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
-      return nextMonth;
-    })(), // Later
   },
   {
     id: '6',
