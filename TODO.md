@@ -25,6 +25,7 @@ Next focus: begin Core Features below.
 - [ ] define tasks order within the project and apply it in all views
 - [ ] Drag & drop task reordering
 - [ ] name default project better
+- [ ] make the project badge have same look as perspective badge
 
 ### Advanced Organization
 - [ ] special markup support in description
