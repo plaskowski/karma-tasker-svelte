@@ -6,7 +6,7 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-- [x] make all buttons little bigger
+ - [x] make all buttons little bigger
 - [x] add new item should inherit project or perspective from current view
 - [ ] default project name ...
   - how do we know which one is the default? 
