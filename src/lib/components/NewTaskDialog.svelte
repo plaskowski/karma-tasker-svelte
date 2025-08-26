@@ -4,9 +4,11 @@
 
 	interface Props {
 		open: boolean;
+		defaultProjectId?: string;
+		defaultPerspectiveId?: string;
 	}
 
-	let { open }: Props = $props();
+	let { open, defaultProjectId, defaultPerspectiveId }: Props = $props();
 	
 	const dispatch = createEventDispatcher();
 
@@ -17,12 +19,16 @@
 	let perspective = $state('');
 	let submitting = $state(false);
 
-    // Preselect first project in current workspace when dialog opens
+    // Preselect defaults when dialog opens
     $effect(() => {
         if (open) {
-            const firstId = $workspaceProjects[0]?.id;
-            if (!projectId && firstId) {
-                projectId = firstId;
+            // Use provided default or first project
+            if (!projectId) {
+                projectId = defaultProjectId || $workspaceProjects[0]?.id || '';
+            }
+            // Use provided default perspective
+            if (!perspective && defaultPerspectiveId) {
+                perspective = defaultPerspectiveId;
             }
         }
     });
