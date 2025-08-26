@@ -21,6 +21,7 @@ Next focus: begin Core Features below.
 
 ### Core Features
 - [ ] Task editing and detailed view
+- [ ] "All" view
 - [ ] Task notes/descriptions support
 - [ ] Drag & drop task reordering
 
