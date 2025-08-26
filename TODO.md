@@ -32,6 +32,7 @@ Next focus: begin Core Features below.
 - [ ] name default project better
 - [ ] Drag & drop task reordering
 - [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
+- [ ] consolidate all class attribute spagetti into semantic classes
 - [ ] special markup support in description
   - link in first line
   - checklist
