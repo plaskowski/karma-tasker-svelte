@@ -18,6 +18,7 @@
 - [ ] why "first" perspective is lowercase in list group header?
 - [ ] remove "personal" magic value
 - [ ] find any other magic values or special logic
+- [ ] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label 
 
 ## 🚀 Active Development Roadmap
 
