@@ -11,6 +11,7 @@
 - [x] Make all buttons slightly larger for better touch targets
 - [x] New item inherits current project/perspective (project view or perspective view)
 - [x] Default project is derived from workspace.defaultProjectId and surfaced to UI
+- [x] Switch TaskList header secondary actions to outline button style
 - [x] Remove visual dividers between task groups for cleaner look
 - [x] Increase group header font size from `text-sm` to `text-base`
 - [x] Add consistent padding (`mb-6`) between task groups

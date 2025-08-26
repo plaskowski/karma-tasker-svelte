@@ -13,3 +13,4 @@ priority: high
 - **Test before committing**: Ensure no linter/type errors.
 - **Resolve TODO flow**: Move the completed item to `RESOLVED.md` and remove it from `TODO.md` in the same main code commit (do not leave checked-off lines behind).
 - **Squash rule**: When squashing, write a single updated message reflecting combined changes and benefits.
+ - **Commit message transport**: Always use a file-based message at `.git/COMMIT_EDITMSG`. Write the commit message there and run `git commit -F .git/COMMIT_EDITMSG`. Do not pass long messages via `-m`.
