@@ -27,6 +27,7 @@ Next focus: begin Core Features below.
 - [ ] Drag & drop task reordering
 - [ ] name default project better
 - [ ] make the project badge have same look as perspective badge
+- [ ] why Inbox does not show completed items
 
 ### Advanced Organization
 - [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
