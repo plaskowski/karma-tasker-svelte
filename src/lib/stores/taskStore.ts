@@ -1,7 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
 import { persisted } from 'svelte-persisted-store';
-import type { Task, Project, Area, Workspace, ViewType } from '$lib/types';
-import { mockTasks, mockProjects, mockAreas, mockWorkspaces } from '$lib/data/mockData';
+import type { Task, Project, Workspace, ViewType } from '$lib/types';
+import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 
 // Storage key for persistence
 const STORAGE_KEY = 'karma-tasks';
@@ -9,7 +9,6 @@ const STORAGE_KEY = 'karma-tasks';
 // Core data stores with persistence
 export const tasks = persisted(STORAGE_KEY + '-tasks', mockTasks);
 export const projects = persisted(STORAGE_KEY + '-projects', mockProjects);
-export const areas = persisted(STORAGE_KEY + '-areas', mockAreas);
 export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces);
 
 // Current state stores

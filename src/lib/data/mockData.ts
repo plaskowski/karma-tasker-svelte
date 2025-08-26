@@ -1,4 +1,4 @@
-import type { Task, Project, Area, Workspace } from '$lib/types';
+import type { Task, Project, Workspace } from '$lib/types';
 
 export const mockTasks: Task[] = [
   {
@@ -272,8 +272,6 @@ export const mockProjects: Project[] = [
   { id: 'music', name: 'Music', workspaceId: 'hobby', createdAt: new Date() },
 ];
 
-export const mockAreas: Area[] = [];
-
 export const mockWorkspaces: Workspace[] = [
   {
     id: 'personal',
@@ -284,7 +282,6 @@ export const mockWorkspaces: Workspace[] = [
       { id: 'next', name: 'Next', icon: 'clock', order: 3 },
       { id: 'someday', name: 'Someday', icon: 'archive', order: 4 },
     ],
-    isActive: true,
     createdAt: new Date()
   },
   {
@@ -296,7 +293,6 @@ export const mockWorkspaces: Workspace[] = [
       { id: 'next', name: 'Next', icon: 'clock', order: 3 },
       { id: 'review', name: 'Review', icon: 'users', order: 4 },
     ],
-    isActive: false,
     createdAt: new Date()
   },
   {
@@ -308,7 +304,6 @@ export const mockWorkspaces: Workspace[] = [
       { id: 'next', name: 'Next', icon: 'clock', order: 3 },
       { id: 'ideas', name: 'Ideas', icon: 'archive', order: 4 },
     ],
-    isActive: false,
     createdAt: new Date()
   },
 ];
