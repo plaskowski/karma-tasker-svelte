@@ -1,0 +1,12 @@
+---
+name: Project-Specific Rules
+scopes:
+  - "*"
+visibility: project
+priority: high
+---
+
+- **No tags**: Tags were removed for MVP; do not reintroduce without discussion.
+- **GTD perspectives**: Use Inbox, Next, Waiting, Scheduled, Someday for categorization.
+- **Mock data**: Development uses mock data with simulated delays/failures.
+- **SvelteKit + Tailwind**: Stick to the current stack; avoid new dependencies unless necessary.

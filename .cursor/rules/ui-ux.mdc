@@ -1,0 +1,12 @@
+---
+name: UI/UX Standards
+scopes:
+  - "*"
+visibility: project
+priority: high
+---
+
+- **Dark mode**: Ensure components work in light and dark themes.
+- **Responsive**: Support a range of screen sizes.
+- **Accessibility**: Semantic HTML, ARIA where appropriate, keyboard navigation.
+- **Performance**: Use Svelte reactivity efficiently to avoid unnecessary re-renders.

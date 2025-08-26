@@ -1,0 +1,12 @@
+---
+name: Code Quality Standards
+scopes:
+  - "*"
+visibility: project
+priority: high
+---
+
+- **Strict TypeScript**: No `any` in new code; prefer explicit types.
+- **Svelte 5 runes**: Use `$state()`, `$derived()`, and `onclick` over deprecated patterns.
+- **Clean imports**: Remove unused imports/exports after refactors.
+- **Consistency**: Maintain naming, structure, and patterns across the codebase.

@@ -1,0 +1,14 @@
+---
+name: Development Workflow
+scopes:
+  - "*"
+visibility: project
+priority: high
+---
+
+- **Commit after each edit**: Commit immediately with a descriptive message.
+- **Conventional commits**: `type: description` (feat, fix, refactor, docs, style, test, chore, etc.).
+- **Include benefits in messages**: Explain impact/benefits, not just what changed.
+- **Test before committing**: Ensure no linter/type errors.
+- **Resolve TODO flow**: When completing an item in `TODO.md`, mark it `- [x]` and move it to `RESOLVED.md` in the same commit.
+- **Squash rule**: When squashing, write a single updated message reflecting combined changes and benefits.

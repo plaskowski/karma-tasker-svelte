@@ -1,0 +1,12 @@
+---
+name: Architecture Guidelines
+scopes:
+  - "*"
+visibility: project
+priority: high
+---
+
+- **Component separation**: Keep `TaskList` (container/logic) and `TaskItem` (presentation) separated.
+- **Store management**: Use Svelte stores for global state; local component state for component-specific data.
+- **GTD principles**: Align task organization with Getting Things Done.
+- **MVP focus**: Keep features simple and essential; avoid unnecessary complexity.
