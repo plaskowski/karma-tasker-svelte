@@ -288,12 +288,8 @@
         />
 
         {#if showCreateEditor}
-            <div class="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
-                <div class="max-w-4xl mx-auto">
-                    <header class="mb-3 flex items-center justify-between">
-                        <h2 class="text-base font-medium text-gray-900 dark:text-gray-100">New Task</h2>
-                        <button class="btn btn-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200" onclick={handleCreateClose}>Close</button>
-                    </header>
+            <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+                <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
                     <TaskEditorForm
                         task={{
                             id: 'new',
@@ -321,7 +317,7 @@
                         }}
                         on:close={handleCreateClose}
                     />
-                </div>
+                </section>
             </div>
         {/if}
     </div>
