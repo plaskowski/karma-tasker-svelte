@@ -14,6 +14,7 @@
 - [ ] project badge should be aligned with item title line
 - [ ] when closing editor the task line should not use in animation
 - [ ] cmd/ctrl+enter should confirm the edit panel
+- [ ] default project name ...
 
 ## 🚀 Active Development Roadmap
 
