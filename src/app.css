@@ -34,8 +34,5 @@ html, body {
     @apply border border-gray-300 dark:border-gray-600 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700;
   }
 
-  /* Slightly larger vertical padding for top bar buttons */
-  .btn-topbar {
-    @apply py-2.5;
-  }
+  /* Top bar specific class removed; use btn-base with btn-outline instead */
 }

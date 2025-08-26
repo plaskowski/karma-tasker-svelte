@@ -254,7 +254,7 @@
                 {#if onNewTask}
                     <button
                         onclick={onNewTask}
-                        class="btn btn-sm btn-outline btn-topbar"
+                        class="btn btn-base btn-outline"
                         title="Create new task (N or Ctrl+N)"
                     >
 						<Plus class="w-4 h-4" />
@@ -265,7 +265,7 @@
                 {#if onCleanup}
                     <button
                         onclick={onCleanup}
-                        class="btn btn-sm btn-outline btn-topbar"
+                        class="btn btn-base btn-outline"
                     >
 						<Zap class="w-4 h-4" />
 						<span>Cleanup</span>
@@ -275,7 +275,7 @@
                 {#if onRefresh}
                     <button
                         onclick={onRefresh}
-                        class="btn btn-sm btn-outline btn-topbar"
+                        class="btn btn-base btn-outline"
                     >
 						<RefreshCw class="w-4 h-4" />
 						<span>Refresh</span>
