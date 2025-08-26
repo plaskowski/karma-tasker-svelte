@@ -279,13 +279,13 @@
 
 <div class="h-full flex dark">
 	<!-- Sidebar -->
-	<Sidebar
+    <Sidebar
 		currentView={$currentView}
 		currentProjectId={$currentProjectId}
 		currentWorkspace={$currentWorkspace}
 		workspaces={$workspaces}
 		perspectives={$workspacePerspectives}
-		projects={$workspaceProjects}
+		projects={$workspaceProjectsForSelection}
 		onViewChange={handleViewChange}
 		onProjectSelect={handleProjectSelect}
 		onWorkspaceChange={handleWorkspaceChange}
