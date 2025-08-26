@@ -7,6 +7,7 @@ priority: high
 ---
 
 - **Commit after each edit**: Commit immediately with a descriptive message.
+- **Do not ask to commit**: Never prompt the user about committing; commit automatically.
 - **Conventional commits**: `type: description` (feat, fix, refactor, docs, style, test, chore, etc.).
 - **Include benefits in messages**: Explain impact/benefits, not just what changed.
 - **Test before committing**: Ensure no linter/type errors.
