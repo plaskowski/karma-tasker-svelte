@@ -7,6 +7,7 @@
 
 ### UI/UX Bugs
 - [ ] remove "personal" magic value
+- [ ] write a claude rule - no need for backward compatibility, the app is not released yet
 - [ ] find any other magic values or special logic
 - [ ] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label 
 
