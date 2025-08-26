@@ -17,6 +17,7 @@ Next focus: begin Core Features below.
 - [x] Task editing and detailed view
 - [x] "All" view
 - [ ] Task notes/descriptions support
+- [ ] define tasks order within the project and apply it in all views
 - [ ] Drag & drop task reordering
 
 ### Advanced Organization
