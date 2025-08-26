@@ -9,7 +9,8 @@
 - [x] remove "personal" magic value
 - [ ] write a claude rule - no need for backward compatibility, the app is not released yet
 - [ ] find any other magic values or special logic
-- [ ] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label 
+- [ ] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label
+- [ ] icons - both project and perspective should have an icon property, remove hardcoded icon mappings
 
 ## 🚀 Active Development Roadmap
 
@@ -17,8 +18,8 @@
 Next focus: begin Core Features below.
 
 ### Core Features
-- [ ] Task editing and detailed view
-- [ ] "All" view
+- [x] Task editing and detailed view
+- [x] "All" view
 - [ ] Task notes/descriptions support
 - [ ] Drag & drop task reordering
 
