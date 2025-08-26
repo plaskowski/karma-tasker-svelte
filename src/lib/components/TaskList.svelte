@@ -33,30 +33,21 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	}: Props = $props();
 
 	function getViewTitle() {
-		switch (currentView) {
-			case 'first':
-				return 'First';
-			case 'all':
-				return 'All';
-			case 'inbox':
-				return 'Inbox';
-			case 'next':
-				return 'Next';
-			case 'waiting':
-				return 'Waiting';
-			case 'scheduled':
-				return 'Scheduled';
-			case 'someday':
-				return 'Someday';
-			case 'project':
-				if (currentProjectId) {
-					const project = projects.find(p => p.id === currentProjectId);
-					return project ? project.name : 'Project';
-				}
-				return 'Project';
-			default:
-				return 'Tasks';
+		// Special views
+		if (currentView === 'all') {
+			return 'All';
 		}
+		if (currentView === 'project') {
+			if (currentProjectId) {
+				const project = projects.find(p => p.id === currentProjectId);
+				return project ? project.name : 'Project';
+			}
+			return 'Project';
+		}
+		
+		// Look up perspective name
+		const perspective = $workspacePerspectives.find(p => p.id === currentView);
+		return perspective?.name || 'Tasks';
 	}
 
 
@@ -194,15 +185,9 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	}
 
 	function getPerspectiveGroupLabel(groupKey: string): string {
-		switch (groupKey) {
-			case 'first': return 'First';
-			case 'inbox': return 'Inbox';
-			case 'next': return 'Next';
-			case 'waiting': return 'Waiting';
-			case 'scheduled': return 'Scheduled';
-			case 'someday': return 'Someday';
-			default: return groupKey;
-		}
+		// Look up the perspective definition to get its proper name
+		const perspective = $workspacePerspectives.find(p => p.id === groupKey);
+		return perspective?.name || groupKey;
 	}
 
 	// Unified task groups for rendering
