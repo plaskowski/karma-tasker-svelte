@@ -144,7 +144,7 @@ export const perspectiveTaskCounts = derived([tasks, currentWorkspace, workspace
   return result;
 });
 
-// Derived store for workspace-filtered projects (excluding default projects)
+// Derived store for workspace-filtered projects
 export const workspaceProjects = derived(
   [projects, currentWorkspace],
   ([$projects, $currentWorkspace]) => {
@@ -156,19 +156,7 @@ export const workspaceProjects = derived(
 );
 
 // Default project id for the current workspace
-// NOTE: No default project id; use the first project from workspace where needed.
-
-// Project list for selection controls (includes the default project)
-export const workspaceProjectsForSelection = derived(
-  [projects, currentWorkspace],
-  ([$projects, $currentWorkspace]) => {
-    // Keep insertion order; first item is considered the workspace's first project
-    return $projects.filter(project => {
-      const projectWorkspace = project.workspaceId || 'personal';
-      return projectWorkspace === $currentWorkspace;
-    });
-  }
-);
+// NOTE: Use the first project from workspace where needed.
 
 // Derived store for current workspace perspectives (unordered)
 export const workspacePerspectives = derived(

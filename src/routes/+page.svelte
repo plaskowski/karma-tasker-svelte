@@ -24,7 +24,7 @@
     import { onMount } from 'svelte';
     import Sidebar from '$lib/components/Sidebar.svelte';
     import TaskList from '$lib/components/TaskList.svelte';
-import { workspaceProjectsForSelection, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
+import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
     import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
     import TaskInlineEditor from '$lib/components/TaskInlineEditor.svelte';
     import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
@@ -122,7 +122,7 @@ import { workspaceProjectsForSelection, workspacePerspectivesOrdered } from '$li
 			currentView.set(view);
 			if (view === 'project' && project) {
 				// Validate project exists in current workspace
-				const projectExists = $workspaceProjectsForSelection.some(p => p.id === project);
+                const projectExists = $workspaceProjects.some(p => p.id === project);
 				if (projectExists) {
 					currentProjectId.set(project);
 				} else {
@@ -278,13 +278,13 @@ import { workspaceProjectsForSelection, workspacePerspectivesOrdered } from '$li
 
 <div class="h-full flex dark">
 	<!-- Sidebar -->
-    <Sidebar
+        <Sidebar
 		currentView={$currentView}
 		currentProjectId={$currentProjectId}
 		currentWorkspace={$currentWorkspace}
 		workspaces={$workspaces}
 		perspectives={$workspacePerspectives}
-		projects={$workspaceProjectsForSelection}
+		projects={$workspaceProjects}
 		onViewChange={handleViewChange}
 		onProjectSelect={handleProjectSelect}
 		onWorkspaceChange={handleWorkspaceChange}
@@ -297,7 +297,7 @@ import { workspaceProjectsForSelection, workspacePerspectivesOrdered } from '$li
         <!-- Task List fills remaining space -->
         <TaskList
             tasks={$filteredTasks}
-            projects={$workspaceProjectsForSelection}
+            projects={$workspaceProjects}
             currentView={$currentView}
             currentProjectId={$currentProjectId}
             onTaskToggle={handleTaskToggle}
@@ -323,13 +323,13 @@ import { workspaceProjectsForSelection, workspacePerspectivesOrdered } from '$li
                             projectId: (
                                 $currentView === 'project' && $currentProjectId
                                 ? $currentProjectId
-                                : ($workspaceProjectsForSelection[0]?.id || '')
+                                : ($workspaceProjects[0]?.id || '')
                             ),
                             workspaceId: $currentWorkspace,
                             createdAt: new Date(),
                             updatedAt: new Date()
                         }}
-                        projects={$workspaceProjectsForSelection}
+                        projects={$workspaceProjects}
                         perspectives={$workspacePerspectivesOrdered}
                         save={async ({ title, description, projectId, perspective }) => {
                             await addTask({
