@@ -3,7 +3,6 @@
 		tasks,
 		projects,
 		workspaces,
-		workspaceProjects,
 		workspacePerspectives,
 		currentView,
 		currentProjectId,
@@ -25,7 +24,7 @@
     import { onMount } from 'svelte';
     import Sidebar from '$lib/components/Sidebar.svelte';
     import TaskList from '$lib/components/TaskList.svelte';
-    import { workspaceProjectsForSelection, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
+import { workspaceProjectsForSelection, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
     import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
     import TaskInlineEditor from '$lib/components/TaskInlineEditor.svelte';
     import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
@@ -123,7 +122,7 @@
 			currentView.set(view);
 			if (view === 'project' && project) {
 				// Validate project exists in current workspace
-				const projectExists = $workspaceProjects.some(p => p.id === project);
+				const projectExists = $workspaceProjectsForSelection.some(p => p.id === project);
 				if (projectExists) {
 					currentProjectId.set(project);
 				} else {
@@ -324,7 +323,7 @@
                             projectId: (
                                 $currentView === 'project' && $currentProjectId
                                 ? $currentProjectId
-                                : ($workspaces.find(w => w.id === $currentWorkspace)?.defaultProjectId || 'personal-default')
+                                : ($workspaceProjectsForSelection[0]?.id || '')
                             ),
                             workspaceId: $currentWorkspace,
                             createdAt: new Date(),

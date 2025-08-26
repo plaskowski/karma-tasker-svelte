@@ -146,40 +146,27 @@ export const perspectiveTaskCounts = derived([tasks, currentWorkspace, workspace
 
 // Derived store for workspace-filtered projects (excluding default projects)
 export const workspaceProjects = derived(
-  [projects, workspaces, currentWorkspace],
-  ([$projects, $workspaces, $currentWorkspace]) => {
-    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
-    const defaultProjectId = currentWorkspaceData?.defaultProjectId;
-    
+  [projects, currentWorkspace],
+  ([$projects, $currentWorkspace]) => {
     return $projects.filter(project => {
       const projectWorkspace = project.workspaceId || 'personal';
-      return projectWorkspace === $currentWorkspace && project.id !== defaultProjectId;
+      return projectWorkspace === $currentWorkspace;
     });
   }
 );
 
 // Default project id for the current workspace
-export const workspaceDefaultProjectId = derived(
-  [workspaces, currentWorkspace],
-  ([$workspaces, $currentWorkspace]) => {
-    return $workspaces.find(w => w.id === $currentWorkspace)?.defaultProjectId;
-  }
-);
+// NOTE: No default project id; use the first project from workspace where needed.
 
 // Project list for selection controls (includes the default project)
 export const workspaceProjectsForSelection = derived(
-  [projects, workspaces, currentWorkspace],
-  ([$projects, $workspaces, $currentWorkspace]) => {
-    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
-    const defaultProjectId = currentWorkspaceData?.defaultProjectId;
-
-    const list = $projects.filter(project => {
+  [projects, currentWorkspace],
+  ([$projects, $currentWorkspace]) => {
+    // Keep insertion order; first item is considered the workspace's first project
+    return $projects.filter(project => {
       const projectWorkspace = project.workspaceId || 'personal';
       return projectWorkspace === $currentWorkspace;
     });
-
-    // Sort to put default project first, keep others stable
-    return list.sort((a, b) => (a.id === defaultProjectId ? -1 : b.id === defaultProjectId ? 1 : 0));
   }
 );
 
@@ -195,18 +182,20 @@ export const workspacePerspectives = derived(
 // Migration function to add workspaceId to existing tasks/projects and assign default projects
 export function migrateToWorkspaces() {
   // Update tasks without workspaceId to use 'personal' and assign default project if missing
-  tasks.update(taskList => 
-    taskList.map(task => {
+  tasks.update(taskList => {
+    const allProjects = get(projects);
+    return taskList.map(task => {
       const finalWorkspaceId = task.workspaceId || 'personal';
-      const finalProjectId = task.projectId || `${finalWorkspaceId}-default`;
-      
+      const firstWorkspaceProjectId = allProjects.find(p => (p.workspaceId || 'personal') === finalWorkspaceId)?.id;
+      const finalProjectId = task.projectId || firstWorkspaceProjectId || '';
+
       return {
         ...task,
         workspaceId: finalWorkspaceId,
         projectId: finalProjectId
       };
-    })
-  );
+    });
+  });
   
   // Update projects without workspaceId to use 'personal'
   projects.update(projectList =>

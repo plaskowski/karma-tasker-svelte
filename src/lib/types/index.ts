@@ -40,7 +40,6 @@ export interface PerspectiveConfig {
 export interface Workspace {
   id: string;
   name: string;
-  defaultProjectId: string;
   perspectives: PerspectiveConfig[];
   isActive: boolean;
   createdAt: Date;

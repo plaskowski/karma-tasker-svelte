@@ -278,7 +278,6 @@ export const mockWorkspaces: Workspace[] = [
   {
     id: 'personal',
     name: 'Personal',
-    defaultProjectId: 'personal-default',
     perspectives: [
       { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
       { id: 'first', name: 'First', icon: 'zap', order: 2 },
@@ -291,7 +290,6 @@ export const mockWorkspaces: Workspace[] = [
   {
     id: 'work',
     name: 'Work',
-    defaultProjectId: 'work-default',
     perspectives: [
       { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
       { id: 'first', name: 'First', icon: 'zap', order: 2 },
@@ -304,7 +302,6 @@ export const mockWorkspaces: Workspace[] = [
   {
     id: 'hobby',
     name: 'Hobby',
-    defaultProjectId: 'hobby-default',
     perspectives: [
       { id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
       { id: 'first', name: 'First', icon: 'zap', order: 2 },

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addTask, workspaceProjects, workspacePerspectives, currentWorkspace, workspaces } from '$lib/stores/taskStore';
+    import { addTask, workspaceProjects, workspacePerspectives, currentWorkspace } from '$lib/stores/taskStore';
 	import { createEventDispatcher } from 'svelte';
 
 	interface Props {
@@ -22,9 +22,9 @@
 
 		submitting = true;
 		try {
-			// Get default project if no project selected
-			const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
-			const finalProjectId = projectId || currentWorkspaceData?.defaultProjectId || 'personal-default';
+        // Pick first project of the current workspace if none selected
+        const firstProjectId = $workspaceProjects[0]?.id || '';
+        const finalProjectId = projectId || firstProjectId;
 
 			await addTask({
 				title: title.trim(),

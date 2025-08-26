@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Task } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
-	import { workspaceProjects, workspacePerspectives } from '$lib/stores/taskStore';
+import { workspaceProjects, workspacePerspectives } from '$lib/stores/taskStore';
 	import TaskEditorForm from './TaskEditorForm.svelte';
 
 	interface Props {
