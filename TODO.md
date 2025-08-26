@@ -19,6 +19,7 @@ Next focus: begin Core Features below.
 - [x] Task notes/descriptions support
 - [x] "All" view in Projects (groups by perspective, then orders by project)
 - [ ] no special view for "First" perspective
+- [ ] add ask should default to current perspective or project respectively
 - [ ] define tasks order within the project and apply it in all views
 - [ ] Drag & drop task reordering
 - [ ] name default project better
