@@ -6,8 +6,7 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-- [ ] icons - both project and perspective should have an icon property, remove hardcoded icon mappings
-- [ ] drop counters from sidebar, they brings anxiety
+*All bugs resolved! 🎉*
 
 ## 🚀 Active Development Roadmap
 
