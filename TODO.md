@@ -17,7 +17,7 @@ Next focus: begin Core Features below.
 - [x] Task editing and detailed view
 - [x] "All" view
 - [x] Task notes/descriptions support
-- [ ] "All" view in Projects (groups by perspective, then orders by project)
+- [x] "All" view in Projects (groups by perspective, then orders by project)
 - [ ] no special view for "First" perspective
 - [ ] define tasks order within the project and apply it in all views
 - [ ] Drag & drop task reordering

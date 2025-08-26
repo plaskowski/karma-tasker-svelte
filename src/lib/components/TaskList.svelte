@@ -300,7 +300,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 		return groups;
 	});
 
-	const showProjectBadge = $derived(!shouldGroupByProject && !shouldGroupByPerspective && currentView !== 'project-all');
+	const showProjectBadge = $derived(!shouldGroupByProject && !shouldGroupByPerspective);
 
 
 </script>
