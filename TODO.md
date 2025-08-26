@@ -20,8 +20,8 @@ Next focus: begin Core Features below.
 - [x] "All" view in Projects (groups by perspective, then orders by project)
 - [x] show perspective badge in View > All
 - [x] no special view for "First" perspective
-- [ ] why project badge says "personal-default"?
-- [ ] add ask should default to current perspective or project respectively
+- [x] why project badge says "personal-default"? (fixed - now shows "Personal Actions")
+- [ ] add task should default to current perspective or project respectively
 - [ ] define tasks order within the project and apply it in all views
 - [ ] Drag & drop task reordering
 - [ ] name default project better
