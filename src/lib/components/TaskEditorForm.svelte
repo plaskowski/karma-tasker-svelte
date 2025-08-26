@@ -4,13 +4,22 @@
 	import { updateTask } from '$lib/stores/taskStore';
     import { ChevronDown } from 'lucide-svelte';
 
-	interface Props {
-		task: Task;
-		projects: Project[];
-		perspectives: PerspectiveConfig[];
-	}
+    type SaveFields = {
+        title: string;
+        description?: string;
+        projectId: string;
+        perspective?: string;
+    };
 
-	let { task, projects, perspectives }: Props = $props();
+    interface Props {
+        task: Task;
+        projects: Project[];
+        perspectives: PerspectiveConfig[];
+        // Optional custom save handler; when provided, creation/update is delegated to parent
+        save?: (fields: SaveFields) => Promise<void>;
+    }
+
+    let { task, projects, perspectives, save }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 
@@ -25,16 +34,22 @@
 	const projectIdId = `project-${task.id}`;
 	const perspectiveId = `perspective-${task.id}`;
 
-	async function handleSave() {
+    async function handleSave() {
 		if (!title.trim()) return;
 		submitting = true;
 		try {
-			await updateTask(task.id, {
-				title: title.trim(),
-				description: description.trim() || undefined,
-				projectId,
-				perspective: perspective || undefined
-			});
+            const fields: SaveFields = {
+                title: title.trim(),
+                description: description.trim() || undefined,
+                projectId,
+                perspective: perspective || undefined
+            };
+
+            if (save) {
+                await save(fields);
+            } else {
+                await updateTask(task.id, fields);
+            }
 			dispatch('close');
 		} catch (err) {
 			console.error(err);

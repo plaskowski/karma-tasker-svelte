@@ -9,6 +9,8 @@ export interface Task {
 
   createdAt: Date;
   updatedAt: Date;
+  /** Optional due date for scheduling or reminders */
+  dueDate?: Date;
 }
 
 export interface Project {
@@ -45,6 +47,9 @@ export interface Workspace {
 }
 
 export type ViewType = 'focus' | 'project' | string; // string allows for configurable perspective views
+
+// Draft payload shape used when creating a new task
+export type TaskDraft = Omit<Task, 'id' | 'createdAt' | 'updatedAt'>;
 
 export interface AppState {
   currentWorkspace: string;

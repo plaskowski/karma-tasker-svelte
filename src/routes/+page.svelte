@@ -22,17 +22,18 @@
 	} from '$lib/stores/taskStore';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
-	import Sidebar from '$lib/components/Sidebar.svelte';
-	import TaskList from '$lib/components/TaskList.svelte';
-	import NewTaskDialog from '$lib/components/NewTaskDialog.svelte';
-	import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
-	import type { Task } from '$lib/types';
+    import { onMount } from 'svelte';
+    import Sidebar from '$lib/components/Sidebar.svelte';
+    import TaskList from '$lib/components/TaskList.svelte';
+    import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
+    import TaskInlineEditor from '$lib/components/TaskInlineEditor.svelte';
+    import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
+    import type { Task } from '$lib/types';
 
 	// Modal state
-	let showNewTaskDialog = $state(false);
-	let showTaskDetailsDialog = $state(false);
+    let showTaskDetailsDialog = $state(false);
 	let selectedTask: Task | null = $state(null);
+    let showCreateEditor = $state(false);
 
 	// Update URL based on current state
 	function updateURL(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
@@ -156,14 +157,14 @@
 
 
 	// Handle new task creation
-	function handleNewTask() {
-		showNewTaskDialog = true;
-	}
+    function handleNewTask() {
+        showCreateEditor = true;
+    }
 
 	// Handle modal close
-	function handleModalClose() {
-		showNewTaskDialog = false;
-	}
+    function handleCreateClose() {
+        showCreateEditor = false;
+    }
 
 	function handleTaskDetailsClose() {
 		showTaskDetailsDialog = false;
@@ -191,14 +192,14 @@
 			return;
 		}
 
-		// Close modal on Escape
-		if (event.key === 'Escape') {
-			if (showNewTaskDialog) {
-				showNewTaskDialog = false;
-				event.preventDefault();
-			}
-			return;
-		}
+        // Close create editor on Escape
+        if (event.key === 'Escape') {
+            if (showCreateEditor) {
+                showCreateEditor = false;
+                event.preventDefault();
+            }
+            return;
+        }
 
 		// Workspace navigation (Ctrl+1, Ctrl+2, Ctrl+3)
 		if (event.ctrlKey || event.metaKey) {
@@ -213,9 +214,9 @@
 				return;
 			}
 
-			// New task (Ctrl+N)
-			if (event.key === 'n' || event.key === 'N') {
-				showNewTaskDialog = true;
+            // New task (Ctrl+N)
+            if (event.key === 'n' || event.key === 'N') {
+                showCreateEditor = true;
 				event.preventDefault();
 				return;
 			}
@@ -241,9 +242,9 @@
 			return;
 		}
 
-		// New task (N key)
-		if (event.key === 'n' || event.key === 'N') {
-			showNewTaskDialog = true;
+        // New task (N key)
+        if (event.key === 'n' || event.key === 'N') {
+            showCreateEditor = true;
 			event.preventDefault();
 			return;
 		}
@@ -288,8 +289,40 @@
 	</div>
 </div>
 
-<!-- New Task Modal -->
-<NewTaskDialog open={showNewTaskDialog} on:close={handleModalClose} />
+    {#if showCreateEditor}
+        <div class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50">
+            <div class="bg-white dark:bg-gray-800 w-full max-w-2xl p-6 rounded-xl shadow-2xl">
+                <header class="mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">New Task</h2>
+                </header>
+                <TaskEditorForm
+                    task={{
+                        id: 'new',
+                        title: '',
+                        description: '',
+                        completed: false,
+                        projectId: $workspaces.find(w => w.id === $currentWorkspace)?.defaultProjectId || 'personal-default',
+                        workspaceId: $currentWorkspace,
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    }}
+                    projects={$workspaceProjects}
+                    perspectives={$workspacePerspectives}
+                    save={async ({ title, description, projectId, perspective }) => {
+                        await addTask({
+                            title,
+                            description,
+                            projectId,
+                            workspaceId: $currentWorkspace,
+                            completed: false,
+                            perspective
+                        });
+                    }}
+                    on:close={handleCreateClose}
+                />
+            </div>
+        </div>
+    {/if}
 
 <!-- Task Details Modal -->
 <TaskDetailsDialog open={showTaskDetailsDialog} task={selectedTask} on:close={handleTaskDetailsClose} />
