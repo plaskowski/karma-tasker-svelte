@@ -398,6 +398,37 @@ export function createTaskListViewModel(state: TaskListState) {
 - Logic is trivial (single line expressions)
 - Component just passes props through
 
+### Why Not Shared Services for View Logic?
+
+Avoid creating generic services like `viewService.ts` that would mix logic from different components. This violates cohesion principles by spreading related logic across files. 
+
+**Don't do this:**
+```typescript
+// lib/services/viewService.ts - AVOID
+export function getTaskListTitle(...) { }
+export function getSidebarTitle(...) { }
+export function getHeaderTitle(...) { }
+```
+
+**Do this instead:**
+```typescript
+// lib/components/tasks/taskListViewModel.ts
+export function createTaskListViewModel(state) {
+  return {
+    get viewTitle() { /* TaskList-specific logic */ }
+  };
+}
+
+// lib/components/navigation/sidebarViewModel.ts  
+export function createSidebarViewModel(state) {
+  return {
+    get title() { /* Sidebar-specific logic */ }
+  };
+}
+```
+
+Each component's logic stays colocated with the component, maintaining high cohesion and making the codebase easier to navigate and maintain.
+
 ### Testing Example
 
 ```typescript
