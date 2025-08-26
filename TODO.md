@@ -24,7 +24,7 @@ Next focus: begin Core Features below.
 - [x] add task should default to current perspective or project respectively
 - [x] define tasks order within the project and apply it in all views
 - [x] why we have both mockData and sampleData? move sampleData out of store file
-- [ ] make the project badge have same look as perspective badge
+- [x] make the project badge have same look as perspective badge
 - [ ] why Inbox does not show completed items
 - [ ] the "All" view should obey the project order when showing groups
 

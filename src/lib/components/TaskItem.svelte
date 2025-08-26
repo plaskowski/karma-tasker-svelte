@@ -62,7 +62,7 @@
 		
 		<!-- Project badge -->
 		{#if task.projectId && showProjectBadge}
-			<span class="text-xs leading-5 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+			<span class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded">
 				{projectName || task.projectId}
 			</span>
 		{/if}

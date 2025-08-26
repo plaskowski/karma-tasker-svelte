@@ -44,6 +44,7 @@
  - [x] Cmd/Ctrl+Enter submits task editor (faster keyboard flow)
  - [x] Define tasks order within the project and apply it in all views (order field on Task, sorting by order)
  - [x] Removed redundant sampleData generation from store (all mock data now in mockData.ts)
+ - [x] Project badge styling matches perspective badge (both use blue color scheme)
 
 ### Workspace System
 - [x] Implement workspace architecture (Personal, Work, Hobby)
