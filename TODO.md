@@ -6,17 +6,6 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-- [x] make all buttons little bigger
-- [x] add new item should inherit project or perspective from current view
-- [x] the top bar buttons stand out too much, change them to outline only style
-- [x] default project name ...
-- [x] remove any special/magic logic related to default project (same as did with Inbox perspective)
-- [x] remove $workspaceProjectsForSelection, no more need for it
-- [x] add "All" view (should be the last one)
-- [x] make "first" view use standard perspective view, remove any special logic around "first" perspective
-- [x] "All" view should use standard perspective view (the one that groups by project, it should sort the items by persperctive order within project group)
-- [x] close editor when leaving the view
-- [X] why "first" perspective is lowercase in list group header?
 - [ ] remove "personal" magic value
 - [ ] find any other magic values or special logic
 - [ ] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label 

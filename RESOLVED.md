@@ -3,6 +3,17 @@
 ## ✅ Completed Features
 
 ### UI/UX Improvements
+- [x] Make all buttons little bigger
+- [x] Add new item should inherit project or perspective from current view
+- [x] The top bar buttons stand out too much, change them to outline only style
+- [x] Default project name ...
+- [x] Remove any special/magic logic related to default project (same as did with Inbox perspective)
+- [x] Remove $workspaceProjectsForSelection, no more need for it
+- [x] Add "All" view (should be the last one)
+- [x] Make "first" view use standard perspective view, remove any special logic around "first" perspective
+- [x] "All" view should use standard perspective view (the one that groups by project, it should sort the items by persperctive order within project group)
+- [x] Close editor when leaving the view
+- [x] Why "first" perspective is lowercase in list group header?
 - [x] Use the editor for new task flow (inline at bottom of main panel)
 - [x] Auto-scroll inline create editor into view when opened
 - [x] Autofocus title input on create/edit
