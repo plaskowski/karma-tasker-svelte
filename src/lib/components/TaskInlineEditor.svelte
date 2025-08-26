@@ -19,13 +19,14 @@
 		task: Task;
 		projects: Project[];
 		perspectives: PerspectiveConfig[];
+		startHeight?: number;
 	}
 
-	let { task, projects, perspectives }: Props = $props();
+	let { task, projects, perspectives, startHeight }: Props = $props();
 
 	const dispatch = createEventDispatcher<{ close: void }>();
 </script>
 
-<section class="mt-2 mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4" transition:slide={{ duration: 150 }} aria-label="Task inline editor">
+<section class="mt-2 mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4" style={startHeight ? `height:${startHeight}px; overflow:hidden;` : ''} transition:slide={{ duration: 150 }} aria-label="Task inline editor">
 	<TaskEditorForm {task} {projects} {perspectives} on:close={() => dispatch('close')} />
 </section>

@@ -63,13 +63,23 @@
 
 	// Inline editor state
 	let inlineEditingTaskId: string | null = $state(null);
+	let editorStartHeight: number | null = $state(null);
+	const rowRefs: Record<string, HTMLDivElement | undefined> = $state({});
 
 	function toggleInlineEditor(taskId: string) {
-		inlineEditingTaskId = inlineEditingTaskId === taskId ? null : taskId;
+		if (inlineEditingTaskId === taskId) {
+			inlineEditingTaskId = null;
+			editorStartHeight = null;
+			return;
+		}
+		const ref = rowRefs[taskId];
+		editorStartHeight = ref ? ref.getBoundingClientRect().height : null;
+		inlineEditingTaskId = taskId;
 	}
 
 	function closeInlineEditor() {
 		inlineEditingTaskId = null;
+		editorStartHeight = null;
 	}
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
@@ -310,15 +320,18 @@
 									{task}
 									projects={projects}
 									perspectives={$workspacePerspectives}
-									on:close={() => inlineEditingTaskId = null}
+									startHeight={editorStartHeight || undefined}
+									on:close={closeInlineEditor}
 								/>
 							{:else}
-								<TaskItem
-									{task}
-									onToggle={onTaskToggle}
-									onClick={(t) => toggleInlineEditor(t.id)}
-									{showProjectBadge}
-								/>
+								<div bind:this={rowRefs[task.id]}>
+									<TaskItem
+										{task}
+										onToggle={onTaskToggle}
+										onClick={(t) => toggleInlineEditor(t.id)}
+										{showProjectBadge}
+									/>
+								</div>
 							{/if}
 						{/each}
 					</div>
