@@ -210,17 +210,17 @@
 
     // Keyboard navigation
     function handleKeydown(event: KeyboardEvent) {
-        // Don't interfere with typing in inputs
-        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
-            return;
-        }
-
-        // Close create editor on Escape
+        // Allow Escape to close the create editor even when focused in inputs
         if (event.key === 'Escape') {
             if (showCreateEditor) {
                 showCreateEditor = false;
                 event.preventDefault();
             }
+            return;
+        }
+
+        // Don't interfere with typing in inputs for other shortcuts
+        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
             return;
         }
 
