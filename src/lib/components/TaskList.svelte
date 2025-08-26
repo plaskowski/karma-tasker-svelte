@@ -265,6 +265,13 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	});
 
 	const showProjectBadge = $derived(!shouldGroupByProject && !shouldGroupByPerspective);
+	const showPerspectiveBadge = $derived(currentView === 'all');
+	
+	function getPerspectiveName(perspectiveId?: string): string {
+		if (!perspectiveId) return '';
+		const perspective = $workspacePerspectives.find(p => p.id === perspectiveId);
+		return perspective?.name || '';
+	}
 
 
 </script>
@@ -345,6 +352,9 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 									onToggle={onTaskToggle}
 									onClick={(t) => toggleInlineEditor(t.id)}
 									{showProjectBadge}
+									{showPerspectiveBadge}
+									perspectiveName={getPerspectiveName(task.perspective)}
+									projectName={getProjectName(task.projectId)}
 								/>
 							{/if}
 						{/each}
@@ -360,9 +370,11 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 						<TaskItem
 							{task}
 							onToggle={onTaskToggle}
-	
 							onClick={onTaskClick}
 							{showProjectBadge}
+							{showPerspectiveBadge}
+							perspectiveName={getPerspectiveName(task.perspective)}
+							projectName={getProjectName(task.projectId)}
 						/>
 					{/each}
 				{/if}

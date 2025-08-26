@@ -7,9 +7,12 @@
 		onClick: (task: Task) => void;
 
 		showProjectBadge?: boolean;
+		showPerspectiveBadge?: boolean;
+		perspectiveName?: string;
+		projectName?: string;
 	}
 
-	let { task, onToggle, onClick, showProjectBadge = true }: Props = $props();
+	let { task, onToggle, onClick, showProjectBadge = true, showPerspectiveBadge = false, perspectiveName, projectName }: Props = $props();
 </script>
 
 <div
@@ -48,14 +51,22 @@
 		{/if}
 	</div>
 
-	<!-- Project badge (right side) -->
-	{#if task.projectId && showProjectBadge}
-		<div class="flex-shrink-0 mr-2 self-baseline">
-			<span class="text-xs leading-5 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
-				{task.projectId}
+	<!-- Badges (right side) -->
+	<div class="flex-shrink-0 mr-2 self-baseline flex gap-2">
+		<!-- Perspective badge -->
+		{#if showPerspectiveBadge && perspectiveName}
+			<span class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded">
+				{perspectiveName}
 			</span>
-		</div>
-	{/if}
+		{/if}
+		
+		<!-- Project badge -->
+		{#if task.projectId && showProjectBadge}
+			<span class="text-xs leading-5 text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
+				{projectName || task.projectId}
+			</span>
+		{/if}
+	</div>
 
 
 </div>
