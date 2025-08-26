@@ -245,7 +245,7 @@
 <div class="flex-1 flex flex-col h-full">
 	<!-- Header -->
     <div class="topbar">
-		<div class="flex items-center justify-between">
+        <div class="flex items-center justify-between w-full">
 			<div>
 				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{getViewTitle()}</h1>
 			</div>
