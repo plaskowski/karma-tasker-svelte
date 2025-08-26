@@ -104,7 +104,7 @@
 	
 	// Get current workspace name
 	function getCurrentWorkspaceName() {
-		return workspaces.find(w => w.id === currentWorkspace)?.name || 'Personal';
+		return workspaces.find(w => w.id === currentWorkspace)?.name;
 	}
 
 	// Get dynamic header title based on current context
