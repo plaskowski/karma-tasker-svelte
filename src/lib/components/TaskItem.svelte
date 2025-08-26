@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class="group flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer transition-colors"
+	class="group flex items-start gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer transition-colors"
 	onclick={() => onClick(task)}
 	onkeydown={(e) => e.key === 'Enter' && onClick(task)}
 	role="button"
@@ -25,6 +25,7 @@
 		class="flex-shrink-0 w-4 h-4 rounded-full border-2 transition-all {task.completed 
 			? 'bg-blue-500 border-blue-500' 
 			: 'border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-300'}"
+		style="margin-top: 2px;"
 	>
 		{#if task.completed}
 			<span class="text-white text-xs leading-none flex items-center justify-center h-full">✓</span>
@@ -37,9 +38,7 @@
 			<span class="text-sm leading-5 text-gray-900 dark:text-gray-100 {task.completed ? 'line-through opacity-50' : ''}">
 				{task.title}
 			</span>
-			{#if task.description}
-				<span class="text-sm leading-5 text-gray-500 dark:text-gray-400">•</span>
-			{/if}
+			<!-- removed decorative bullet next to title -->
 		</div>
 		
 		{#if task.description}
