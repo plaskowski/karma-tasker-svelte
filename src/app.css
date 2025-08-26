@@ -34,5 +34,8 @@ html, body {
     @apply border border-gray-300 dark:border-gray-600 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700;
   }
 
-  /* Top bar specific class removed; use btn-base with btn-outline instead */
+  /* Unified top bar style for Sidebar and TaskList headers */
+  .topbar {
+    @apply h-12 px-6 border-b border-gray-200 dark:border-gray-700;
+  }
 }
