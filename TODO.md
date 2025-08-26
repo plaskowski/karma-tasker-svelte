@@ -23,7 +23,7 @@ Next focus: begin Core Features below.
 - [x] why project badge says "personal-default"? (fixed - now shows "Personal Actions")
 - [x] add task should default to current perspective or project respectively
 - [x] define tasks order within the project and apply it in all views
-- [ ] why we have both mockData and sampleData? move sampleData out of store file
+- [x] why we have both mockData and sampleData? move sampleData out of store file
 - [ ] Drag & drop task reordering
 - [ ] name default project better
 - [ ] make the project badge have same look as perspective badge

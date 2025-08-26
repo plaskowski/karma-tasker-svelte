@@ -14,7 +14,6 @@
 		toggleTaskComplete,
 
 		addTask,
-		addSampleWorkspaceTasks,
 		resetToInitialState
 	} from '$lib/stores/taskStore';
 	import { page } from '$app/stores';
@@ -129,9 +128,6 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 
 	// Initialize view from URL parameters
 	onMount(() => {
-		// Add sample tasks to Work and Hobby workspaces if they're empty
-		addSampleWorkspaceTasks();
-		
 		const urlParams = $page.url.searchParams;
 		const workspaceParam = urlParams.get('workspace');
 		const view = urlParams.get('view') as import('$lib/types').ViewType;
