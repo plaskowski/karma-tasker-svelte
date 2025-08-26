@@ -331,20 +331,15 @@
                             updatedAt: new Date()
                         }}
                         projects={$workspaceProjectsForSelection}
-                        perspectives={$workspacePerspectives}
+                        perspectives={$workspacePerspectivesOrdered}
                         save={async ({ title, description, projectId, perspective }) => {
-                            const inheritedPerspective = (
-                                $currentView && ['inbox','first','next','waiting','scheduled','someday','review','ideas'].includes($currentView)
-                                ? ($currentView === 'inbox' ? undefined : $currentView)
-                                : undefined
-                            );
                             await addTask({
                                 title,
                                 description,
                                 projectId,
                                 workspaceId: $currentWorkspace,
                                 completed: false,
-                                perspective: perspective ?? inheritedPerspective
+                                perspective: perspective || ($workspacePerspectivesOrdered[0]?.id ?? '')
                             });
                             // Close after successful create
                             handleCreateClose();
