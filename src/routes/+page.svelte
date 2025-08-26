@@ -209,6 +209,15 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
         }
     });
 
+    // Close inline/create editors when navigating away from the current view
+    $effect(() => {
+        // React to currentView or currentProjectId changes
+        const v = $currentView;
+        const p = $currentProjectId;
+        // When these change, ensure creation editor is closed
+        showCreateEditor = false;
+    });
+
     // Keyboard navigation
     function handleKeydown(event: KeyboardEvent) {
         // Allow Escape to close the create editor even when focused in inputs

@@ -3,7 +3,7 @@
 	import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
 	import TaskItem from './TaskItem.svelte';
 	import TaskInlineEditor from './TaskInlineEditor.svelte';
-	import { workspacePerspectives } from '$lib/stores/taskStore';
+import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
 
 	interface Props {
 		tasks: Task[];
@@ -119,6 +119,9 @@
 	function groupTasksByProject(taskList: Task[]) {
 		if (!shouldGroupByProject) return { ungrouped: taskList };
 		
+		// Build perspective order map for sorting within each project group
+		const perspectiveOrder = new Map($workspacePerspectivesOrdered.map((p, idx) => [p.id, idx] as const));
+		
 		const grouped: { [key: string]: Task[] } = {};
 		const ungrouped: Task[] = [];
 		
@@ -129,6 +132,16 @@
 			} else {
 				ungrouped.push(task);
 			}
+		});
+		
+		// Sort tasks inside each project by perspective order, then title
+		Object.keys(grouped).forEach(projectId => {
+			grouped[projectId].sort((a, b) => {
+				const ra = perspectiveOrder.get(a.perspective || '') ?? Number.MAX_SAFE_INTEGER;
+				const rb = perspectiveOrder.get(b.perspective || '') ?? Number.MAX_SAFE_INTEGER;
+				if (ra !== rb) return ra - rb;
+				return a.title.localeCompare(b.title);
+			});
 		});
 		
 		return { grouped, ungrouped };
