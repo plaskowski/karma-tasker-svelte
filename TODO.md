@@ -6,9 +6,9 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
- - [x] make all buttons little bigger
- - [x] add new item should inherit project or perspective from current view
- - [x] the top bar buttons stand out too much, change them to outline only style
+- [x] make all buttons little bigger
+- [x] add new item should inherit project or perspective from current view
+- [ ] the top bar buttons stand out too much, change them to outline only style
 - [x] default project name ...
 - [ ] close editor when leaving the view
 - [ ] why "first" perspective is lowercase in list group header?
