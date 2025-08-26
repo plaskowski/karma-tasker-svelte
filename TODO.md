@@ -28,6 +28,7 @@ Next focus: begin Core Features below.
 - [ ] make the project badge have same look as perspective badge
 
 ### Advanced Organization
+- [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
 - [ ] special markup support in description
   - link in first line
   - checklist
