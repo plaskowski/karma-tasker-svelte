@@ -239,6 +239,18 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		// TODO: Implement cleanup functionality
 		console.log('Cleanup triggered');
 	}
+	
+	// Get default values for new task based on current context
+	function getNewTaskDefaults() {
+		return {
+			projectId: $currentView === 'project' && $currentProjectId
+				? $currentProjectId
+				: ($workspaceProjects[0]?.id || ''),
+			perspective: $currentView === 'perspective'
+				? $currentPerspectiveId
+				: ($workspacePerspectivesOrdered[0]?.id || '')
+		};
+	}
 
 	// Handle refresh action
 	function handleRefresh() {
@@ -369,6 +381,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
         />
 
         {#if showCreateEditor}
+            {@const taskDefaults = getNewTaskDefaults()}
             <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4" bind:this={createEditorEl}>
                 <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
                     <TaskEditorForm
@@ -377,17 +390,8 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
                             title: '',
                             description: '',
                             completed: false,
-                            // Inherit project/perspective from current context
-                            projectId: (
-                                $currentView === 'project' && $currentProjectId
-                                ? $currentProjectId
-                                : ($workspaceProjects[0]?.id || '')
-                            ),
-                            perspective: (
-                                $currentView === 'perspective'
-                                ? $currentPerspectiveId
-                                : ($workspacePerspectivesOrdered[0]?.id || '')  // For all other views, use first perspective
-                            ),
+                            projectId: taskDefaults.projectId,
+                            perspective: taskDefaults.perspective,
                             workspaceId: $currentWorkspace,
                             createdAt: new Date(),
                             updatedAt: new Date()
