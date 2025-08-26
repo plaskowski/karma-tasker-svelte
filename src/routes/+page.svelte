@@ -36,16 +36,31 @@
     let showCreateEditor = $state(false);
     let createEditorEl = $state<HTMLElement | null>(null);
 
-	// Update URL based on current state
-	function updateURL(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
-		const params = new URLSearchParams();
-		params.set('workspace', workspaceId || $currentWorkspace);
-		params.set('view', view);
-		if (projectId && view === 'project') {
-			params.set('project', projectId);
-		}
-		goto(`?${params.toString()}`, { replaceState: true, noScroll: true });
-	}
+    // Update URL based on current state
+    function updateURL(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
+        const params = new URLSearchParams();
+        params.set('workspace', workspaceId || $currentWorkspace);
+        params.set('view', view);
+        if (projectId && view === 'project') {
+            params.set('project', projectId);
+        }
+        goto(`?${params.toString()}`, { replaceState: true, noScroll: true });
+    }
+
+    // Only update URL if it would change (avoid remount on initial load)
+    function updateURLIfChanged(view: import('$lib/types').ViewType, projectId?: string, workspaceId?: string) {
+        const params = new URLSearchParams();
+        params.set('workspace', workspaceId || $currentWorkspace);
+        params.set('view', view);
+        if (projectId && view === 'project') {
+            params.set('project', projectId);
+        }
+        const target = params.toString();
+        const current = $page.url.searchParams.toString();
+        if (target !== current) {
+            goto(`?${target}`, { replaceState: true, noScroll: true });
+        }
+    }
 
 	// Handle view changes
 	function handleViewChange(view: import('$lib/types').ViewType) {
@@ -129,13 +144,13 @@
 		// Always update URL to ensure workspace is included
 		const finalView = $currentView;
 		const finalProject = $currentProjectId;
-		updateURL(finalView, finalProject);
+        updateURLIfChanged(finalView, finalProject);
 
-		// Add keyboard navigation
-		document.addEventListener('keydown', handleKeydown);
+        // Add keyboard navigation
+        window.addEventListener('keydown', handleKeydown);
 
 		return () => {
-			document.removeEventListener('keydown', handleKeydown);
+            window.removeEventListener('keydown', handleKeydown);
 		};
 	});
 
@@ -186,20 +201,19 @@
 		updateURL('first', undefined, 'personal');
 	}
 
-	// Keyboard navigation
-	function handleKeydown(event: KeyboardEvent) {
-		// Don't interfere with typing in inputs
-		if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
-			return;
-		}
-
-    // Ensure inline create editor is visible when opened (when many items exist)
+    // Auto-scroll the create editor into view whenever it opens
     $effect(() => {
         if (showCreateEditor && createEditorEl) {
-            // Scroll the editor into view at the bottom of the main panel
             createEditorEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
     });
+
+    // Keyboard navigation
+    function handleKeydown(event: KeyboardEvent) {
+        // Don't interfere with typing in inputs
+        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
+            return;
+        }
 
         // Close create editor on Escape
         if (event.key === 'Escape') {
