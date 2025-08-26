@@ -46,6 +46,7 @@
  - [x] Removed redundant sampleData generation from store (all mock data now in mockData.ts)
  - [x] Project badge styling matches perspective badge (both use blue color scheme)
  - [x] Fixed Inbox and all perspective views to show completed items in Done section
+ - [x] All view now respects project order when displaying project groups
 
 ### Workspace System
 - [x] Implement workspace architecture (Personal, Work, Hobby)

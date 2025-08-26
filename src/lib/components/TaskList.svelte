@@ -234,12 +234,20 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 				});
 			}
 			
-			// Add project groups
-			Object.entries(groupedActiveTasks).forEach(([projectId, tasks]) => {
+			// Add project groups sorted by project order
+			const sortedProjectIds = Object.keys(groupedActiveTasks).sort((a, b) => {
+				const projectA = projects.find(p => p.id === a);
+				const projectB = projects.find(p => p.id === b);
+				const orderA = projectA?.order ?? Number.MAX_SAFE_INTEGER;
+				const orderB = projectB?.order ?? Number.MAX_SAFE_INTEGER;
+				return orderA - orderB;
+			});
+			
+			sortedProjectIds.forEach(projectId => {
 				groups.push({
 					id: `project-${projectId}`,
 					title: getProjectName(projectId),
-					tasks
+					tasks: groupedActiveTasks[projectId]
 				});
 			});
 		}
