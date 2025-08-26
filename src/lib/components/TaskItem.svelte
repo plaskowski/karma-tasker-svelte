@@ -13,7 +13,7 @@
 </script>
 
 <div
-	class="group flex items-start gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer transition-colors"
+	class="group flex items-start gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer"
 	onclick={() => onClick(task)}
 	onkeydown={(e) => e.key === 'Enter' && onClick(task)}
 	role="button"
@@ -22,7 +22,7 @@
 	<!-- Completion checkbox -->
 	<button
 		onclick={(e) => { e.stopPropagation(); onToggle(task.id); }}
-		class="flex-shrink-0 w-4 h-4 rounded-full border-2 transition-all {task.completed 
+		class="flex-shrink-0 w-4 h-4 rounded-full border-2 {task.completed 
 			? 'bg-blue-500 border-blue-500' 
 			: 'border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-300'}"
 		style="margin-top: 2px;"
