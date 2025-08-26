@@ -25,7 +25,7 @@
     import { onMount } from 'svelte';
     import Sidebar from '$lib/components/Sidebar.svelte';
     import TaskList from '$lib/components/TaskList.svelte';
-    import { workspaceProjectsForSelection } from '$lib/stores/taskStore';
+    import { workspaceProjectsForSelection, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
     import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
     import TaskInlineEditor from '$lib/components/TaskInlineEditor.svelte';
     import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
@@ -119,7 +119,7 @@
 			currentWorkspace.set(workspaceParam);
 		}
 
-		if (view && ['first', 'inbox', 'next', 'waiting', 'scheduled', 'someday', 'project'].includes(view)) {
+    if (view && ['project', ...$workspacePerspectivesOrdered.map(p => p.id)].includes(view)) {
 			currentView.set(view);
 			if (view === 'project' && project) {
 				// Validate project exists in current workspace
@@ -132,18 +132,18 @@
 					currentProjectId.set(undefined);
 					updateURL('first');
 				}
-			} else if (view !== 'project') {
+            } else if (view !== 'project') {
 				currentProjectId.set(undefined);
 			}
 		} else {
 			// Invalid or missing view, default to first
-			currentView.set('first');
+            currentView.set($workspacePerspectivesOrdered[0]?.id || 'project');
 			currentProjectId.set(undefined);
-			updateURL('first');
+            updateURL($workspacePerspectivesOrdered[0]?.id || 'project');
 		}
 
 		// Always update URL to ensure workspace is included
-		const finalView = $currentView;
+        const finalView = $currentView;
 		const finalProject = $currentProjectId;
         updateURLIfChanged(finalView, finalProject);
 
@@ -199,7 +199,7 @@
 		// Reset app to initial state (temporary dev feature)
 		resetToInitialState();
 		// Update URL to reflect reset state
-		updateURL('first', undefined, 'personal');
+        updateURL($workspacePerspectivesOrdered[0]?.id || 'project', undefined, 'personal');
 	}
 
     // Auto-scroll the create editor into view whenever it opens
@@ -258,7 +258,7 @@
 			}
 			
 			// Other keys map to workspace perspectives
-			const perspective = $workspacePerspectives[perspectiveIndex - 1];
+            const perspective = $workspacePerspectivesOrdered[perspectiveIndex - 1];
 			if (perspective) {
 				handleViewChange(perspective.id);
 				event.preventDefault();

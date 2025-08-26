@@ -71,9 +71,17 @@ export async function toggleTaskComplete(id: string): Promise<void> {
 }
 
 // Derived store for filtered tasks
+export const workspacePerspectivesOrdered = derived(
+  [workspaces, currentWorkspace],
+  ([$workspaces, $currentWorkspace]) => {
+    const ws = $workspaces.find(w => w.id === $currentWorkspace);
+    return (ws?.perspectives || []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }
+);
+
 export const filteredTasks = derived(
-  [tasks, currentView, currentProjectId, currentWorkspace, workspaces],
-  ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $workspaces]) => {
+  [tasks, currentView, currentProjectId, currentWorkspace, workspacePerspectivesOrdered],
+  ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $workspacePerspectivesOrdered]) => {
     // Filter by current workspace first (treat tasks without workspaceId as 'personal' for backward compatibility)
     let filtered = $tasks.filter(task => {
       const taskWorkspace = task.workspaceId || 'personal';
@@ -81,24 +89,17 @@ export const filteredTasks = derived(
     });
 
     // Filter by view
-    if ($currentView === 'first') {
-      // First: tasks with first perspective
-      filtered = filtered.filter(task => task.perspective === 'first' && !task.completed);
-    } else if ($currentView === 'project') {
+    if ($currentView === 'project') {
       // Project view: specific project tasks
       if ($currentProjectId) {
         filtered = filtered.filter(task => task.projectId === $currentProjectId);
       }
     } else {
-      // Perspective view: filter by perspective
+      // Perspective view: filter by perspective id
       const perspectiveId = $currentView;
-      if (perspectiveId === 'inbox') {
-        // Inbox: tasks without perspective assigned
-        filtered = filtered.filter(task => !task.perspective && !task.completed);
-      } else {
-        // Other perspectives: tasks with matching perspective
-        filtered = filtered.filter(task => task.perspective === perspectiveId && !task.completed);
-      }
+      const isKnownPerspective = $workspacePerspectivesOrdered.some(p => p.id === perspectiveId);
+      const effectivePerspective = isKnownPerspective ? perspectiveId : $workspacePerspectivesOrdered[0]?.id;
+      filtered = filtered.filter(task => task.perspective === effectivePerspective && !task.completed);
     }
 
     return filtered;
@@ -113,11 +114,34 @@ export const firstTaskCount = derived([tasks, currentWorkspace], ([$tasks, $curr
   }).length
 );
 
-export const inboxTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => {
+// First perspective id (default) for the current workspace
+export const firstPerspectiveId = derived([workspaces, currentWorkspace], ([$workspaces, $currentWorkspace]) => {
+  const ws = $workspaces.find(w => w.id === $currentWorkspace);
+  return ws?.perspectives?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))[0]?.id;
+});
+
+export const inboxTaskCount = derived([tasks, currentWorkspace, firstPerspectiveId], ([$tasks, $currentWorkspace, $firstPerspectiveId]) => {
   return $tasks.filter(task => {
     const taskWorkspace = task.workspaceId || 'personal';
-    return taskWorkspace === $currentWorkspace && !task.perspective && !task.completed;
+    return taskWorkspace === $currentWorkspace && task.perspective === $firstPerspectiveId && !task.completed;
   }).length;
+});
+
+// Counts per perspective for the current workspace (active tasks only)
+export const perspectiveTaskCounts = derived([tasks, currentWorkspace, workspaces], ([$tasks, $currentWorkspace, $workspaces]) => {
+  const ws = $workspaces.find(w => w.id === $currentWorkspace);
+  const result: Record<string, number> = {};
+  const ids = (ws?.perspectives || []).map(p => p.id);
+  ids.forEach(id => { result[id] = 0; });
+  for (const t of $tasks) {
+    const tWs = t.workspaceId || 'personal';
+    if (tWs !== $currentWorkspace) continue;
+    if (t.completed) continue;
+    if (t.perspective && ids.includes(t.perspective)) {
+      result[t.perspective] = (result[t.perspective] ?? 0) + 1;
+    }
+  }
+  return result;
 });
 
 // Derived store for workspace-filtered projects (excluding default projects)
@@ -159,7 +183,7 @@ export const workspaceProjectsForSelection = derived(
   }
 );
 
-// Derived store for current workspace perspectives
+// Derived store for current workspace perspectives (unordered)
 export const workspacePerspectives = derived(
   [workspaces, currentWorkspace],
   ([$workspaces, $currentWorkspace]) => {
@@ -211,6 +235,7 @@ export function addSampleWorkspaceTasks() {
         description: '',
         completed: false,
 
+        perspective: 'first',
         projectId: 'client-portal',
         workspaceId: 'work',
         createdAt: new Date(),
@@ -223,6 +248,7 @@ export function addSampleWorkspaceTasks() {
         description: '',
         completed: false,
 
+        perspective: 'inbox',
         projectId: 'meetings',
         workspaceId: 'work',
         createdAt: new Date(),
@@ -234,6 +260,7 @@ export function addSampleWorkspaceTasks() {
         description: '',
         completed: false,
 
+        perspective: 'next',
         projectId: 'api-redesign',
         workspaceId: 'work',
         createdAt: new Date(),
@@ -245,6 +272,7 @@ export function addSampleWorkspaceTasks() {
         description: '',
         completed: false,
 
+        perspective: 'next',
         projectId: 'api-redesign',
         workspaceId: 'work',
         createdAt: new Date(),
@@ -261,6 +289,7 @@ export function addSampleWorkspaceTasks() {
         description: '',
         completed: false,
 
+        perspective: 'inbox',
         projectId: 'photography',
         workspaceId: 'hobby',
         createdAt: new Date(),
@@ -272,6 +301,7 @@ export function addSampleWorkspaceTasks() {
         description: '',
         completed: false,
 
+        perspective: 'ideas',
         projectId: 'electronics',
         workspaceId: 'hobby',
         createdAt: new Date(),
@@ -283,6 +313,7 @@ export function addSampleWorkspaceTasks() {
         description: '',
         completed: false,
 
+        perspective: 'ideas',
         projectId: 'music',
         workspaceId: 'hobby',
         createdAt: new Date(),

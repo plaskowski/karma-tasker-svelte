@@ -48,16 +48,13 @@
 		}))
 	);
 
-	function getTaskCount(view: ViewType) {
-		switch (view) {
-			case 'first':
-				return firstTaskCount;
-			case 'inbox':
-				return inboxTaskCount;
-			default:
-				return null; // No counter for other perspectives yet
-		}
-	}
+    // Counts per perspective (active only)
+    import { perspectiveTaskCounts, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
+    function getTaskCount(view: ViewType) {
+        // For perspective views, show count; for project view, none
+        if (view === 'project') return null;
+        return $perspectiveTaskCounts[view as string] ?? null;
+    }
 
 	function getProjectIcon(projectId: string) {
 		switch (projectId) {
@@ -185,9 +182,9 @@
 
 			<!-- Views section -->
 	<div class="p-4 border-b border-gray-200 dark:border-gray-700">
-		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Views</h3>
+        <h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Views</h3>
 		<div class="space-y-1">
-			{#each sidebarItems as item}
+            {#each sidebarItems as item}
 				<button
 					onclick={() => onViewChange(item.id as ViewType)}
 					class="w-full btn btn-base text-left {currentView === item.id 
@@ -208,9 +205,9 @@
 						<Clock class="w-4 h-4" />
 					{/if}
 					<span class="flex-1">{item.label}</span>
-					{#if getTaskCount(item.id as ViewType) !== null}
-						<span class="text-sm text-current opacity-70">{getTaskCount(item.id as ViewType)}</span>
-					{/if}
+                    {#if getTaskCount(item.id as ViewType) !== null}
+                        <span class="text-sm text-current opacity-70">{getTaskCount(item.id as ViewType)}</span>
+                    {/if}
 				</button>
 			{/each}
 		</div>
