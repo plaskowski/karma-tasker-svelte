@@ -252,18 +252,186 @@ Based on official documentation and community best practices:
 4. **Domain modeling matters** - Clean domain modeling helps manage complexity
 5. **DTOs are recommended** - Data Transfer Objects provide clear data contracts
 
+## ViewModel Pattern for Components
+
+### The Problem
+Components currently mix UI logic with business logic, making them hard to test and maintain. We need a pattern that separates these concerns while working naturally with Svelte's reactivity.
+
+### Recommended Pattern: Stateless ViewModels with Closure
+
+After discussion, we've identified an elegant pattern that combines the benefits of ViewModels with Svelte's reactive system:
+
+#### Pattern Structure
+
+```typescript
+// lib/components/tasks/taskListViewModel.ts
+
+// 1. Define the state interface for this ViewModel
+export interface TaskListState {
+  tasks: Task[];
+  projects: Project[];
+  currentView: ViewType;
+  currentPerspectiveId?: string;
+  currentProjectId?: string;
+  currentWorkspace: string;
+  perspectives: PerspectiveConfig[];
+}
+
+// 2. Create a factory function that returns the ViewModel object
+export function createTaskListViewModel(state: TaskListState) {
+  return {
+    // Computed properties as getters
+    get viewTitle() {
+      if (state.currentView === 'all') return 'All';
+      if (state.currentView === 'project' && state.currentProjectId) {
+        const project = state.projects.find(p => p.id === state.currentProjectId);
+        return project?.name || 'Project';
+      }
+      // ... more logic
+    },
+    
+    get activeTasks() {
+      return state.tasks.filter(t => 
+        !t.completed && 
+        t.workspaceId === state.currentWorkspace
+      );
+    },
+    
+    get groupedTasks() {
+      const workspaceTasks = this.filterWorkspaceTasks();
+      
+      if (state.currentView === 'perspective') {
+        return this.groupByProject(workspaceTasks);
+      }
+      // ... more logic
+    },
+    
+    // Private helper methods
+    filterWorkspaceTasks() {
+      return state.tasks.filter(t => t.workspaceId === state.currentWorkspace);
+    },
+    
+    groupByProject(tasks: Task[]) {
+      // grouping logic
+    }
+  };
+}
+```
+
+#### Component Usage
+
+```svelte
+<script lang="ts">
+  import { tasks, projects, currentView, ... } from '$lib/stores';
+  import { createTaskListViewModel } from './taskListViewModel';
+  
+  // Create ViewModel with reactive recreation on store changes
+  const vm = $derived(createTaskListViewModel({
+    tasks: $tasks,
+    projects: $projects,
+    currentView: $currentView,
+    currentProjectId: $currentProjectId,
+    currentWorkspace: $currentWorkspace,
+    perspectives: $workspacePerspectives,
+  }));
+</script>
+
+<!-- Clean template using ViewModel properties -->
+<div>
+  <h1>{vm.viewTitle}</h1>
+  
+  {#each vm.groupedTasks as group}
+    <TaskGroup {group} />
+  {/each}
+  
+  <footer>
+    Showing {vm.activeTasks.length} active tasks
+  </footer>
+</div>
+```
+
+### Benefits of This Pattern
+
+1. **Separation of Concerns**
+   - Component handles UI and wiring
+   - ViewModel handles all business logic and computed values
+   - State management stays in stores
+
+2. **Testability**
+   - ViewModels are pure functions - easy to unit test
+   - Just pass mock state objects to test
+   - No need to mount components to test logic
+
+3. **Natural Reactivity**
+   - `$derived` ensures ViewModel recreates when stores change
+   - All computed values update automatically
+   - No manual subscription management
+
+4. **Developer Experience**
+   - Clean component templates with `vm.property` syntax
+   - IntelliSense works perfectly with typed ViewModels
+   - Easy to understand data flow
+
+5. **Maintainability**
+   - Each ViewModel declares its own state requirements via interface
+   - Related logic stays together in the ViewModel
+   - Easy to refactor without touching components
+
+### Key Principles
+
+1. **Colocate ViewModel with Component** - Keep the ViewModel in the same folder as the component that uses it
+2. **Define State Interface** - Each ViewModel explicitly declares what state it needs
+3. **Use Factory Functions** - `createViewModel()` pattern allows closure over state
+4. **Keep ViewModels Pure** - No side effects, just transformations
+5. **One ViewModel per Complex Component** - Simple components don't need ViewModels
+
+### When to Use ViewModels
+
+**Use ViewModels when:**
+- Component has complex computed properties
+- Multiple derived values from stores
+- Business logic that needs testing
+- Grouping, filtering, or transforming data
+
+**Skip ViewModels when:**
+- Component is purely presentational
+- Logic is trivial (single line expressions)
+- Component just passes props through
+
+### Testing Example
+
+```typescript
+import { createTaskListViewModel } from './taskListViewModel';
+
+test('viewTitle shows project name', () => {
+  const state: TaskListState = {
+    currentView: 'project',
+    currentProjectId: 'p1',
+    projects: [{ id: 'p1', name: 'My Project', ... }],
+    // ... other required state
+  };
+  
+  const vm = createTaskListViewModel(state);
+  expect(vm.viewTitle).toBe('My Project');
+});
+```
+
 ## Conclusion
 
-After researching official and community recommendations, the **Domain-Organized MVC Pattern with lib/server** emerges as the best approach for Karma Tasker. This pattern:
-- Aligns with SvelteKit conventions
-- Is widely adopted in the community
-- Provides clear separation of concerns
-- Scales well as the application grows
+After researching official and community recommendations, the **Domain-Organized MVC Pattern with lib/server** emerges as the best approach for Karma Tasker, enhanced with the **ViewModel pattern** for complex components.
 
-**Revised Recommendation:** 
-1. Start with extracting domain models and business logic
-2. Implement the lib/server pattern for future backend integration
-3. Keep stores simple and focused on UI state
-4. Avoid over-engineering - add complexity only as needed
+This combined approach:
+- Aligns with SvelteKit conventions
+- Provides clear separation of concerns at all levels
+- Makes business logic easily testable
+- Scales well as the application grows
+- Maintains excellent developer experience
+
+**Final Architecture Recommendation:** 
+1. Use Domain-Organized MVC for overall structure
+2. Implement stateless ViewModels for complex components
+3. Keep stores simple and focused on state management
+4. Extract business logic to services and domain models
+5. Use lib/server pattern for future backend integration
 
 This approach balances best practices with pragmatism, ensuring the codebase remains maintainable without unnecessary complexity.
