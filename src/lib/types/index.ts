@@ -6,6 +6,7 @@ export interface Task {
   perspective?: string; // undefined = inbox
   projectId: string;
   workspaceId: string;
+  order: number; // Tasks are ordered within their project
 
   createdAt: Date;
   updatedAt: Date;

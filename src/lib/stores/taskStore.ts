@@ -28,7 +28,7 @@ export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', moc
 export const showCompleted = writable(false);
 
 // Mock API functions with realistic delays
-export async function addTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>): Promise<Task> {
+export async function addTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>): Promise<Task> {
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 500));
   
@@ -37,9 +37,15 @@ export async function addTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updated
     throw new Error('Network error');
   }
 
+  // Calculate the next order value for this project
+  const currentTasks = get(tasks);
+  const projectTasks = currentTasks.filter(t => t.projectId === taskData.projectId);
+  const maxOrder = projectTasks.reduce((max, task) => Math.max(max, task.order || 0), 0);
+
   const newTask: Task = {
     ...taskData,
     id: crypto.randomUUID(),
+    order: maxOrder + 1,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -170,6 +176,7 @@ export function addSampleWorkspaceTasks() {
         perspective: 'first',
         projectId: 'client-portal',
         workspaceId: 'work',
+        order: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -182,6 +189,7 @@ export function addSampleWorkspaceTasks() {
         perspective: 'inbox',
         projectId: 'meetings',
         workspaceId: 'work',
+        order: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -194,6 +202,7 @@ export function addSampleWorkspaceTasks() {
         perspective: 'next',
         projectId: 'api-redesign',
         workspaceId: 'work',
+        order: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -206,6 +215,7 @@ export function addSampleWorkspaceTasks() {
         perspective: 'next',
         projectId: 'api-redesign',
         workspaceId: 'work',
+        order: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -223,6 +233,7 @@ export function addSampleWorkspaceTasks() {
         perspective: 'inbox',
         projectId: 'photography',
         workspaceId: 'hobby',
+        order: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -235,6 +246,7 @@ export function addSampleWorkspaceTasks() {
         perspective: 'ideas',
         projectId: 'electronics',
         workspaceId: 'hobby',
+        order: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -247,6 +259,7 @@ export function addSampleWorkspaceTasks() {
         perspective: 'ideas',
         projectId: 'music',
         workspaceId: 'hobby',
+        order: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       }

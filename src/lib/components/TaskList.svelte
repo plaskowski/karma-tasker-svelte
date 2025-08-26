@@ -103,15 +103,13 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 			}
 		});
 		
-		// Sort tasks inside each project by perspective order, then title
+		// Sort tasks inside each project by order field
 		Object.keys(grouped).forEach(projectId => {
-			grouped[projectId].sort((a, b) => {
-				const ra = perspectiveOrder.get(a.perspective || '') ?? Number.MAX_SAFE_INTEGER;
-				const rb = perspectiveOrder.get(b.perspective || '') ?? Number.MAX_SAFE_INTEGER;
-				if (ra !== rb) return ra - rb;
-				return a.title.localeCompare(b.title);
-			});
+			grouped[projectId].sort((a, b) => a.order - b.order);
 		});
+		
+		// Sort ungrouped tasks by order as well
+		ungrouped.sort((a, b) => a.order - b.order);
 		
 		return { grouped, ungrouped };
 	}
@@ -140,6 +138,11 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 				}
 				perspectiveGroups[perspectiveId].push(task);
 			}
+		});
+		
+		// Sort tasks within each perspective group by order
+		Object.values(perspectiveGroups).forEach(tasks => {
+			tasks.sort((a, b) => a.order - b.order);
 		});
 		
 		return perspectiveGroups;
@@ -171,7 +174,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 			perspectiveGroups[perspectiveId].push(task);
 		});
 		
-		// Sort tasks within each perspective group by project name, then by task title
+		// Sort tasks within each perspective group by project name, then by order within project
 		Object.values(perspectiveGroups).forEach(tasks => {
 			tasks.sort((a, b) => {
 				// First sort by project name
@@ -179,8 +182,8 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 				const projectB = projects.find(p => p.id === b.projectId)?.name || '';
 				const projectCompare = projectA.localeCompare(projectB);
 				if (projectCompare !== 0) return projectCompare;
-				// Then sort by task title
-				return a.title.localeCompare(b.title);
+				// Then sort by order field within same project
+				return a.order - b.order;
 			});
 		});
 		

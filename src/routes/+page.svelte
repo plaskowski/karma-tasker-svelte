@@ -254,6 +254,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 				? $currentPerspectiveId
 				: ($workspacePerspectivesOrdered[0]?.id || ''),
 			workspaceId: $currentWorkspace,
+			order: 0, // Will be calculated when task is actually saved
 			createdAt: new Date(),
 			updatedAt: new Date()
 		};

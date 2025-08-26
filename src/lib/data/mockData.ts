@@ -9,6 +9,7 @@ export const mockTasks: Task[] = [
     perspective: 'first',
     projectId: 'client-portal',
     workspaceId: 'work',
+    order: 1,
 
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15'),
@@ -21,6 +22,7 @@ export const mockTasks: Task[] = [
     perspective: 'first',
     projectId: 'household',
     workspaceId: 'personal',
+    order: 1,
 
     createdAt: new Date('2024-01-16'),
     updatedAt: new Date('2024-01-16'),
@@ -33,6 +35,7 @@ export const mockTasks: Task[] = [
     perspective: 'first',
     projectId: 'personal-default',
     workspaceId: 'personal',
+    order: 1,
 
     createdAt: new Date('2024-01-17'),
     updatedAt: new Date('2024-01-17'),
@@ -45,6 +48,7 @@ export const mockTasks: Task[] = [
     perspective: 'first',
     projectId: 'finances',
     workspaceId: 'personal',
+    order: 1,
 
     createdAt: new Date('2024-01-18'),
     updatedAt: new Date('2024-01-18'),
@@ -57,6 +61,7 @@ export const mockTasks: Task[] = [
     perspective: 'first',
     projectId: 'travel',
     workspaceId: 'personal',
+    order: 1,
 
     createdAt: new Date('2024-01-19'),
     updatedAt: new Date('2024-01-19'),
@@ -69,6 +74,7 @@ export const mockTasks: Task[] = [
 
     projectId: 'api-redesign',
     workspaceId: 'work',
+    order: 1,
 
     createdAt: new Date('2024-01-20'),
     updatedAt: new Date('2024-01-20'),
@@ -81,6 +87,7 @@ export const mockTasks: Task[] = [
 
     projectId: 'learning',
     workspaceId: 'personal',
+    order: 1,
 
     createdAt: new Date('2024-01-21'),
     updatedAt: new Date('2024-01-21'),
@@ -93,6 +100,7 @@ export const mockTasks: Task[] = [
 
     projectId: 'health',
     workspaceId: 'personal',
+    order: 1,
 
     createdAt: new Date('2024-01-22'),
     updatedAt: new Date('2024-01-22'),
@@ -105,6 +113,7 @@ export const mockTasks: Task[] = [
 
     projectId: 'electronics',
     workspaceId: 'hobby',
+    order: 1,
 
     createdAt: new Date('2024-01-23'),
     updatedAt: new Date('2024-01-23'),
@@ -117,6 +126,7 @@ export const mockTasks: Task[] = [
 
     projectId: 'work-default',
     workspaceId: 'work',
+    order: 1,
 
     createdAt: new Date('2024-01-24'),
     updatedAt: new Date('2024-01-24'),
@@ -130,6 +140,7 @@ export const mockTasks: Task[] = [
     perspective: 'someday',
     projectId: 'learning',
     workspaceId: 'personal',
+    order: 2,
 
     createdAt: new Date('2024-01-25'),
     updatedAt: new Date('2024-01-25'),
@@ -143,6 +154,7 @@ export const mockTasks: Task[] = [
     // No perspective = inbox
     projectId: 'household',
     workspaceId: 'personal',
+    order: 2,
 
     createdAt: new Date('2024-01-26'),
     updatedAt: new Date('2024-01-26'),
@@ -155,6 +167,7 @@ export const mockTasks: Task[] = [
     perspective: 'first',
     projectId: 'photography',
     workspaceId: 'hobby',
+    order: 1,
 
     createdAt: new Date('2024-01-27'),
     updatedAt: new Date('2024-01-27'),
@@ -167,6 +180,7 @@ export const mockTasks: Task[] = [
 
     projectId: 'api-redesign',
     workspaceId: 'work',
+    order: 2,
 
     createdAt: new Date('2024-01-28'),
     updatedAt: new Date('2024-01-28'),
@@ -180,6 +194,7 @@ export const mockTasks: Task[] = [
     perspective: 'review',
     projectId: 'work-default',
     workspaceId: 'work',
+    order: 2,
     createdAt: new Date('2024-01-29'),
     updatedAt: new Date('2024-01-29'),
   },
@@ -191,6 +206,7 @@ export const mockTasks: Task[] = [
     perspective: 'review',
     projectId: 'meetings',
     workspaceId: 'work',
+    order: 1,
     createdAt: new Date('2024-01-30'),
     updatedAt: new Date('2024-01-30'),
   },
@@ -202,6 +218,7 @@ export const mockTasks: Task[] = [
     perspective: 'ideas',
     projectId: 'photography',
     workspaceId: 'hobby',
+    order: 2,
     createdAt: new Date('2024-01-31'),
     updatedAt: new Date('2024-01-31'),
   },
@@ -213,6 +230,7 @@ export const mockTasks: Task[] = [
     perspective: 'ideas',
     projectId: 'electronics',
     workspaceId: 'hobby',
+    order: 2,
     createdAt: new Date('2024-02-01'),
     updatedAt: new Date('2024-02-01'),
   },
@@ -224,6 +242,7 @@ export const mockTasks: Task[] = [
     // No perspective = inbox
     projectId: 'meetings',
     workspaceId: 'work',
+    order: 2,
     createdAt: new Date('2024-02-02'),
     updatedAt: new Date('2024-02-02'),
   },
@@ -235,6 +254,7 @@ export const mockTasks: Task[] = [
     // No perspective = inbox  
     projectId: 'hobby-default',
     workspaceId: 'hobby',
+    order: 1,
     createdAt: new Date('2024-02-03'),
     updatedAt: new Date('2024-02-03'),
   },

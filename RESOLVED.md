@@ -42,6 +42,7 @@
  - [x] Escape key closes inline editor
  - [x] Disabled animations for task rows and inline editor show/hide (instant)
  - [x] Cmd/Ctrl+Enter submits task editor (faster keyboard flow)
+ - [x] Define tasks order within the project and apply it in all views (order field on Task, sorting by order)
 
 ### Workspace System
 - [x] Implement workspace architecture (Personal, Work, Hobby)
