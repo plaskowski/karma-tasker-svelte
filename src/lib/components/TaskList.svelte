@@ -121,27 +121,24 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	function groupTasksByPerspective(taskList: Task[]) {
 		if (!shouldGroupByPerspective) return { ungrouped: taskList };
 		
-		const perspectiveGroups = {
-			inbox: [] as Task[],
-			first: [] as Task[],
-			next: [] as Task[],
-			someday: [] as Task[],
-			review: [] as Task[],
-			ideas: [] as Task[]
-		};
+		const perspectiveGroups: Record<string, Task[]> = {};
+		
+		// Initialize groups for all workspace perspectives
+		$workspacePerspectivesOrdered.forEach(p => {
+			perspectiveGroups[p.id] = [];
+		});
 		
 		taskList.forEach(task => {
 			if (task.completed) return; // Skip completed tasks
 			
 			// Group by explicit perspective field
-			if (!task.perspective) {
-				// No perspective = inbox
-				perspectiveGroups.inbox.push(task);
-			} else if (perspectiveGroups[task.perspective as keyof typeof perspectiveGroups]) {
-				perspectiveGroups[task.perspective as keyof typeof perspectiveGroups].push(task);
-			} else {
-				// Unknown perspective, put in inbox
-				perspectiveGroups.inbox.push(task);
+			const perspectiveId = task.perspective || $workspacePerspectivesOrdered[0]?.id;
+			
+			if (perspectiveId) {
+				if (!perspectiveGroups[perspectiveId]) {
+					perspectiveGroups[perspectiveId] = [];
+				}
+				perspectiveGroups[perspectiveId].push(task);
 			}
 		});
 		
@@ -165,7 +162,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 		taskList.forEach(task => {
 			if (task.completed) return; // Skip completed tasks
 			
-			const perspectiveId = task.perspective || $workspacePerspectivesOrdered[0]?.id || 'inbox';
+			const perspectiveId = task.perspective || $workspacePerspectivesOrdered[0]?.id;
 			
 			if (!perspectiveGroups[perspectiveId]) {
 				perspectiveGroups[perspectiveId] = [];

@@ -161,25 +161,14 @@
         <h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Views</h3>
 		<div class="space-y-1">
             {#each sidebarItems as item}
+				{@const Icon = item.icon}
 				<button
 					onclick={() => onViewChange(item.id === 'all' ? 'all' : 'perspective', item.id === 'all' ? undefined : item.id)}
 					class="w-full btn btn-base text-left {(currentView === 'perspective' && currentPerspectiveId === item.id) || (currentView === 'all' && item.id === 'all')
 					? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 						: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 				>
-					{#if item.icon === Zap}
-						<Zap class="w-4 h-4" />
-					{:else if item.icon === Inbox}
-						<Inbox class="w-4 h-4" />
-					{:else if item.icon === Clock}
-						<Clock class="w-4 h-4" />
-					{:else if item.icon === Archive}
-						<Archive class="w-4 h-4" />
-					{:else if item.icon === Users}
-						<Users class="w-4 h-4" />
-					{:else}
-						<Clock class="w-4 h-4" />
-					{/if}
+					<Icon class="w-4 h-4" />
 					<span class="flex-1">{item.label}</span>
 				</button>
 			{/each}

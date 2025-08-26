@@ -14,7 +14,10 @@ export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces)
 // Current state stores
 // Default to perspective view; will be set on mount based on workspace config
 export const currentView = writable<ViewType>('perspective');
-export const currentPerspectiveId = writable<string>('inbox');
+// Default perspective will be set from first workspace's first perspective
+const firstWorkspace = mockWorkspaces[0];
+const defaultPerspective = firstWorkspace?.perspectives?.[0]?.id || '';
+export const currentPerspectiveId = writable<string>(defaultPerspective);
 export const currentProjectId = writable<string | undefined>();
 // Use first workspace as default
 if (!mockWorkspaces[0]?.id) {
