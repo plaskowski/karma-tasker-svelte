@@ -113,7 +113,7 @@
 	const firstHeader = firstHeaders[Math.floor(Math.random() * firstHeaders.length)];
 
 	// Group tasks by project for certain views
-	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday', 'scheduled'].includes(currentView));
+	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday', 'scheduled', 'all'].includes(currentView));
 	const shouldGroupByPerspective = $derived(['project'].includes(currentView));
 	
 	function groupTasksByProject(taskList: Task[]) {
@@ -192,17 +192,10 @@
 			tasks: Task[];
 		}> = [];
 
-		// First/all views - single group of active tasks
+		// First view - single group of active tasks
 		if (!shouldGroupByProject && !shouldGroupByPerspective) {
 			if (activeTasks.length > 0) {
-				if (currentView === 'first') {
-					groups.push({ id: 'first', title: firstHeader, tasks: activeTasks });
-				} else if (currentView === 'all') {
-					groups.push({ id: 'all', title: 'All', tasks: activeTasks });
-				} else {
-					// Fallback label
-					groups.push({ id: 'tasks', title: 'Tasks', tasks: activeTasks });
-				}
+				groups.push({ id: 'first', title: firstHeader, tasks: activeTasks });
 			}
 		}
 		// Project-grouped views (Inbox, Next, Waiting, etc.)

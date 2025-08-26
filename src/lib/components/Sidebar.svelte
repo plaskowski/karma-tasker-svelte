@@ -41,11 +41,14 @@
 
     // Dynamic sidebar items: configured perspectives + All (last)
     const sidebarItems = $derived([
-        ...perspectives.map(p => ({
-            id: p.id,
-            label: p.name,
-            icon: iconMap[p.icon] || Clock
-        })),
+        ...perspectives
+            .slice()
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+            .map(p => ({
+                id: p.id,
+                label: p.name,
+                icon: iconMap[p.icon] || Clock
+            })),
         { id: 'all', label: 'All', icon: Clock }
     ]);
 
@@ -189,7 +192,7 @@
 				<button
 					onclick={() => onViewChange(item.id as ViewType)}
 					class="w-full btn btn-base text-left {currentView === item.id 
-						? (item.id === 'first' ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100')
+					? (item.id === $workspacePerspectivesOrdered[0]?.id ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100')
 						: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 				>
 					{#if item.icon === Zap}

@@ -13,7 +13,8 @@ export const areas = persisted(STORAGE_KEY + '-areas', mockAreas);
 export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces);
 
 // Current state stores
-export const currentView = writable<ViewType>('first');
+// Default to the first perspective; will be set on mount based on workspace config
+export const currentView = writable<ViewType>('inbox');
 export const currentProjectId = writable<string | undefined>();
 export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', 'personal');
 
@@ -109,19 +110,20 @@ export const filteredTasks = derived(
   }
 );
 
-// Task count derived stores for sidebar
-export const firstTaskCount = derived([tasks, currentWorkspace], ([$tasks, $currentWorkspace]) => 
-  $tasks.filter(task => {
-    const taskWorkspace = task.workspaceId || 'personal';
-    return taskWorkspace === $currentWorkspace && task.perspective === 'first' && !task.completed;
-  }).length
-);
-
 // First perspective id (default) for the current workspace
 export const firstPerspectiveId = derived([workspaces, currentWorkspace], ([$workspaces, $currentWorkspace]) => {
   const ws = $workspaces.find(w => w.id === $currentWorkspace);
   return ws?.perspectives?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))[0]?.id;
 });
+
+// Task count derived stores for sidebar
+// Keep a count for the first perspective id in each workspace (if present)
+export const firstTaskCount = derived([tasks, currentWorkspace, firstPerspectiveId], ([$tasks, $currentWorkspace, $firstPerspectiveId]) => 
+  $tasks.filter(task => {
+    const taskWorkspace = task.workspaceId || 'personal';
+    return taskWorkspace === $currentWorkspace && task.perspective === $firstPerspectiveId && !task.completed;
+  }).length
+);
 
 export const inboxTaskCount = derived([tasks, currentWorkspace, firstPerspectiveId], ([$tasks, $currentWorkspace, $firstPerspectiveId]) => {
   return $tasks.filter(task => {
@@ -315,7 +317,7 @@ export function resetToInitialState() {
   workspaces.set(mockWorkspaces);
   
   // Reset current state
-  currentView.set('first');
+  currentView.set('inbox');
   currentProjectId.set(undefined);
   currentWorkspace.set('personal');
   showCompleted.set(false);

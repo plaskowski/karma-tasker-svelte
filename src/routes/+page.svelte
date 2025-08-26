@@ -126,16 +126,17 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 				if (projectExists) {
 					currentProjectId.set(project);
 				} else {
-					// Project doesn't exist in current workspace, default to first
-					currentView.set('first');
+					// Project doesn't exist in current workspace, default to first workspace perspective
+					const defaultPerspective = $workspacePerspectivesOrdered[0]?.id || 'project';
+					currentView.set(defaultPerspective);
 					currentProjectId.set(undefined);
-					updateURL('first');
+					updateURL(defaultPerspective);
 				}
             } else if (view !== 'project') {
 				currentProjectId.set(undefined);
 			}
 		} else {
-			// Invalid or missing view, default to first
+			// Invalid or missing view, default to first workspace perspective
             currentView.set($workspacePerspectivesOrdered[0]?.id || 'project');
 			currentProjectId.set(undefined);
             updateURL($workspacePerspectivesOrdered[0]?.id || 'project');
@@ -249,10 +250,13 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		const perspectiveKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 		const perspectiveIndex = perspectiveKeys.indexOf(event.key);
 		if (perspectiveIndex !== -1) {
-			// First key is for 'first' perspective
+			// First key maps to the first perspective in current workspace
 			if (perspectiveIndex === 0) {
-				handleViewChange('first');
-				event.preventDefault();
+				const firstPerspective = $workspacePerspectivesOrdered[0];
+				if (firstPerspective) {
+					handleViewChange(firstPerspective.id);
+					event.preventDefault();
+				}
 				return;
 			}
 			
