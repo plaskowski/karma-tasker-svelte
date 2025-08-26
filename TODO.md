@@ -9,6 +9,8 @@
 - [x] use the editor for new task flow
 - [x] validate new task pane when a lot of items
 - [x] put focus into title input when editing/creating task
+- [ ] 'N' shortcut stopped working
+- [ ] escape does not work when focus in in new item title field
 - [ ] make all buttons little bigger
 - [ ] default project name ...
   - how do we know which one is the default? 
