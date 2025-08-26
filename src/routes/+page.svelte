@@ -386,9 +386,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
                             perspective: (
                                 $currentView === 'perspective'
                                 ? $currentPerspectiveId
-                                : $currentView === 'project-all' || $currentView === 'all'
-                                ? ($workspacePerspectivesOrdered[0]?.id || '')
-                                : $currentPerspectiveId  // Use current perspective as default for other views too
+                                : ($workspacePerspectivesOrdered[0]?.id || '')  // For all other views, use first perspective
                             ),
                             workspaceId: $currentWorkspace,
                             createdAt: new Date(),
