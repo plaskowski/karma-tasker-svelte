@@ -13,7 +13,8 @@
 - [ ] close editor when leaving the view
 - [ ] why "first" perspective is lowercase in list group header?
 - [ ] make "first" category use standard category view
-- [ ] default project should come first in grouped task list
+- [ ] remove any special/magic logic related to default project (same as did with Inbox perspective)
+- [ ] add "All" view (should be the last one)
 
 ## 🚀 Active Development Roadmap
 
