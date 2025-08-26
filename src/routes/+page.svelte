@@ -75,9 +75,11 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 	}
 
 	// Handle project selection
-	function handleProjectSelect(projectId: string) {
+	function handleProjectSelect(projectId: string | undefined) {
 		currentProjectId.set(projectId);
-		updateURL('project', projectId);
+		if (projectId) {
+			updateURL('project', projectId);
+		}
 	}
 
 	// Handle workspace change
@@ -112,7 +114,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 			currentWorkspace.set(workspaceParam);
 		}
 
-    if (view && ['project', 'all', ...$workspacePerspectivesOrdered.map(p => p.id)].includes(view)) {
+    if (view && ['project', 'project-all', 'all', ...$workspacePerspectivesOrdered.map(p => p.id)].includes(view)) {
 			currentView.set(view);
 			if (view === 'project' && project) {
 				// Validate project exists in current workspace

@@ -97,6 +97,9 @@ export const filteredTasks = derived(
       if ($currentProjectId) {
         filtered = filtered.filter(task => task.projectId === $currentProjectId);
       }
+    } else if ($currentView === 'project-all') {
+      // Project All view: all tasks in workspace (excluding those without projects)
+      filtered = filtered.filter(task => task.projectId);
     } else if ($currentView === 'all') {
       // All view: keep all tasks for current workspace (both active and completed)
       // No additional filtering

@@ -37,6 +37,9 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 		if (currentView === 'all') {
 			return 'All';
 		}
+		if (currentView === 'project-all') {
+			return 'All Projects';
+		}
 		if (currentView === 'project') {
 			if (currentProjectId) {
 				const project = projects.find(p => p.id === currentProjectId);
@@ -113,6 +116,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	// Group tasks by project for certain views
 	const shouldGroupByProject = $derived(['inbox', 'next', 'waiting', 'someday', 'scheduled', 'all'].includes(currentView));
 	const shouldGroupByPerspective = $derived(['project'].includes(currentView));
+	const shouldGroupByPerspectiveThenProject = $derived(currentView === 'project-all');
 	
 	function groupTasksByProject(taskList: Task[]) {
 		if (!shouldGroupByProject) return { ungrouped: taskList };
@@ -179,6 +183,47 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 
 	const { grouped: groupedActiveTasks = {}, ungrouped: ungroupedActiveTasks = [] } = $derived(groupTasksByProject(activeTasks));
 	const perspectiveGroupedActiveTasks = $derived(groupTasksByPerspective(activeTasks));
+	
+	// Group tasks by perspective, then order by project within each perspective
+	function groupTasksByPerspectiveThenOrderByProject(taskList: Task[]) {
+		if (!shouldGroupByPerspectiveThenProject) return {};
+		
+		const perspectiveGroups: Record<string, Task[]> = {};
+		
+		// Initialize perspective groups
+		$workspacePerspectivesOrdered.forEach(p => {
+			perspectiveGroups[p.id] = [];
+		});
+		
+		taskList.forEach(task => {
+			if (task.completed) return; // Skip completed tasks
+			
+			const perspectiveId = task.perspective || $workspacePerspectivesOrdered[0]?.id || 'inbox';
+			
+			if (!perspectiveGroups[perspectiveId]) {
+				perspectiveGroups[perspectiveId] = [];
+			}
+			
+			perspectiveGroups[perspectiveId].push(task);
+		});
+		
+		// Sort tasks within each perspective group by project name, then by task title
+		Object.values(perspectiveGroups).forEach(tasks => {
+			tasks.sort((a, b) => {
+				// First sort by project name
+				const projectA = projects.find(p => p.id === a.projectId)?.name || '';
+				const projectB = projects.find(p => p.id === b.projectId)?.name || '';
+				const projectCompare = projectA.localeCompare(projectB);
+				if (projectCompare !== 0) return projectCompare;
+				// Then sort by task title
+				return a.title.localeCompare(b.title);
+			});
+		});
+		
+		return perspectiveGroups;
+	}
+	
+	const perspectiveThenProjectGroups = $derived(groupTasksByPerspectiveThenOrderByProject(activeTasks));
 
 	function getProjectName(projectId: string): string {
 		return projects.find(p => p.id === projectId)?.name || projectId;
@@ -199,7 +244,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 		}> = [];
 
 		// First view - single group of active tasks
-		if (!shouldGroupByProject && !shouldGroupByPerspective) {
+		if (!shouldGroupByProject && !shouldGroupByPerspective && !shouldGroupByPerspectiveThenProject) {
 			if (activeTasks.length > 0) {
 				groups.push({ id: 'first', title: firstHeader, tasks: activeTasks });
 			}
@@ -237,11 +282,25 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 				});
 			});
 		}
+		// Perspective then Project grouped views (Project All view)
+		else if (shouldGroupByPerspectiveThenProject) {
+			// Iterate through perspectives in order
+			$workspacePerspectivesOrdered.forEach(perspective => {
+				const tasks = perspectiveThenProjectGroups[perspective.id];
+				if (tasks && tasks.length > 0) {
+					groups.push({
+						id: `perspective-${perspective.id}`,
+						title: perspective.name,
+						tasks
+					});
+				}
+			});
+		}
 
 		return groups;
 	});
 
-	const showProjectBadge = $derived(!shouldGroupByProject && !shouldGroupByPerspective);
+	const showProjectBadge = $derived(!shouldGroupByProject && !shouldGroupByPerspective && currentView !== 'project-all');
 
 
 </script>

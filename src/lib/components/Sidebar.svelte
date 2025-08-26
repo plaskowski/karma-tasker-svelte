@@ -10,7 +10,7 @@
 		perspectives: PerspectiveConfig[];
 		projects: Project[];
 		onViewChange: (view: ViewType) => void;
-		onProjectSelect: (projectId: string) => void;
+		onProjectSelect: (projectId: string | undefined) => void;
 		onWorkspaceChange: (workspaceId: string) => void;
 	}
 
@@ -203,6 +203,20 @@
 					<span class="flex-1 truncate">{project.name}</span>
 				</button>
 			{/each}
+			
+			<!-- All Projects view -->
+			<button
+				onclick={() => {
+					onViewChange('project-all');
+					onProjectSelect(undefined);
+				}}
+				class="w-full btn btn-base text-left {currentView === 'project-all'
+					? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
+					: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
+			>
+				<Clock class="w-4 h-4" />
+				<span class="flex-1">All</span>
+			</button>
 		</div>
 	</div>
 </div>
