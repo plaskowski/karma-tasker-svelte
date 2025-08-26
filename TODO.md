@@ -6,12 +6,7 @@
 ## 🐛 Known Issues
 
 ### UI/UX Bugs
-- [x] in task editor the dropdown caret is spaced from border and custom chevron added
-- [x] align checklist bullet and project badge with first title line; remove decorative dot
-- [x] pressing Escape cancels editing
 - [ ] use the editor for new task flow
-- [x] remove decorative indicator after the title when description present
-- [x] stop all row and editor animations for show/hide
 - [ ] cmd/ctrl+enter should confirm the edit panel
 - [ ] default project name ...
 

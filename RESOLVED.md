@@ -10,6 +10,10 @@
  - [x] Sidebar and task list header alignment refined; reduced header height to `py-3`
  - [x] Workspace dropdown rendered inline below header and spans full sidebar width
  - [x] Removed numbers from "Views" header in sidebar
+ - [x] Editor caret spacing fixed with custom chevrons on selects
+ - [x] Checklist bullet and project badge aligned with title baseline; decorative dot removed
+ - [x] Escape key closes inline editor
+ - [x] Disabled animations for task rows and inline editor show/hide (instant)
 
 ### Workspace System
 - [x] Implement workspace architecture (Personal, Work, Hobby)
