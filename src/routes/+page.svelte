@@ -9,8 +9,6 @@
 		currentWorkspace,
 
 		filteredTasks,
-		firstTaskCount,
-		inboxTaskCount,
 
 		toggleTaskComplete,
 
@@ -301,8 +299,6 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		onViewChange={handleViewChange}
 		onProjectSelect={handleProjectSelect}
 		onWorkspaceChange={handleWorkspaceChange}
-		firstTaskCount={$firstTaskCount}
-		inboxTaskCount={$inboxTaskCount}
 	/>
 
     <!-- Main Content Area -->

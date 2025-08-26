@@ -12,8 +12,6 @@
 		onViewChange: (view: ViewType) => void;
 		onProjectSelect: (projectId: string) => void;
 		onWorkspaceChange: (workspaceId: string) => void;
-		firstTaskCount: number;
-		inboxTaskCount: number;
 	}
 
 	let { 
@@ -25,19 +23,30 @@
 		projects, 
 		onViewChange, 
 		onProjectSelect,
-		onWorkspaceChange,
-		firstTaskCount, 
-		inboxTaskCount
+		onWorkspaceChange
 	}: Props = $props();
 
-	// Icon mapping for perspectives
+	// Icon mapping for all icons (perspectives and projects)
 	const iconMap: Record<string, any> = {
 		inbox: Inbox,
 		zap: Zap,
 		clock: Clock,
 		archive: Archive,
 		users: Users,
+		home: Home,
+		building: Building,
+		activity: Activity,
+		user: User,
+		briefcase: Briefcase,
+		heart: Heart,
+		calendar: Calendar,
+		gamepad2: Gamepad2
 	};
+
+	function getIconComponent(iconName?: string) {
+		if (!iconName) return Briefcase; // Default icon
+		return iconMap[iconName.toLowerCase()] || Briefcase;
+	}
 
     // Dynamic sidebar items: configured perspectives + All (last)
     const sidebarItems = $derived([
@@ -47,44 +56,15 @@
             .map(p => ({
                 id: p.id,
                 label: p.name,
-                icon: iconMap[p.icon] || Clock
+                icon: getIconComponent(p.icon)
             })),
         { id: 'all', label: 'All', icon: Clock }
     ]);
 
-    // Counts per perspective (active only)
-    import { perspectiveTaskCounts, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
-    function getTaskCount(view: ViewType) {
-        // For perspective views, show count; for project/all views, none
-        if (view === 'project' || view === 'all') return null;
-        return $perspectiveTaskCounts[view as string] ?? null;
-    }
+    import { workspacePerspectivesOrdered } from '$lib/stores/taskStore';
 
-	function getProjectIcon(projectId: string) {
-		switch (projectId) {
-			case 'household':
-				return Home;
-			case 'finances':
-				return Building;
-			case 'health':
-				return Activity;
-			case 'travel':
-				return Calendar;
-			case 'learning':
-				return User;
-			case 'work-projects':
-				return Briefcase;
-			case 'meetings':
-				return Users;
-			case 'photography':
-				return Heart;
-			case 'electronics':
-				return Activity;
-			case 'music':
-				return Heart;
-			default:
-				return Briefcase; // Default fallback icon
-		}
+	function getProjectIcon(project: Project) {
+		return getIconComponent(project.icon);
 	}
 
 	function getWorkspaceIcon(workspaceId: string) {
@@ -199,9 +179,6 @@
 						<Clock class="w-4 h-4" />
 					{/if}
 					<span class="flex-1">{item.label}</span>
-                    {#if getTaskCount(item.id as ViewType) !== null}
-                        <span class="text-sm text-current opacity-70">{getTaskCount(item.id as ViewType)}</span>
-                    {/if}
 				</button>
 			{/each}
 		</div>
@@ -212,7 +189,7 @@
 		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Projects</h3>
 		<div class="space-y-1">
 			{#each projects as project}
-				{@const ProjectIcon = getProjectIcon(project.id)}
+				{@const ProjectIcon = getProjectIcon(project)}
 				<button
 					onclick={() => {
 						onViewChange('project');

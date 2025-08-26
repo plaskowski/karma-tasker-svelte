@@ -118,35 +118,6 @@ export const firstPerspectiveId = derived([workspaces, currentWorkspace], ([$wor
   return ws?.perspectives?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))[0]?.id;
 });
 
-// Task count derived stores for sidebar
-// Keep a count for the first perspective id in each workspace (if present)
-export const firstTaskCount = derived([tasks, currentWorkspace, firstPerspectiveId], ([$tasks, $currentWorkspace, $firstPerspectiveId]) => 
-  $tasks.filter(task => {
-    return task.workspaceId === $currentWorkspace && task.perspective === $firstPerspectiveId && !task.completed;
-  }).length
-);
-
-export const inboxTaskCount = derived([tasks, currentWorkspace, firstPerspectiveId], ([$tasks, $currentWorkspace, $firstPerspectiveId]) => {
-  return $tasks.filter(task => {
-    return task.workspaceId === $currentWorkspace && task.perspective === $firstPerspectiveId && !task.completed;
-  }).length;
-});
-
-// Counts per perspective for the current workspace (active tasks only)
-export const perspectiveTaskCounts = derived([tasks, currentWorkspace, workspaces], ([$tasks, $currentWorkspace, $workspaces]) => {
-  const ws = $workspaces.find(w => w.id === $currentWorkspace);
-  const result: Record<string, number> = {};
-  const ids = (ws?.perspectives || []).map(p => p.id);
-  ids.forEach(id => { result[id] = 0; });
-  for (const t of $tasks) {
-    if (t.workspaceId !== $currentWorkspace) continue;
-    if (t.completed) continue;
-    if (t.perspective && ids.includes(t.perspective)) {
-      result[t.perspective] = (result[t.perspective] ?? 0) + 1;
-    }
-  }
-  return result;
-});
 
 // Derived store for workspace-filtered projects
 export const workspaceProjects = derived(

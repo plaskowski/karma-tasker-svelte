@@ -242,24 +242,24 @@ export const mockTasks: Task[] = [
 
 export const mockProjects: Project[] = [
   // Personal workspace projects
-  { id: 'personal-default', name: 'Personal Actions', workspaceId: 'personal', createdAt: new Date() },
-  { id: 'household', name: 'Household', workspaceId: 'personal', createdAt: new Date() },
-  { id: 'finances', name: 'Finances', workspaceId: 'personal', createdAt: new Date() },
-  { id: 'health', name: 'Health', workspaceId: 'personal', createdAt: new Date() },
-  { id: 'travel', name: 'Travel', workspaceId: 'personal', createdAt: new Date() },
-  { id: 'learning', name: 'Learning', workspaceId: 'personal', createdAt: new Date() },
+  { id: 'personal-default', name: 'Personal Actions', icon: 'user', workspaceId: 'personal', createdAt: new Date() },
+  { id: 'household', name: 'Household', icon: 'home', workspaceId: 'personal', createdAt: new Date() },
+  { id: 'finances', name: 'Finances', icon: 'building', workspaceId: 'personal', createdAt: new Date() },
+  { id: 'health', name: 'Health', icon: 'activity', workspaceId: 'personal', createdAt: new Date() },
+  { id: 'travel', name: 'Travel', icon: 'calendar', workspaceId: 'personal', createdAt: new Date() },
+  { id: 'learning', name: 'Learning', icon: 'user', workspaceId: 'personal', createdAt: new Date() },
 
   // Work workspace projects  
-  { id: 'work-default', name: 'Work Actions', workspaceId: 'work', createdAt: new Date() },
-  { id: 'client-portal', name: 'Client Portal', workspaceId: 'work', createdAt: new Date() },
-  { id: 'api-redesign', name: 'API Redesign', workspaceId: 'work', createdAt: new Date() },
-  { id: 'meetings', name: 'Meetings', workspaceId: 'work', createdAt: new Date() },
+  { id: 'work-default', name: 'Work Actions', icon: 'briefcase', workspaceId: 'work', createdAt: new Date() },
+  { id: 'client-portal', name: 'Client Portal', icon: 'briefcase', workspaceId: 'work', createdAt: new Date() },
+  { id: 'api-redesign', name: 'API Redesign', icon: 'briefcase', workspaceId: 'work', createdAt: new Date() },
+  { id: 'meetings', name: 'Meetings', icon: 'users', workspaceId: 'work', createdAt: new Date() },
   
   // Hobby workspace projects
-  { id: 'hobby-default', name: 'Hobby Actions', workspaceId: 'hobby', createdAt: new Date() },
-  { id: 'photography', name: 'Photography', workspaceId: 'hobby', createdAt: new Date() },
-  { id: 'electronics', name: 'Electronics', workspaceId: 'hobby', createdAt: new Date() },
-  { id: 'music', name: 'Music', workspaceId: 'hobby', createdAt: new Date() },
+  { id: 'hobby-default', name: 'Hobby Actions', icon: 'heart', workspaceId: 'hobby', createdAt: new Date() },
+  { id: 'photography', name: 'Photography', icon: 'heart', workspaceId: 'hobby', createdAt: new Date() },
+  { id: 'electronics', name: 'Electronics', icon: 'heart', workspaceId: 'hobby', createdAt: new Date() },
+  { id: 'music', name: 'Music', icon: 'heart', workspaceId: 'hobby', createdAt: new Date() },
 ];
 
 export const mockWorkspaces: Workspace[] = [
