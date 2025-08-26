@@ -28,6 +28,7 @@ Next focus: begin Core Features below.
 - [ ] name default project better
 - [ ] make the project badge have same look as perspective badge
 - [ ] why Inbox does not show completed items
+- [ ] the "All" view should obey the project order when showing groups
 
 ### Advanced Organization
 - [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
