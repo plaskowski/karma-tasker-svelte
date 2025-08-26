@@ -319,7 +319,12 @@
                             title: '',
                             description: '',
                             completed: false,
-                            projectId: $workspaces.find(w => w.id === $currentWorkspace)?.defaultProjectId || 'personal-default',
+                            // Inherit project/perspective from current context
+                            projectId: (
+                                $currentView === 'project' && $currentProjectId
+                                ? $currentProjectId
+                                : ($workspaces.find(w => w.id === $currentWorkspace)?.defaultProjectId || 'personal-default')
+                            ),
                             workspaceId: $currentWorkspace,
                             createdAt: new Date(),
                             updatedAt: new Date()
@@ -327,13 +332,18 @@
                         projects={$workspaceProjects}
                         perspectives={$workspacePerspectives}
                         save={async ({ title, description, projectId, perspective }) => {
+                            const inheritedPerspective = (
+                                $currentView && ['inbox','first','next','waiting','scheduled','someday','review','ideas'].includes($currentView)
+                                ? ($currentView === 'inbox' ? undefined : $currentView)
+                                : undefined
+                            );
                             await addTask({
                                 title,
                                 description,
                                 projectId,
                                 workspaceId: $currentWorkspace,
                                 completed: false,
-                                perspective
+                                perspective: perspective ?? inheritedPerspective
                             });
                             // Close after successful create
                             handleCreateClose();
