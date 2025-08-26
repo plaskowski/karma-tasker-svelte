@@ -15,7 +15,6 @@
 		toggleTaskComplete,
 
 		addTask,
-		migrateToWorkspaces,
 		addSampleWorkspaceTasks,
 		resetToInitialState
 	} from '$lib/stores/taskStore';
@@ -102,9 +101,6 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 
 	// Initialize view from URL parameters
 	onMount(() => {
-		// Run migration to ensure existing tasks/projects have workspaceId
-		migrateToWorkspaces();
-		
 		// Add sample tasks to Work and Hobby workspaces if they're empty
 		addSampleWorkspaceTasks();
 		
@@ -198,8 +194,9 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 	function handleRefresh() {
 		// Reset app to initial state (temporary dev feature)
 		resetToInitialState();
-		// Update URL to reflect reset state
-        updateURL($workspacePerspectivesOrdered[0]?.id || 'project', undefined, 'personal');
+		// Update URL to reflect reset state - use first workspace
+		const firstWorkspaceId = $workspaces[0]?.id || 'personal';
+        updateURL($workspacePerspectivesOrdered[0]?.id || 'project', undefined, firstWorkspaceId);
 	}
 
     // Auto-scroll the create editor into view whenever it opens

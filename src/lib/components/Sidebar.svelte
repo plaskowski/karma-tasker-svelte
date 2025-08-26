@@ -88,16 +88,13 @@
 	}
 
 	function getWorkspaceIcon(workspaceId: string) {
-		switch (workspaceId) {
-			case 'personal':
-				return User;
-			case 'work':
-				return Briefcase;
-			case 'hobby':
-				return Gamepad2;
-			default:
-				return User;
-		}
+		// Map workspace IDs to icons
+		const iconMap: Record<string, any> = {
+			'personal': User,
+			'work': Briefcase,
+			'hobby': Gamepad2
+		};
+		return iconMap[workspaceId] || User; // Default to User icon
 	}
 
 	// State for workspace selector dropdown
@@ -161,6 +158,7 @@
 		<div class="py-0 border-b border-gray-200 dark:border-gray-700" bind:this={workspaceDropdownContainerRef}>
 			<div class="rounded-none overflow-hidden">
 				{#each workspaces as workspace}
+					{@const Icon = getWorkspaceIcon(workspace.id)}
 					<button
 						onclick={() => {
 							onWorkspaceChange(workspace.id);
@@ -168,15 +166,7 @@
 						}}
 						class="w-full btn btn-base text-base text-left rounded-none {workspace.id === currentWorkspace ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 					>
-						{#if workspace.id === 'personal'}
-							<User class="w-5 h-5" />
-						{:else if workspace.id === 'work'}
-							<Briefcase class="w-5 h-5" />
-						{:else if workspace.id === 'hobby'}
-							<Gamepad2 class="w-5 h-5" />
-						{:else}
-							<User class="w-5 h-5" />
-						{/if}
+						<Icon class="w-5 h-5" />
 						<span>{workspace.name}</span>
 					</button>
 				{/each}

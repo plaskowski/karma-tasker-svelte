@@ -16,7 +16,8 @@ export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces)
 // Default to the first perspective; will be set on mount based on workspace config
 export const currentView = writable<ViewType>('inbox');
 export const currentProjectId = writable<string | undefined>();
-export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', 'personal');
+// Use first workspace as default
+export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', mockWorkspaces[0]?.id || 'personal');
 
 export const showCompleted = writable(false);
 
@@ -83,10 +84,9 @@ export const workspacePerspectivesOrdered = derived(
 export const filteredTasks = derived(
   [tasks, currentView, currentProjectId, currentWorkspace, workspacePerspectivesOrdered],
   ([$tasks, $currentView, $currentProjectId, $currentWorkspace, $workspacePerspectivesOrdered]) => {
-    // Filter by current workspace first (treat tasks without workspaceId as 'personal' for backward compatibility)
+    // Filter by current workspace first
     let filtered = $tasks.filter(task => {
-      const taskWorkspace = task.workspaceId || 'personal';
-      return taskWorkspace === $currentWorkspace;
+      return task.workspaceId === $currentWorkspace;
     });
 
     // Filter by view
@@ -120,15 +120,13 @@ export const firstPerspectiveId = derived([workspaces, currentWorkspace], ([$wor
 // Keep a count for the first perspective id in each workspace (if present)
 export const firstTaskCount = derived([tasks, currentWorkspace, firstPerspectiveId], ([$tasks, $currentWorkspace, $firstPerspectiveId]) => 
   $tasks.filter(task => {
-    const taskWorkspace = task.workspaceId || 'personal';
-    return taskWorkspace === $currentWorkspace && task.perspective === $firstPerspectiveId && !task.completed;
+    return task.workspaceId === $currentWorkspace && task.perspective === $firstPerspectiveId && !task.completed;
   }).length
 );
 
 export const inboxTaskCount = derived([tasks, currentWorkspace, firstPerspectiveId], ([$tasks, $currentWorkspace, $firstPerspectiveId]) => {
   return $tasks.filter(task => {
-    const taskWorkspace = task.workspaceId || 'personal';
-    return taskWorkspace === $currentWorkspace && task.perspective === $firstPerspectiveId && !task.completed;
+    return task.workspaceId === $currentWorkspace && task.perspective === $firstPerspectiveId && !task.completed;
   }).length;
 });
 
@@ -139,8 +137,7 @@ export const perspectiveTaskCounts = derived([tasks, currentWorkspace, workspace
   const ids = (ws?.perspectives || []).map(p => p.id);
   ids.forEach(id => { result[id] = 0; });
   for (const t of $tasks) {
-    const tWs = t.workspaceId || 'personal';
-    if (tWs !== $currentWorkspace) continue;
+    if (t.workspaceId !== $currentWorkspace) continue;
     if (t.completed) continue;
     if (t.perspective && ids.includes(t.perspective)) {
       result[t.perspective] = (result[t.perspective] ?? 0) + 1;
@@ -154,8 +151,7 @@ export const workspaceProjects = derived(
   [projects, currentWorkspace],
   ([$projects, $currentWorkspace]) => {
     return $projects.filter(project => {
-      const projectWorkspace = project.workspaceId || 'personal';
-      return projectWorkspace === $currentWorkspace;
+      return project.workspaceId === $currentWorkspace;
     });
   }
 );
@@ -172,32 +168,6 @@ export const workspacePerspectives = derived(
   }
 );
 
-// Migration function to add workspaceId to existing tasks/projects and assign default projects
-export function migrateToWorkspaces() {
-  // Update tasks without workspaceId to use 'personal' and assign default project if missing
-  tasks.update(taskList => {
-    const allProjects = get(projects);
-    return taskList.map(task => {
-      const finalWorkspaceId = task.workspaceId || 'personal';
-      const firstWorkspaceProjectId = allProjects.find(p => (p.workspaceId || 'personal') === finalWorkspaceId)?.id;
-      const finalProjectId = task.projectId || firstWorkspaceProjectId || '';
-
-      return {
-        ...task,
-        workspaceId: finalWorkspaceId,
-        projectId: finalProjectId
-      };
-    });
-  });
-  
-  // Update projects without workspaceId to use 'personal'
-  projects.update(projectList =>
-    projectList.map(project => ({
-      ...project,
-      workspaceId: project.workspaceId || 'personal'
-    }))
-  );
-}
 
 // Function to add sample tasks to Work and Hobby workspaces (for demo purposes)
 export function addSampleWorkspaceTasks() {
@@ -316,14 +286,13 @@ export function resetToInitialState() {
   projects.set(mockProjects);
   workspaces.set(mockWorkspaces);
   
-  // Reset current state
+  // Reset current state to first workspace
   currentView.set('inbox');
   currentProjectId.set(undefined);
-  currentWorkspace.set('personal');
+  currentWorkspace.set(mockWorkspaces[0]?.id || 'personal');
   showCompleted.set(false);
   
-  // Run migrations to ensure data consistency
-  migrateToWorkspaces();
+  // Add sample tasks for other workspaces
   addSampleWorkspaceTasks();
 }
 
