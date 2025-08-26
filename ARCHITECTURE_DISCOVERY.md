@@ -44,6 +44,39 @@ src/
    - No clear patterns for extending functionality
    - Difficult to swap data sources (mock → real API)
 
+## Research: Official and Community-Recommended Patterns
+
+### Official SvelteKit Recommendations
+Based on the official documentation and community best practices:
+
+1. **Route-centric organization** - Components used in single routes should be colocated with those routes
+2. **`$lib/server` pattern** - Server-only code with automatic client-side import prevention
+3. **Minimal abstraction** - Leverage SvelteKit's built-in features rather than over-abstracting
+
+### Community-Promoted Patterns (2024)
+
+#### MVC-Like Pattern with lib/server
+The most promoted pattern for enterprise SvelteKit applications:
+```
+src/lib/
+├── server/
+│   ├── httpConsumers/      # Domain-organized API integrations
+│   │   ├── tasks/
+│   │   │   ├── models/     # Request/response models
+│   │   │   └── index.ts    # API consumer
+│   │   └── projects/
+│   └── db/                 # Database access
+└── dtos/                   # Data Transfer Objects
+    └── views/              # Composite DTOs for UI
+```
+
+#### Clean Architecture / Hexagonal Architecture
+Promoted by thought leaders like Niko Heikkila:
+- Domain at the center
+- Parse, don't validate (using Zod or similar)
+- Ports and adapters pattern
+- Technology-agnostic domain logic
+
 ## Common SvelteKit Architecture Patterns
 
 ### 1. **Feature-Based Structure**
@@ -95,35 +128,37 @@ src/lib/
 
 ## Recommendations for Karma Tasker
 
-### Proposed Architecture: **Hybrid Feature + Service Pattern**
+### Revised Recommendation Based on Research
+
+After researching official and community best practices, I recommend a **Modified MVC Pattern with lib/server** approach that aligns with SvelteKit conventions:
+
+### Proposed Architecture: **Domain-Organized MVC Pattern**
 
 ```
-src/lib/
-├── features/
-│   ├── tasks/
-│   │   ├── components/
-│   │   │   ├── TaskItem.svelte
-│   │   │   ├── TaskList.svelte
-│   │   │   └── TaskEditor.svelte
-│   │   ├── services/
-│   │   │   └── taskService.ts
-│   │   ├── stores/
-│   │   │   └── taskStore.ts (simplified)
-│   │   └── types.ts
-│   ├── projects/
-│   │   └── (similar structure)
-│   └── workspaces/
-│       └── (similar structure)
-├── shared/
-│   ├── services/
-│   │   └── api.ts
-│   ├── repositories/
-│   │   └── localStorage.ts
-│   ├── components/
-│   │   └── (shared UI components)
+src/
+├── lib/
+│   ├── server/              # Server-only code (SvelteKit convention)
+│   │   ├── domain/         # Domain logic (if needed for server)
+│   │   ├── repositories/  # Data access layer
+│   │   │   └── task.ts
+│   │   └── services/       # Business logic
+│   │       └── taskService.ts
+│   ├── domain/             # Shared domain models and logic
+│   │   ├── task/
+│   │   │   ├── model.ts   # Task entity
+│   │   │   └── logic.ts   # Task business rules
+│   │   └── project/
+│   ├── stores/             # Client state management
+│   │   ├── taskStore.ts   # Simplified, UI state only
+│   │   └── uiStore.ts      # UI-specific state
+│   ├── components/         # Reusable components
+│   │   ├── tasks/
+│   │   └── shared/
 │   └── utils/
-└── types/
-    └── index.ts (global types)
+└── routes/
+    ├── (app)/              # Grouped routes for main app
+    │   └── +page.svelte    # Keep route components lean
+    └── api/                # API endpoints if needed
 ```
 
 ### Why This Approach?
