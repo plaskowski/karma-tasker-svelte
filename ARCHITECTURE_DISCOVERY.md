@@ -161,13 +161,13 @@ src/
     └── api/                # API endpoints if needed
 ```
 
-### Why This Approach?
+### Why This Revised Approach?
 
-1. **Feature Organization** - Related code stays together
-2. **Service Layer** - Business logic separated from UI
-3. **Clear Dependencies** - Features → Services → Repositories
-4. **Testability** - Services can be tested independently
-5. **Gradual Migration** - Can be implemented incrementally
+1. **Follows SvelteKit Conventions** - Uses `lib/server` pattern as recommended
+2. **Clean Domain Modeling** - Separate domain logic from infrastructure
+3. **MVC Pattern** - Proven pattern that works well with SvelteKit
+4. **Parse, Don't Validate** - Can integrate Zod for robust data validation
+5. **Future-Ready** - Easy to transition from mock to real API/database
 
 ### Implementation Plan
 
@@ -242,8 +242,28 @@ This provides some benefits without major disruption.
 4. How important is real-time collaboration features?
 5. What is the timeline for moving from mock data to real backend?
 
+## Key Insights from Research
+
+Based on official documentation and community best practices:
+
+1. **SvelteKit favors simplicity** - The framework encourages minimal abstraction and leveraging built-in features
+2. **lib/server is crucial** - This pattern is the official way to separate server-only code
+3. **MVC pattern is dominant** - Most enterprise SvelteKit apps use MVC-like architecture
+4. **Domain modeling matters** - Clean domain modeling helps manage complexity
+5. **DTOs are recommended** - Data Transfer Objects provide clear data contracts
+
 ## Conclusion
 
-The current codebase works but has mixed concerns that will become problematic as it grows. A service-based architecture with feature organization provides a good balance of structure and flexibility. However, the level of refactoring should match the project's actual needs and constraints.
+After researching official and community recommendations, the **Domain-Organized MVC Pattern with lib/server** emerges as the best approach for Karma Tasker. This pattern:
+- Aligns with SvelteKit conventions
+- Is widely adopted in the community
+- Provides clear separation of concerns
+- Scales well as the application grows
 
-**Recommendation:** Start with Phase 1 (Service Layer) as a proof of concept. This provides immediate benefits with minimal disruption. Further phases can be implemented based on actual needs.
+**Revised Recommendation:** 
+1. Start with extracting domain models and business logic
+2. Implement the lib/server pattern for future backend integration
+3. Keep stores simple and focused on UI state
+4. Avoid over-engineering - add complexity only as needed
+
+This approach balances best practices with pragmatism, ensuring the codebase remains maintainable without unnecessary complexity.
