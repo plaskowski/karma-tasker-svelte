@@ -6,6 +6,7 @@
 - **Include benefits in commit messages**: Explain not just what changed, but the benefits and impact of the change.
 - **Test before committing**: Ensure there are no linter errors.
 - **Immediately cross out completed TODOs and move to RESOLVED**: When you complete an item in `TODO.md`, mark it `- [x]` and move it to `RESOLVED.md` in the same commit.
+- **Squash commit rule**: When asked to squash commits, always update the new squashed commit message to accurately reflect the resulting combined changes and their benefits, using a single conventional commit subject.
 
 ## Code Quality
 - **Use TypeScript strictly**: All new code should be properly typed with no `any` types.
