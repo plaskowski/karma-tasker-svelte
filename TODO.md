@@ -10,7 +10,7 @@
 - [x] add new item should inherit project or perspective from current view
 - [ ] the top bar buttons stand out too much, change them to outline only style
 - [x] default project name ...
-  - how do we know which one is the default? 
+- [ ] close editor when leaving the view
 
 ## 🚀 Active Development Roadmap
 
