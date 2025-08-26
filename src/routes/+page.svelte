@@ -118,7 +118,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 			currentWorkspace.set(workspaceParam);
 		}
 
-    if (view && ['project', ...$workspacePerspectivesOrdered.map(p => p.id)].includes(view)) {
+    if (view && ['project', 'all', ...$workspacePerspectivesOrdered.map(p => p.id)].includes(view)) {
 			currentView.set(view);
 			if (view === 'project' && project) {
 				// Validate project exists in current workspace

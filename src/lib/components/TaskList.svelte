@@ -36,6 +36,8 @@
 		switch (currentView) {
 			case 'first':
 				return 'First';
+			case 'all':
+				return 'All';
 			case 'inbox':
 				return 'Inbox';
 			case 'next':
@@ -190,14 +192,17 @@
 			tasks: Task[];
 		}> = [];
 
-		// First view - single group
+		// First/all views - single group of active tasks
 		if (!shouldGroupByProject && !shouldGroupByPerspective) {
 			if (activeTasks.length > 0) {
-				groups.push({
-					id: 'first',
-					title: firstHeader,
-					tasks: activeTasks
-				});
+				if (currentView === 'first') {
+					groups.push({ id: 'first', title: firstHeader, tasks: activeTasks });
+				} else if (currentView === 'all') {
+					groups.push({ id: 'all', title: 'All', tasks: activeTasks });
+				} else {
+					// Fallback label
+					groups.push({ id: 'tasks', title: 'Tasks', tasks: activeTasks });
+				}
 			}
 		}
 		// Project-grouped views (Inbox, Next, Waiting, etc.)

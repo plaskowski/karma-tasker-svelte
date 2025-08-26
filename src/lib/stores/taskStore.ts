@@ -94,6 +94,9 @@ export const filteredTasks = derived(
       if ($currentProjectId) {
         filtered = filtered.filter(task => task.projectId === $currentProjectId);
       }
+    } else if ($currentView === 'all') {
+      // All view: keep all tasks for current workspace (both active and completed)
+      // No additional filtering
     } else {
       // Perspective view: filter by perspective id
       const perspectiveId = $currentView;

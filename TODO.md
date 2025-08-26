@@ -12,7 +12,7 @@
 - [x] default project name ...
 - [x] remove any special/magic logic related to default project (same as did with Inbox perspective)
 - [x] remove $workspaceProjectsForSelection, no more need for it
-- [ ] add "All" view (should be the last one)
+- [x] add "All" view (should be the last one)
 - [ ] make "first" view use standard perspective view, remove any special logic around "first" perspective
 - [ ] close editor when leaving the view
 - [ ] why "first" perspective is lowercase in list group header?

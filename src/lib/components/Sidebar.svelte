@@ -39,20 +39,21 @@
 		users: Users,
 	};
 
-	// Dynamic sidebar items: configured perspectives only
-	const sidebarItems = $derived(
-		perspectives.map(p => ({
-			id: p.id,
-			label: p.name,
-			icon: iconMap[p.icon] || Clock
-		}))
-	);
+    // Dynamic sidebar items: configured perspectives + All (last)
+    const sidebarItems = $derived([
+        ...perspectives.map(p => ({
+            id: p.id,
+            label: p.name,
+            icon: iconMap[p.icon] || Clock
+        })),
+        { id: 'all', label: 'All', icon: Clock }
+    ]);
 
     // Counts per perspective (active only)
     import { perspectiveTaskCounts, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
     function getTaskCount(view: ViewType) {
-        // For perspective views, show count; for project view, none
-        if (view === 'project') return null;
+        // For perspective views, show count; for project/all views, none
+        if (view === 'project' || view === 'all') return null;
         return $perspectiveTaskCounts[view as string] ?? null;
     }
 
