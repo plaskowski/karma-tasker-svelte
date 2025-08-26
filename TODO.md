@@ -13,6 +13,7 @@
 - [ ] a task with description has some strange indicator after the title
 - [ ] project badge should be aligned with item title line
 - [ ] when closing editor the task line should not use in animation
+- [ ] cmd/ctrl+enter should confirm the edit panel
 
 ## 🚀 Active Development Roadmap
 
