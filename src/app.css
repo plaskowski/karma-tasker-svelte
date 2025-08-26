@@ -36,6 +36,6 @@ html, body {
 
   /* Unified top bar style for Sidebar and TaskList headers */
   .topbar {
-    @apply h-12 px-6 border-b border-gray-200 dark:border-gray-700;
+    @apply h-12 px-6 border-b border-gray-200 dark:border-gray-700 flex items-center;
   }
 }
