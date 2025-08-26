@@ -240,15 +240,22 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		console.log('Cleanup triggered');
 	}
 	
-	// Get default values for new task based on current context
-	function getNewTaskDefaults() {
+	// Create a new task object with defaults based on current context
+	function createNewTaskWithDefaults() {
 		return {
+			id: 'new',
+			title: '',
+			description: '',
+			completed: false,
 			projectId: $currentView === 'project' && $currentProjectId
 				? $currentProjectId
 				: ($workspaceProjects[0]?.id || ''),
 			perspective: $currentView === 'perspective'
 				? $currentPerspectiveId
-				: ($workspacePerspectivesOrdered[0]?.id || '')
+				: ($workspacePerspectivesOrdered[0]?.id || ''),
+			workspaceId: $currentWorkspace,
+			createdAt: new Date(),
+			updatedAt: new Date()
 		};
 	}
 
@@ -381,21 +388,10 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
         />
 
         {#if showCreateEditor}
-            {@const taskDefaults = getNewTaskDefaults()}
             <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4" bind:this={createEditorEl}>
                 <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
                     <TaskEditorForm
-                        task={{
-                            id: 'new',
-                            title: '',
-                            description: '',
-                            completed: false,
-                            projectId: taskDefaults.projectId,
-                            perspective: taskDefaults.perspective,
-                            workspaceId: $currentWorkspace,
-                            createdAt: new Date(),
-                            updatedAt: new Date()
-                        }}
+                        task={createNewTaskWithDefaults()}
                         projects={$workspaceProjects}
                         perspectives={$workspacePerspectivesOrdered}
                         save={async ({ title, description, projectId, perspective }) => {
