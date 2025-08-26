@@ -7,7 +7,6 @@
 
 ### UI/UX Bugs
 - [ ] use the editor for new task flow
-- [ ] cmd/ctrl+enter should confirm the edit panel
 - [ ] default project name ...
 
 ## 🚀 Active Development Roadmap
