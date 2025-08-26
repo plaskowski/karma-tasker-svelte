@@ -103,9 +103,15 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 			}
 		});
 		
-		// Sort tasks inside each project by order field
+		// Sort tasks inside each project by perspective order, then by task order
 		Object.keys(grouped).forEach(projectId => {
-			grouped[projectId].sort((a, b) => a.order - b.order);
+			grouped[projectId].sort((a, b) => {
+				const perspA = perspectiveOrder.get(a.perspective || '') ?? Number.MAX_SAFE_INTEGER;
+				const perspB = perspectiveOrder.get(b.perspective || '') ?? Number.MAX_SAFE_INTEGER;
+				if (perspA !== perspB) return perspA - perspB;
+				// If same perspective, sort by task order
+				return a.order - b.order;
+			});
 		});
 		
 		// Sort ungrouped tasks by order as well
