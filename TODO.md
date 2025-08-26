@@ -10,11 +10,11 @@
 - [x] add new item should inherit project or perspective from current view
 - [x] the top bar buttons stand out too much, change them to outline only style
 - [x] default project name ...
-- [ ] close editor when leaving the view
-- [ ] why "first" perspective is lowercase in list group header?
-- [ ] make "first" category use standard category view
 - [ ] remove any special/magic logic related to default project (same as did with Inbox perspective)
 - [ ] add "All" view (should be the last one)
+- [ ] make "first" view use standard perspective view, remove any special logic around "first" perspective
+- [ ] close editor when leaving the view
+- [ ] why "first" perspective is lowercase in list group header?
 
 ## 🚀 Active Development Roadmap
 
