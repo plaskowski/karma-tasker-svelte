@@ -134,6 +134,31 @@ export const workspaceProjects = derived(
   }
 );
 
+// Default project id for the current workspace
+export const workspaceDefaultProjectId = derived(
+  [workspaces, currentWorkspace],
+  ([$workspaces, $currentWorkspace]) => {
+    return $workspaces.find(w => w.id === $currentWorkspace)?.defaultProjectId;
+  }
+);
+
+// Project list for selection controls (includes the default project)
+export const workspaceProjectsForSelection = derived(
+  [projects, workspaces, currentWorkspace],
+  ([$projects, $workspaces, $currentWorkspace]) => {
+    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
+    const defaultProjectId = currentWorkspaceData?.defaultProjectId;
+
+    const list = $projects.filter(project => {
+      const projectWorkspace = project.workspaceId || 'personal';
+      return projectWorkspace === $currentWorkspace;
+    });
+
+    // Sort to put default project first, keep others stable
+    return list.sort((a, b) => (a.id === defaultProjectId ? -1 : b.id === defaultProjectId ? 1 : 0));
+  }
+);
+
 // Derived store for current workspace perspectives
 export const workspacePerspectives = derived(
   [workspaces, currentWorkspace],

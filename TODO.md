@@ -9,7 +9,7 @@
 - [x] make all buttons little bigger
 - [x] add new item should inherit project or perspective from current view
 - [ ] the top bar buttons stand out too much, change them to outline only style
-- [ ] default project name ...
+- [x] default project name ...
   - how do we know which one is the default? 
 
 ## 🚀 Active Development Roadmap

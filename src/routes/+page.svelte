@@ -25,6 +25,7 @@
     import { onMount } from 'svelte';
     import Sidebar from '$lib/components/Sidebar.svelte';
     import TaskList from '$lib/components/TaskList.svelte';
+    import { workspaceProjectsForSelection } from '$lib/stores/taskStore';
     import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
     import TaskInlineEditor from '$lib/components/TaskInlineEditor.svelte';
     import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
@@ -297,7 +298,7 @@
         <!-- Task List fills remaining space -->
         <TaskList
             tasks={$filteredTasks}
-            projects={$workspaceProjects}
+            projects={$workspaceProjectsForSelection}
             currentView={$currentView}
             currentProjectId={$currentProjectId}
             onTaskToggle={handleTaskToggle}
@@ -329,7 +330,7 @@
                             createdAt: new Date(),
                             updatedAt: new Date()
                         }}
-                        projects={$workspaceProjects}
+                        projects={$workspaceProjectsForSelection}
                         perspectives={$workspacePerspectives}
                         save={async ({ title, description, projectId, perspective }) => {
                             const inheritedPerspective = (
