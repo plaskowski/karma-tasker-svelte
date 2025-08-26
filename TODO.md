@@ -16,7 +16,7 @@
 - [x] make "first" view use standard perspective view, remove any special logic around "first" perspective
 - [x] "All" view should use standard perspective view (the one that groups by project, it should sort the items by persperctive order within project group)
 - [x] close editor when leaving the view
-- [ ] why "first" perspective is lowercase in list group header?
+- [X] why "first" perspective is lowercase in list group header?
 - [ ] remove "personal" magic value
 - [ ] find any other magic values or special logic
 - [ ] getPerspectiveGroupLabel - no hardcoded mapping, the perspective definition should have a label 
