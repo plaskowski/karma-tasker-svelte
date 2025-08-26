@@ -269,60 +269,65 @@
 		inboxTaskCount={$inboxTaskCount}
 	/>
 
-	<!-- Main Content Area -->
-	<div class="flex-1 overflow-hidden">
-		<!-- Task List -->
-		<TaskList
-			tasks={$filteredTasks}
-			projects={$workspaceProjects}
-			currentView={$currentView}
-			currentProjectId={$currentProjectId}
-			onTaskToggle={handleTaskToggle}
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Task List fills remaining space -->
+        <TaskList
+            tasks={$filteredTasks}
+            projects={$workspaceProjects}
+            currentView={$currentView}
+            currentProjectId={$currentProjectId}
+            onTaskToggle={handleTaskToggle}
 
-			onTaskClick={handleTaskClick}
+            onTaskClick={handleTaskClick}
 
-			showCompleted={true}
-			onNewTask={handleNewTask}
-			onCleanup={handleCleanup}
-			onRefresh={handleRefresh}
-		/>
-	</div>
+            showCompleted={true}
+            onNewTask={handleNewTask}
+            onCleanup={handleCleanup}
+            onRefresh={handleRefresh}
+        />
+
+        {#if showCreateEditor}
+            <div class="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
+                <div class="max-w-4xl mx-auto">
+                    <header class="mb-3 flex items-center justify-between">
+                        <h2 class="text-base font-medium text-gray-900 dark:text-gray-100">New Task</h2>
+                        <button class="btn btn-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200" onclick={handleCreateClose}>Close</button>
+                    </header>
+                    <TaskEditorForm
+                        task={{
+                            id: 'new',
+                            title: '',
+                            description: '',
+                            completed: false,
+                            projectId: $workspaces.find(w => w.id === $currentWorkspace)?.defaultProjectId || 'personal-default',
+                            workspaceId: $currentWorkspace,
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        }}
+                        projects={$workspaceProjects}
+                        perspectives={$workspacePerspectives}
+                        save={async ({ title, description, projectId, perspective }) => {
+                            await addTask({
+                                title,
+                                description,
+                                projectId,
+                                workspaceId: $currentWorkspace,
+                                completed: false,
+                                perspective
+                            });
+                            // Close after successful create
+                            handleCreateClose();
+                        }}
+                        on:close={handleCreateClose}
+                    />
+                </div>
+            </div>
+        {/if}
+    </div>
 </div>
 
-    {#if showCreateEditor}
-        <div class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50">
-            <div class="bg-white dark:bg-gray-800 w-full max-w-2xl p-6 rounded-xl shadow-2xl">
-                <header class="mb-4">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">New Task</h2>
-                </header>
-                <TaskEditorForm
-                    task={{
-                        id: 'new',
-                        title: '',
-                        description: '',
-                        completed: false,
-                        projectId: $workspaces.find(w => w.id === $currentWorkspace)?.defaultProjectId || 'personal-default',
-                        workspaceId: $currentWorkspace,
-                        createdAt: new Date(),
-                        updatedAt: new Date()
-                    }}
-                    projects={$workspaceProjects}
-                    perspectives={$workspacePerspectives}
-                    save={async ({ title, description, projectId, perspective }) => {
-                        await addTask({
-                            title,
-                            description,
-                            projectId,
-                            workspaceId: $currentWorkspace,
-                            completed: false,
-                            perspective
-                        });
-                    }}
-                    on:close={handleCreateClose}
-                />
-            </div>
-        </div>
-    {/if}
+    
 
 <!-- Task Details Modal -->
 <TaskDetailsDialog open={showTaskDetailsDialog} task={selectedTask} on:close={handleTaskDetailsClose} />
