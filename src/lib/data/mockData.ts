@@ -71,7 +71,7 @@ export const mockTasks: Task[] = [
     title: 'Upgrade authentication library',
     description: '',
     completed: true,
-
+    perspective: 'next',
     projectId: 'api-redesign',
     workspaceId: 'work',
     order: 1,
@@ -84,7 +84,7 @@ export const mockTasks: Task[] = [
     title: 'Read book',
     description: '',
     completed: true,
-
+    perspective: 'someday',
     projectId: 'learning',
     workspaceId: 'personal',
     order: 1,
@@ -97,7 +97,7 @@ export const mockTasks: Task[] = [
     title: 'Exercise routine',
     description: '',
     completed: false,
-
+    perspective: 'inbox',
     projectId: 'health',
     workspaceId: 'personal',
     order: 1,
@@ -110,7 +110,7 @@ export const mockTasks: Task[] = [
     title: 'Build Arduino robot',
     description: '',
     completed: false,
-
+    perspective: 'inbox',
     projectId: 'electronics',
     workspaceId: 'hobby',
     order: 1,
@@ -123,7 +123,7 @@ export const mockTasks: Task[] = [
     title: 'Team meeting',
     description: '',
     completed: false,
-
+    perspective: 'inbox',
     projectId: 'work-default',
     workspaceId: 'work',
     order: 1,
@@ -150,8 +150,7 @@ export const mockTasks: Task[] = [
     title: 'Clean workspace',
     description: '',
     completed: false,
-
-    // No perspective = inbox
+    perspective: 'inbox',
     projectId: 'household',
     workspaceId: 'personal',
     order: 2,
@@ -177,7 +176,7 @@ export const mockTasks: Task[] = [
     title: 'Document new API endpoints',
     description: '',
     completed: false,
-
+    perspective: 'inbox',
     projectId: 'api-redesign',
     workspaceId: 'work',
     order: 2,
@@ -239,7 +238,7 @@ export const mockTasks: Task[] = [
     title: 'Schedule team lunch',
     description: '',
     completed: false,
-    // No perspective = inbox
+    perspective: 'inbox',
     projectId: 'meetings',
     workspaceId: 'work',
     order: 2,
@@ -251,7 +250,7 @@ export const mockTasks: Task[] = [
     title: 'Organize studio space',
     description: '',
     completed: false,
-    // No perspective = inbox  
+    perspective: 'inbox',
     projectId: 'hobby-default',
     workspaceId: 'hobby',
     order: 1,
@@ -276,7 +275,7 @@ export const mockTasks: Task[] = [
     title: 'Yoga class registration',
     description: '',
     completed: false,
-    // No perspective = inbox
+    perspective: 'inbox',
     projectId: 'health',
     workspaceId: 'personal',
     order: 3,
@@ -300,7 +299,7 @@ export const mockTasks: Task[] = [
     title: 'Deep clean garage',
     description: '',
     completed: false,
-    // No perspective = inbox
+    perspective: 'inbox',
     projectId: 'household',
     workspaceId: 'personal',
     order: 4,
@@ -336,7 +335,7 @@ export const mockTasks: Task[] = [
     title: 'Research investment options',
     description: 'Look into index funds and ETFs',
     completed: false,
-    // No perspective = inbox
+    perspective: 'inbox',
     projectId: 'finances',
     workspaceId: 'personal',
     order: 4,
@@ -360,7 +359,7 @@ export const mockTasks: Task[] = [
     title: 'Research hotels in Barcelona',
     description: 'Compare prices and locations',
     completed: false,
-    // No perspective = inbox
+    perspective: 'inbox',
     projectId: 'travel',
     workspaceId: 'personal',
     order: 3,
@@ -384,7 +383,7 @@ export const mockTasks: Task[] = [
     title: 'Complete online course on investing',
     description: '',
     completed: false,
-    // No perspective = inbox
+    perspective: 'inbox',
     projectId: 'learning',
     workspaceId: 'personal',
     order: 4,
@@ -408,7 +407,7 @@ export const mockTasks: Task[] = [
     title: 'Update emergency contact list',
     description: '',
     completed: false,
-    // No perspective = inbox
+    perspective: 'inbox',
     projectId: 'personal-default',
     workspaceId: 'personal',
     order: 3,
