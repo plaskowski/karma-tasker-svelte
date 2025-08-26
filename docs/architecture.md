@@ -189,7 +189,7 @@ The application is designed to use Supabase for data persistence. Currently usin
 
 ## Migration Path
 
-Currently migrating from a monolithic structure. See [Migration Plan](../MIGRATION_PLAN.md) for details.
+Currently migrating from a monolithic structure. See [Migration Plan](discovery/MIGRATION_PLAN.md) for details.
 
 ### Phase 1: Service Extraction ✅
 - Extract business logic from stores
