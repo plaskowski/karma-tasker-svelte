@@ -14,8 +14,8 @@
 - [x] remove $workspaceProjectsForSelection, no more need for it
 - [x] add "All" view (should be the last one)
 - [x] make "first" view use standard perspective view, remove any special logic around "first" perspective
-- [ ] "All" view should use standard perspective view (the one that groups by project, it should sort the items by persperctive order within project group)
-- [ ] close editor when leaving the view
+- [x] "All" view should use standard perspective view (the one that groups by project, it should sort the items by persperctive order within project group)
+- [x] close editor when leaving the view
 - [ ] why "first" perspective is lowercase in list group header?
 - [ ] remove "personal" magic value
 - [ ] find any other magic values or special logic
