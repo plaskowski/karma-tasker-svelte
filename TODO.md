@@ -20,6 +20,7 @@ Next focus: begin Core Features below.
 - [ ] "All" view in Projects (groups by perspective, then orders by project)
 - [ ] define tasks order within the project and apply it in all views
 - [ ] Drag & drop task reordering
+- [ ] name default project better
 
 ### Advanced Organization
 - [ ] special markup support in description
