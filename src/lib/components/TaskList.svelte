@@ -73,6 +73,13 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 	function closeInlineEditor() {
 		inlineEditingTaskId = null;
 	}
+
+	// Close inline editor when view or selected project changes
+	$effect(() => {
+		const v = currentView;
+		const p = currentProjectId;
+		inlineEditingTaskId = null;
+	});
 	const completedTasks = $derived(tasks.filter(task => task.completed));
 
 	// Rotating motivational headers for First view - diverse positive energy with nostalgia
@@ -188,6 +195,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 
 	function getPerspectiveGroupLabel(groupKey: string): string {
 		switch (groupKey) {
+			case 'first': return 'First';
 			case 'inbox': return 'Inbox';
 			case 'next': return 'Next';
 			case 'waiting': return 'Waiting';
