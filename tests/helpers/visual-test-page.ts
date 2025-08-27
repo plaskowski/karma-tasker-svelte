@@ -156,47 +156,5 @@ export class VisualTestPage {
 		}
 	}
 
-	/**
-	 * Set tasks using the testing facade
-	 */
-	async setTasks(tasks: any[]) {
-		await this.page.evaluate((tasksData) => {
-			const facade = (window as any).__testingFacade;
-			if (facade) {
-				facade.setTasks(tasksData);
-			} else {
-				localStorage.setItem('karma-tasks-tasks', JSON.stringify(tasksData));
-			}
-		}, tasks);
-	}
 
-	/**
-	 * Get current tasks using the testing facade
-	 */
-	async getTasks(): Promise<any[]> {
-		return await this.page.evaluate(() => {
-			const facade = (window as any).__testingFacade;
-			if (facade) {
-				return facade.getTasks();
-			} else {
-				const tasksJson = localStorage.getItem('karma-tasks-tasks');
-				return tasksJson ? JSON.parse(tasksJson) : [];
-			}
-		});
-	}
-
-	/**
-	 * Enable mock mode using the testing facade
-	 */
-	async enableMockMode() {
-		await this.page.evaluate(() => {
-			const facade = (window as any).__testingFacade;
-			if (facade) {
-				facade.enableMockMode();
-			} else {
-				(window as any).__MOCK_MODE__ = true;
-				localStorage.setItem('mockMode', 'true');
-			}
-		});
-	}
 }

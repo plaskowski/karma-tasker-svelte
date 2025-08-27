@@ -90,25 +90,6 @@ export async function waitForAppReady(page: Page) {
 	await page.evaluate(() => window.scrollTo(0, 0));
 }
 
-/**
- * Set up mock mode for the application
- */
-export async function enableMockMode(page: Page) {
-	// Set environment flag for mock mode
-	await page.addInitScript(() => {
-		// Wait for testing facade to be available
-		const waitForFacade = () => {
-			if ((window as any).__testingFacade) {
-				(window as any).__testingFacade.enableMockMode();
-			} else {
-				// Fallback for immediate execution
-				(window as any).__MOCK_MODE__ = true;
-				localStorage.setItem('mockMode', 'true');
-			}
-		};
-		waitForFacade();
-	});
-}
 
 /**
  * Prepare page for screenshot testing
@@ -116,7 +97,6 @@ export async function enableMockMode(page: Page) {
 export async function prepareForScreenshot(page: Page) {
 	await freezeTime(page);
 	await seedRandom(page);
-	await enableMockMode(page);
 }
 
 

@@ -3,18 +3,9 @@
  * This avoids direct localStorage manipulation from tests
  */
 
-import type { Task } from '$lib/types';
-
 export interface TestingFacade {
-	// State management
+	// Clear all data for empty state testing
 	clearAllData: () => void;
-	setTasks: (tasks: Task[]) => void;
-	
-	// Mock mode control
-	enableMockMode: () => void;
-	
-	// Data retrieval (for test assertions)
-	getTasks: () => Task[];
 }
 
 /**
@@ -26,20 +17,6 @@ export function createTestingFacade(): TestingFacade {
 			localStorage.clear();
 			// Set empty tasks to ensure clean state
 			localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
-		},
-		
-		setTasks(tasks: Task[]) {
-			localStorage.setItem('karma-tasks-tasks', JSON.stringify(tasks));
-		},
-		
-		enableMockMode() {
-			localStorage.setItem('mockMode', 'true');
-			(window as any).__MOCK_MODE__ = true;
-		},
-		
-		getTasks(): Task[] {
-			const tasksJson = localStorage.getItem('karma-tasks-tasks');
-			return tasksJson ? JSON.parse(tasksJson) : [];
 		}
 	};
 }
