@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { prepareForScreenshot, waitForAppReady } from '../../helpers/test-utils';
 
-test('Inbox perspective - full state', async ({ page }) => {
+test('Inbox perspective - with many tasks', async ({ page }) => {
 	// Set up deterministic environment
 	await prepareForScreenshot(page);
 	
@@ -10,7 +10,7 @@ test('Inbox perspective - full state', async ({ page }) => {
 	await waitForAppReady(page);
 	
 	// Take screenshot
-	await expect(page).toHaveScreenshot('inbox-full.png', {
+	await expect(page).toHaveScreenshot('inbox-with-many-tasks.png', {
 		fullPage: true,
 		animations: 'disabled',
 		maxDiffPixels: 100
