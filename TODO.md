@@ -10,6 +10,8 @@
   - [x] don't use localStorage directly from test, expose a testing facade in window object so test can interact with the app
   - [x] remove duplicate and unused code from test-utils (setupVisualTest, etc.)
   - [x] extract page objects for interaction tests
+  - [ ] cover remaining interaction scenarios (write a list first)
+  - [ ] cover completed items with visual test
 - [ ] ...
 
 ### Core Features
