@@ -82,6 +82,7 @@ export default defineConfig({
 			name: 'e2e',
 			testDir: './tests/e2e',
 			testMatch: '**/*.spec.ts',
+			retries: 2, // Set 2 retries for all E2E tests
 			use: {
 				...devices['Desktop Chrome'],
 				viewport: { width: 1280, height: 800 },
