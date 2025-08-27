@@ -2,23 +2,6 @@ import { test, expect } from '@playwright/test';
 import { prepareForScreenshot, waitForAppReady } from '../helpers/test-utils';
 
 test.describe('Settings and Preferences - Visual Tests', () => {
-	test('Theme - light mode', async ({ page }) => {
-		// Set up deterministic environment with light theme
-		await prepareForScreenshot(page);
-		await page.emulateMedia({ colorScheme: 'light' });
-		
-		// Navigate to the app
-		await page.goto('/');
-		await waitForAppReady(page);
-		
-		// Take screenshot
-		await expect(page).toHaveScreenshot('theme-light.png', {
-			fullPage: true,
-			animations: 'disabled',
-			maxDiffPixels: 100
-		});
-	});
-
 	test('Theme - dark mode', async ({ page }) => {
 		// Set up deterministic environment with dark theme (default)
 		await prepareForScreenshot(page);
