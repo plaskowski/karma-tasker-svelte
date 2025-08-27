@@ -42,24 +42,14 @@ export default defineConfig({
 		},
 		/* Emulate reduced motion for CSS */
 		reducedMotion: 'reduce',
-		/* Color scheme */
-		colorScheme: 'light'
+		/* Color scheme - dark mode is default */
+		colorScheme: 'dark'
 	},
 
 	/* Configure projects for major browsers */
 	projects: [
 		{
 			name: 'chromium',
-			use: { 
-				...devices['Desktop Chrome'],
-				viewport: { width: 1280, height: 800 },
-				timezoneId: 'Europe/Warsaw',
-				locale: 'en-US',
-				colorScheme: 'light'
-			},
-		},
-		{
-			name: 'chromium-dark',
 			use: { 
 				...devices['Desktop Chrome'],
 				viewport: { width: 1280, height: 800 },
@@ -78,7 +68,7 @@ export default defineConfig({
 				viewport: { width: 1280, height: 800 },
 				timezoneId: 'Europe/Warsaw',
 				locale: 'en-US',
-				colorScheme: 'light',
+				colorScheme: 'dark',
 				// Ensure consistent screenshots
 				screenshot: {
 					mode: 'only-on-failure',
@@ -96,7 +86,7 @@ export default defineConfig({
 				viewport: { width: 1280, height: 800 },
 				timezoneId: 'Europe/Warsaw',
 				locale: 'en-US',
-				colorScheme: 'light'
+				colorScheme: 'dark'
 			}
 		}
 	],
