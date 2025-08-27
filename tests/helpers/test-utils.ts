@@ -96,8 +96,17 @@ export async function waitForAppReady(page: Page) {
 export async function enableMockMode(page: Page) {
 	// Set environment flag for mock mode
 	await page.addInitScript(() => {
-		(window as any).__MOCK_MODE__ = true;
-		localStorage.setItem('mockMode', 'true');
+		// Wait for testing facade to be available
+		const waitForFacade = () => {
+			if ((window as any).__testingFacade) {
+				(window as any).__testingFacade.enableMockMode();
+			} else {
+				// Fallback for immediate execution
+				(window as any).__MOCK_MODE__ = true;
+				localStorage.setItem('mockMode', 'true');
+			}
+		};
+		waitForFacade();
 	});
 }
 
@@ -110,55 +119,21 @@ export async function prepareForScreenshot(page: Page) {
 	await enableMockMode(page);
 }
 
-/**
- * Navigate and wait for app to be ready
- */
-export async function navigateToApp(page: Page, path: string = '/') {
-	await prepareForScreenshot(page);
-	await page.goto(path);
-	await waitForAppReady(page);
-}
-
-/**
- * Take a screenshot with consistent settings
- */
-export async function takeScreenshot(page: Page, name: string) {
-	// Ensure we're at the top of the page
-	await page.evaluate(() => window.scrollTo(0, 0));
-	
-	// Hide cursors and selections
-	await page.evaluate(() => {
-		const style = document.createElement('style');
-		style.textContent = `
-			* {
-				cursor: none !important;
-				caret-color: transparent !important;
-			}
-			::selection {
-				background: transparent !important;
-			}
-		`;
-		document.head.appendChild(style);
-	});
-	
-	// Take the screenshot
-	const screenshot = await page.screenshot({
-		fullPage: true,
-		animations: 'disabled'
-	});
-	
-	return screenshot;
-}
 
 /**
  * Set up for empty state tests by clearing localStorage
  */
 export async function setupEmptyState(page: Page) {
 	await page.addInitScript(() => {
-		localStorage.clear();
-		// Set empty tasks in localStorage
-		localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
-		// Keep default projects and workspaces if needed
+		// Use testing facade if available
+		const facade = (window as any).__testingFacade;
+		if (facade) {
+			facade.clearAllData();
+		} else {
+			// Fallback for immediate execution
+			localStorage.clear();
+			localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
+		}
 	});
 }
 
@@ -202,95 +177,11 @@ export const SCREENSHOT_OPTIONS = {
 } as const;
 
 /**
- * Setup and navigate for a visual test
+ * Navigate and wait for app to be ready - used by E2E tests
  */
-export async function setupVisualTest(page: Page, options?: {
-	workspace?: string;
-	perspective?: string;
-	projectView?: 'all' | 'single';
-	projectName?: string;
-	emptyState?: boolean;
-}) {
-	// Set up deterministic environment
+export async function navigateToApp(page: Page, path: string = '/') {
 	await prepareForScreenshot(page);
-	
-	// Set up empty state if requested
-	if (options?.emptyState) {
-		await setupEmptyState(page);
-	}
-	
-	// Build URL based on options
-	let url: string;
-	
-	if (options?.perspective === 'All') {
-		// "All" is a special view type, not a perspective
-		url = buildAppUrl({
-			workspace: options.workspace || 'personal',
-			view: 'all'
-		});
-	} else if (options?.perspective) {
-		// Regular perspective view
-		url = buildAppUrl({
-			workspace: options.workspace || 'personal',
-			view: 'perspective',
-			perspective: options.perspective.toLowerCase()
-		});
-	} else if (options?.projectView === 'all') {
-		// All projects view
-		url = buildAppUrl({
-			workspace: options.workspace || 'personal',
-			view: 'project-all'
-		});
-	} else if (options?.projectView === 'single' && options?.projectName) {
-		// Single project view - map project names to their IDs
-		let projectId = options.projectName.toLowerCase();
-		if (options.projectName === 'Personal Default') {
-			projectId = 'personal-default';
-		}
-		url = buildAppUrl({
-			workspace: options.workspace || 'personal',
-			view: 'project',
-			project: projectId
-		});
-	} else {
-		// Default navigation
-		url = buildAppUrl({
-			workspace: options?.workspace || 'personal'
-		});
-	}
-	
-	// Navigate to the app with the constructed URL
-	await page.goto(url);
+	await page.goto(path);
 	await waitForAppReady(page);
 }
 
-/**
- * Take a visual test screenshot with standard options
- */
-export async function expectScreenshot(page: Page, name: string) {
-	await expect(page).toHaveScreenshot(name, SCREENSHOT_OPTIONS);
-}
-
-/**
- * Configuration for a visual test
- */
-export interface VisualTestConfig {
-	name: string;
-	screenshotName: string;
-	options?: {
-		workspace?: string;
-		perspective?: string;
-		projectView?: 'all' | 'single';
-		projectName?: string;
-		emptyState?: boolean;
-	};
-}
-
-/**
- * Run a visual test with the given configuration
- * @deprecated Use VisualTestPage instead
- */
-export async function runVisualTest(page: Page, config: VisualTestConfig) {
-	await setupVisualTest(page, config.options);
-	await expectScreenshot(page, config.screenshotName);
-}
