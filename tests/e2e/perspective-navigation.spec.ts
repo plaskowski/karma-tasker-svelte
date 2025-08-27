@@ -54,38 +54,6 @@ test.describe('Perspective Navigation', () => {
 		await expect(perspectiveBadges.first()).toBeVisible();
 	});
 
-	test.skip('Browser back/forward navigation', async ({ page }) => {
-		// Start from inbox perspective (default)
-		expect(page.url()).toContain('perspective=inbox');
-		
-		// Navigate to First perspective
-		await page.locator('button:has-text("First")').click();
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=first');
-		
-		// Navigate to Next perspective
-		await page.locator('button:has-text("Next")').click();
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=next');
-		
-		// Go back using browser back button
-		await page.goBack();
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=first');
-		
-		// Go forward using browser forward button
-		await page.goForward();
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=next');
-		
-		// Go back to inbox
-		await page.goBack();
-		await page.waitForTimeout(500);
-		await page.goBack();
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=inbox');
-	});
-
 	test('Task filtering by perspective', async ({ page }) => {
 		// Create a task in Inbox
 		await taskManager.createTask('Inbox Task');
