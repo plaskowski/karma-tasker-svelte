@@ -49,8 +49,9 @@ export class TaskManagerPage {
 		await expect(saveButton).toBeVisible();
 		await saveButton.click();
 		
-		// Wait for editor to close - verify it's actually closed
-		await expect(titleInput).not.toBeVisible({ timeout: 5000 });
+		// Wait for editor panel to close - check for the dialog role
+		const editorPanel = this.page.locator('[role="dialog"][data-testid="task-editor-panel"]');
+		await expect(editorPanel).not.toBeVisible({ timeout: 5000 });
 		
 		// Then verify task was created
 		await expect(this.page.locator(`text="${title}"`)).toBeVisible({ timeout: 5000 });

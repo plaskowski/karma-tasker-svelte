@@ -369,7 +369,12 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 
         {#if showCreateEditor}
             <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4" bind:this={createEditorEl}>
-                <section class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4">
+                <div 
+                    class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4"
+                    role="dialog"
+                    aria-label="Create new task"
+                    data-testid="task-editor-panel"
+                >
                     <TaskEditorForm
                         task={createNewTaskWithDefaults()}
                         projects={$workspaceProjects}
@@ -388,7 +393,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
                         }}
                         on:close={handleCreateClose}
                     />
-                </section>
+                </div>
             </div>
         {/if}
     </div>
