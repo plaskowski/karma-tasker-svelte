@@ -30,6 +30,7 @@ export class TaskManagerPage {
 		
 		// Fill in title
 		const titleInput = this.page.locator('input[type="text"]').first();
+		await expect(titleInput).toBeVisible({ timeout: 5000 });
 		await titleInput.fill(title);
 		
 		// Fill in description if provided
