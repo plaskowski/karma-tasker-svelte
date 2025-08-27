@@ -2,6 +2,9 @@
 
 ## ✅ Completed Features
 
+### Testing & Quality
+- [x] Cover remaining interaction scenarios (write a list first) - Created comprehensive E2E tests for perspective navigation, workspace switching, and keyboard shortcuts
+
 ### UI/UX Improvements
 - [x] Make all buttons little bigger
 - [x] Add new item should inherit project or perspective from current view
