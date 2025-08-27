@@ -83,18 +83,32 @@ export class VisualTestPage {
 		// Set up empty state if requested
 		if (options?.emptyState) {
 			await setupEmptyState(this.page);
+			// Navigate to the requested view
+			await this.navigateTo({
+				workspace: options?.workspace,
+				perspective: options?.perspective,
+				projectView: options?.projectView,
+				projectName: options?.projectName
+			});
 		} else if (options?.withCompleted) {
-			// Set up state with completed tasks
-			await this.setupWithCompletedTasks();
+			// For completed tasks, navigate first, then complete tasks
+			await this.navigateTo({
+				workspace: options?.workspace,
+				perspective: options?.perspective,
+				projectView: options?.projectView,
+				projectName: options?.projectName
+			});
+			// Complete half of the tasks
+			await this.completeTasksForView(options?.workspace, options?.perspective);
+		} else {
+			// Normal navigation
+			await this.navigateTo({
+				workspace: options?.workspace,
+				perspective: options?.perspective,
+				projectView: options?.projectView,
+				projectName: options?.projectName
+			});
 		}
-		
-		// Navigate to the requested view
-		await this.navigateTo({
-			workspace: options?.workspace,
-			perspective: options?.perspective,
-			projectView: options?.projectView,
-			projectName: options?.projectName
-		});
 	}
 
 	/**
@@ -121,15 +135,16 @@ export class VisualTestPage {
 	}
 
 	/**
-	 * Set up state with completed tasks for visual testing
+	 * Complete half of tasks for the current view
 	 */
-	async setupWithCompletedTasks() {
-		await this.page.addInitScript(() => {
+	async completeTasksForView(workspace?: string, perspective?: string) {
+		// Complete half of tasks using the facade
+		await this.page.evaluate(async ({ ws, persp }) => {
 			const facade = (window as any).__testingFacade;
-			if (facade) {
-				facade.setupCompletedTasks();
+			if (facade && facade.completeHalfOfTasks) {
+				await facade.completeHalfOfTasks(ws || 'personal', persp);
 			}
-		});
+		}, { ws: workspace, persp: perspective });
 	}
 
 	/**

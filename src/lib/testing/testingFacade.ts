@@ -3,11 +3,15 @@
  * This avoids direct localStorage manipulation from tests
  */
 
+import { get } from 'svelte/store';
+import { tasks, updateTask } from '$lib/stores/taskStore';
+import type { Task } from '$lib/types';
+
 export interface TestingFacade {
 	// Clear all data for empty state testing
 	clearAllData: () => void;
-	// Set up completed tasks for visual testing
-	setupCompletedTasks: () => void;
+	// Complete half of tasks from specified workspace and perspective
+	completeHalfOfTasks: (workspaceId?: string, perspective?: string) => Promise<void>;
 }
 
 /**
@@ -20,108 +24,34 @@ export function createTestingFacade(): TestingFacade {
 			// Set empty tasks to ensure clean state
 			localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
 		},
-		setupCompletedTasks() {
-			// Load existing tasks or use default sample data
-			const existingTasksJson = localStorage.getItem('karma-tasks-tasks');
-			let tasks = [];
+		async completeHalfOfTasks(workspaceId?: string, perspective?: string) {
+			// Get current tasks from store
+			const allTasks = get(tasks);
 			
-			if (existingTasksJson) {
-				tasks = JSON.parse(existingTasksJson);
-			} else {
-				// Use default sample tasks
-				tasks = [
-					{
-						id: '1',
-						title: 'Review GTD weekly',
-						description: 'Go through all inboxes and process items',
-						completed: false,
-						perspective: 'next',
-						projectId: 'personal-default',
-						workspaceId: 'personal',
-						order: 1
-					},
-					{
-						id: '2',
-						title: 'Plan family vacation',
-						description: '',
-						completed: false,
-						perspective: 'someday',
-						projectId: 'family',
-						workspaceId: 'personal',
-						order: 2
-					},
-					{
-						id: '3',
-						title: 'Deploy API changes',
-						description: '',
-						completed: false,
-						perspective: 'next',
-						projectId: 'api-redesign',
-						workspaceId: 'work',
-						order: 1
-					}
-				];
+			// Filter tasks based on criteria
+			let eligibleTasks = allTasks.filter((task: Task) => {
+				if (task.completed) return false; // Skip already completed
+				
+				if (workspaceId && task.workspaceId !== workspaceId) return false;
+				if (perspective && task.perspective !== perspective) return false;
+				
+				return true;
+			});
+			
+			// If no specific filters, just take uncompleted tasks from personal workspace
+			if (!workspaceId && !perspective && eligibleTasks.length === 0) {
+				eligibleTasks = allTasks.filter((task: Task) => 
+					!task.completed && task.workspaceId === 'personal'
+				);
 			}
 			
-			// Add some completed tasks across different perspectives and projects
-			const completedTasks = [
-				{
-					id: 'completed-1',
-					title: 'Set up project structure',
-					description: 'Initialize SvelteKit project with TypeScript',
-					completed: true,
-					perspective: 'next',
-					projectId: 'personal-default',
-					workspaceId: 'personal',
-					order: 100
-				},
-				{
-					id: 'completed-2',
-					title: 'Research vacation destinations',
-					description: 'Look into family-friendly places',
-					completed: true,
-					perspective: 'someday',
-					projectId: 'family',
-					workspaceId: 'personal',
-					order: 101
-				},
-				{
-					id: 'completed-3',
-					title: 'Write API documentation',
-					description: '',
-					completed: true,
-					perspective: 'next',
-					projectId: 'api-redesign',
-					workspaceId: 'work',
-					order: 102
-				},
-				{
-					id: 'completed-4',
-					title: 'Fix authentication bug',
-					description: 'Users were getting logged out randomly',
-					completed: true,
-					perspective: 'inbox',
-					projectId: 'personal-default',
-					workspaceId: 'personal',
-					order: 103
-				},
-				{
-					id: 'completed-5',
-					title: 'Update dependencies',
-					description: '',
-					completed: true,
-					perspective: 'next',
-					projectId: 'personal-default',
-					workspaceId: 'personal',
-					order: 104
-				}
-			];
+			// Complete half of the eligible tasks (at least 1, round up)
+			const tasksToComplete = Math.max(1, Math.ceil(eligibleTasks.length / 2));
 			
-			// Merge completed tasks with existing tasks
-			const allTasks = [...tasks.filter(t => !t.id.startsWith('completed-')), ...completedTasks];
-			
-			// Save to localStorage
-			localStorage.setItem('karma-tasks-tasks', JSON.stringify(allTasks));
+			// Complete the tasks using the actual service
+			for (let i = 0; i < tasksToComplete && i < eligibleTasks.length; i++) {
+				await updateTask(eligibleTasks[i].id, { completed: true });
+			}
 		}
 	};
 }
