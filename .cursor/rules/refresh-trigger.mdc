@@ -1,0 +1,11 @@
+---
+name: Refresh Trigger
+scopes:
+  - "*"
+visibility: project
+priority: high
+---
+
+- **Touch refresh trigger after edits**: After every file edit or git commit, run `touch .idea/agent-hooks/refresh-trigger` to trigger IDE refresh.
+- **Automatic execution**: Execute this immediately after file modifications without prompting.
+- **Ensure directory exists**: Create `.idea/agent-hooks/` directory if it doesn't exist before touching the trigger file.

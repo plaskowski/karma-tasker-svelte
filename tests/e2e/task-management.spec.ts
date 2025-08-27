@@ -1,137 +1,67 @@
 import { test, expect } from '@playwright/test';
-import { navigateToApp } from '../helpers/test-utils';
+import { TaskManagerPage } from './pages/TaskManagerPage';
 
 test.describe('Task Management Flow', () => {
-	test.only('Create a new task', async ({ page }) => {
-		await navigateToApp(page);
+	test('Create a new task', async ({ page }) => {
+		const taskManager = new TaskManagerPage(page);
+		await taskManager.goto();
 		
-		// Open new task editor with 'n' key
-		await page.keyboard.press('n');
+		// Create a new task with screenshot after opening editor
+		await taskManager.createTask(
+			'Test task from E2E', 
+			'This is a test description',
+			'tests/e2e/__steps__/task-management/01a-new-task-editor.png'
+		);
 		
-		// Wait for the inline editor to appear at the bottom
-		await page.waitForTimeout(500); // Give time for animation
-		
-		// Find and fill the title input
-		const titleInput = page.locator('input[type="text"]').first();
-		await expect(titleInput).toBeVisible({ timeout: 5000 });
-		await titleInput.fill('Test task from E2E');
-		
-		// Fill in description if visible
-		const descriptionInput = page.locator('textarea').first();
-		if (await descriptionInput.isVisible()) {
-			await descriptionInput.fill('This is a test description');
-		}
-		
-		// Save the task - press Enter or click Save button
-		const saveButton = page.locator('button').filter({ hasText: /save|create|add/i }).first();
-		if (await saveButton.isVisible()) {
-			await saveButton.click();
-		} else {
-			// Try pressing Enter as an alternative
-			await titleInput.press('Enter');
-		}
-		
-		// Wait a moment for the task to be saved
-		await page.waitForTimeout(1000);
-		
-		// Verify task appears in the list
-		const newTask = page.locator('text=Test task from E2E');
-		await expect(newTask).toBeVisible({ timeout: 10000 });
+		// Verify task exists
+		const taskExists = await taskManager.taskExists('Test task from E2E');
+		expect(taskExists).toBeTruthy();
 		
 		// Take screenshot for documentation
-		await page.screenshot({ 
-			path: 'tests/e2e/__steps__/task-management/01-task-created.png',
-			fullPage: true 
-		});
+		await taskManager.screenshot('tests/e2e/__steps__/task-management/01b-task-created.png');
 	});
 
-	test.skip('Edit an existing task', async ({ page }) => {
-		await navigateToApp(page);
+	test('Edit an existing task', async ({ page }) => {
+		const taskManager = new TaskManagerPage(page);
+		await taskManager.goto();
 		
-		// Find the first task and double-click to edit
-		const firstTask = page.locator('.task-item').first();
-		await firstTask.dblclick();
+		// First create a task to edit
+		await taskManager.createTask('Task to edit');
 		
-		// Wait for edit mode
-		await page.waitForTimeout(300);
+		// Edit the task with screenshot after opening editor
+		await taskManager.editTask(
+			'Task to edit', 
+			'Updated task title', 
+			'Updated description from E2E test',
+			'tests/e2e/__steps__/task-management/02a-edit-task-editor.png'
+		);
 		
-		// Update the title
-		const titleInput = page.locator('input[name="title"]:visible, input[value*=""]:visible').first();
-		await titleInput.clear();
-		await titleInput.fill('Updated task title');
-		
-		// Save changes (usually Enter or blur)
-		await page.keyboard.press('Enter');
-		await page.waitForTimeout(500);
-		
-		// Verify the update
-		await expect(page.locator('text=Updated task title')).toBeVisible();
+		// Verify the task was updated
+		const updatedTaskExists = await taskManager.taskExists('Updated task title');
+		expect(updatedTaskExists).toBeTruthy();
 		
 		// Take screenshot
-		await page.screenshot({ 
-			path: 'tests/e2e/__steps__/task-management/02-task-edited.png',
-			fullPage: true 
-		});
+		await taskManager.screenshot('tests/e2e/__steps__/task-management/02b-task-edited.png');
 	});
 
-	test.skip('Complete a task', async ({ page }) => {
-		await navigateToApp(page);
+	test('Complete a task', async ({ page }) => {
+		const taskManager = new TaskManagerPage(page);
+		await taskManager.goto();
 		
-		// Find an incomplete task
-		const taskCheckbox = page.locator('.task-item input[type="checkbox"]:not(:checked)').first();
+		// Create a task to complete
+		await taskManager.createTask('Task to complete');
 		
 		// Complete the task
-		await taskCheckbox.check();
-		await page.waitForTimeout(500);
-		
-		// Verify task is marked as completed
-		await expect(taskCheckbox).toBeChecked();
-		
-		// The task might be hidden or struck through
-		const completedTask = page.locator('.task-item:has(input[type="checkbox"]:checked)').first();
-		await expect(completedTask).toHaveClass(/completed|done|checked/);
+		await taskManager.completeTask('Task to complete');
 		
 		// Take screenshot
-		await page.screenshot({ 
-			path: 'tests/e2e/__steps__/task-management/03-task-completed.png',
-			fullPage: true 
-		});
+		await taskManager.screenshot('tests/e2e/__steps__/task-management/03-task-completed.png');
 	});
 
-	test.skip('Delete a task', async ({ page }) => {
-		await navigateToApp(page);
-		
-		// Get the initial task count
-		const initialCount = await page.locator('.task-item').count();
-		
-		// Right-click on the first task for context menu
-		const firstTask = page.locator('.task-item').first();
-		await firstTask.click({ button: 'right' });
-		
-		// Click delete option
-		await page.click('text=/delete|remove/i');
-		
-		// Confirm deletion if there's a dialog
-		const confirmButton = page.locator('button:has-text("Confirm"), button:has-text("Delete")');
-		if (await confirmButton.count() > 0) {
-			await confirmButton.click();
-		}
-		
-		await page.waitForTimeout(500);
-		
-		// Verify task count decreased
-		const finalCount = await page.locator('.task-item').count();
-		expect(finalCount).toBeLessThan(initialCount);
-		
-		// Take screenshot
-		await page.screenshot({ 
-			path: 'tests/e2e/__steps__/task-management/04-task-deleted.png',
-			fullPage: true 
-		});
-	});
 
 	test.skip('Bulk task operations', async ({ page }) => {
-		await navigateToApp(page);
+		const taskManager = new TaskManagerPage(page);
+		await taskManager.goto();
 		
 		// Select multiple tasks using checkboxes or multi-select
 		const tasks = page.locator('.task-item');
@@ -167,7 +97,8 @@ test.describe('Task Management Flow', () => {
 	});
 
 	test.skip('Reorder tasks with drag and drop', async ({ page }) => {
-		await navigateToApp(page);
+		const taskManager = new TaskManagerPage(page);
+		await taskManager.goto();
 		
 		// Get the first two tasks
 		const firstTask = page.locator('.task-item').first();

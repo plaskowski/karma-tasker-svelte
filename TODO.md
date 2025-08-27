@@ -9,7 +9,7 @@
   - [x] introduce a visual-test(page) object with all the new methods
   - [x] don't use localStorage directly from test, expose a testing facade in window object so test can interact with the app
   - [x] remove duplicate and unused code from test-utils (setupVisualTest, etc.)
-  - [ ] extract page objects for interaction tests
+  - [x] extract page objects for interaction tests
 - [ ] ...
 
 ### Core Features
