@@ -3,15 +3,12 @@
 *Building what Nirvana couldn't deliver: workspace separation and family collaboration for GTD workflows.*
 *See [README.md](./README.md) for project overview and motivation.*
 
-## 🐛 Known Issues
-
-### UI/UX Bugs
-*All bugs resolved! 🎉*
-
-## 🚀 Active Development Roadmap
-
-### Next Major Features
-Next focus: begin Core Features below.
+### Next steps
+- [ ] automated test coverage - see [doc](docs/test_implementation_plan.md)
+  - [ ] factor out common code
+  - [ ] don't use localStorage directly from test, expose a testing facade in window object so test can interact with the app
+  - [ ] ...
+- [ ] ...
 
 ### Core Features
 - [x] Task editing and detailed view
