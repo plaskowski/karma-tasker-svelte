@@ -1,26 +1,11 @@
-import { test, expect } from '@playwright/test';
-import { prepareForScreenshot, waitForAppReady } from '../../helpers/test-utils';
+import { test } from '@playwright/test';
+import { setupVisualTest, expectScreenshot } from '../../helpers/test-utils';
 
 test('Inbox perspective - empty state', async ({ page }) => {
-	// Set up deterministic environment
-	await prepareForScreenshot(page);
-	
-	// Clear localStorage to ensure empty state
-	await page.addInitScript(() => {
-		localStorage.clear();
-		// Set empty tasks in localStorage
-		localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
-		// Keep default projects and workspaces
-	});
-	
-	// Navigate to the app (defaults to Inbox perspective)
-	await page.goto('/');
-	await waitForAppReady(page);
+	// Setup: Navigate to inbox perspective with empty data
+	await setupVisualTest(page, { emptyState: true });
+	// Inbox is default, no need to navigate
 	
 	// Take screenshot
-	await expect(page).toHaveScreenshot('inbox-empty.png', {
-		fullPage: true,
-		animations: 'disabled',
-		maxDiffPixels: 100
-	});
+	await expectScreenshot(page, 'inbox-empty.png');
 });

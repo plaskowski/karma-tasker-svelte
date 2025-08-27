@@ -1,22 +1,10 @@
-import { test, expect } from '@playwright/test';
-import { prepareForScreenshot, waitForAppReady } from '../../helpers/test-utils';
+import { test } from '@playwright/test';
+import { setupVisualTest, expectScreenshot } from '../../helpers/test-utils';
 
 test('First perspective - full state', async ({ page }) => {
-	// Set up deterministic environment
-	await prepareForScreenshot(page);
-	
-	// Navigate to the app with default mock data
-	await page.goto('/');
-	await waitForAppReady(page);
-	
-	// Click on First perspective in sidebar
-	await page.click('button:has-text("First")');
-	await page.waitForTimeout(500);
+	// Setup: Navigate to First perspective with default data
+	await setupVisualTest(page, { perspective: 'First' });
 	
 	// Take screenshot
-	await expect(page).toHaveScreenshot('first-full.png', {
-		fullPage: true,
-		animations: 'disabled',
-		maxDiffPixels: 100
-	});
+	await expectScreenshot(page, 'first-full.png');
 });

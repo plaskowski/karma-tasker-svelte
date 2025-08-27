@@ -149,3 +149,105 @@ export async function takeScreenshot(page: Page, name: string) {
 	
 	return screenshot;
 }
+
+/**
+ * Set up for empty state tests by clearing localStorage
+ */
+export async function setupEmptyState(page: Page) {
+	await page.addInitScript(() => {
+		localStorage.clear();
+		// Set empty tasks in localStorage
+		localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
+		// Keep default projects and workspaces if needed
+	});
+}
+
+/**
+ * Navigate to a specific perspective
+ */
+export async function navigateToPerspective(page: Page, perspectiveName: string) {
+	// Special handling for "All" perspective - click first occurrence
+	if (perspectiveName === 'All') {
+		await page.click('button:has-text("All"):first-of-type');
+	} else {
+		await page.click(`button:has-text("${perspectiveName}")`);
+	}
+	await page.waitForTimeout(500);
+}
+
+/**
+ * Navigate to project views
+ */
+export async function navigateToProjectView(page: Page, viewType: 'all' | 'single', projectName?: string) {
+	if (viewType === 'all') {
+		// Click on All Projects button (last occurrence, under Projects section)
+		await page.click('button:has-text("All"):last-of-type');
+	} else if (viewType === 'single' && projectName) {
+		await page.click(`button:has-text("${projectName}")`);
+	}
+	await page.waitForTimeout(500);
+}
+
+/**
+ * Switch workspace
+ */
+export async function switchWorkspace(page: Page, workspaceName: string) {
+	await page.click('button[title*="Switch workspace"]');
+	await page.waitForTimeout(200);
+	await page.click(`button:has-text("${workspaceName}")`);
+	await page.waitForTimeout(500);
+}
+
+/**
+ * Standard screenshot options for visual tests
+ */
+export const SCREENSHOT_OPTIONS = {
+	fullPage: true,
+	animations: 'disabled' as const,
+	maxDiffPixels: 100
+} as const;
+
+/**
+ * Setup and navigate for a visual test
+ */
+export async function setupVisualTest(page: Page, options?: {
+	emptyState?: boolean;
+	workspace?: string;
+	perspective?: string;
+	projectView?: 'all' | 'single';
+	projectName?: string;
+}) {
+	// Set up deterministic environment
+	await prepareForScreenshot(page);
+	
+	// Set up empty state if requested
+	if (options?.emptyState) {
+		await setupEmptyState(page);
+	}
+	
+	// Navigate to the app
+	await page.goto('/');
+	await waitForAppReady(page);
+	
+	// Switch workspace if specified
+	if (options?.workspace) {
+		await switchWorkspace(page, options.workspace);
+	}
+	
+	// Navigate to perspective if specified
+	if (options?.perspective) {
+		await navigateToPerspective(page, options.perspective);
+	}
+	
+	// Navigate to project view if specified
+	if (options?.projectView) {
+		await navigateToProjectView(page, options.projectView, options.projectName);
+	}
+}
+
+/**
+ * Take a visual test screenshot with standard options
+ */
+export async function expectScreenshot(page: Page, name: string) {
+	await expect(page).toHaveScreenshot(name, SCREENSHOT_OPTIONS);
+}
