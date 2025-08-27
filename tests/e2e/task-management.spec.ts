@@ -3,9 +3,10 @@ import { TaskManagerPage } from './pages/TaskManagerPage';
 
 test.describe('Task Management Flow', () => {
 	let taskManager: TaskManagerPage;
+	const screenshotBasePath = 'tests/e2e/__steps__/task-management';
 
 	test.beforeEach(async ({ page }) => {
-		taskManager = new TaskManagerPage(page);
+		taskManager = new TaskManagerPage(page, screenshotBasePath);
 		await taskManager.goto();
 	});
 
@@ -14,7 +15,7 @@ test.describe('Task Management Flow', () => {
 		await taskManager.createTask(
 			'Test task from E2E', 
 			'This is a test description',
-			'tests/e2e/__steps__/task-management/01a-new-task-editor.png'
+			'01a-new-task-editor.png'
 		);
 		
 		// Verify task exists
@@ -22,7 +23,7 @@ test.describe('Task Management Flow', () => {
 		expect(taskExists).toBeTruthy();
 		
 		// Take screenshot for documentation
-		await taskManager.screenshot('tests/e2e/__steps__/task-management/01b-task-created.png');
+		await taskManager.screenshot('01b-task-created.png');
 	});
 
 	test('Edit an existing task', async () => {
@@ -34,7 +35,7 @@ test.describe('Task Management Flow', () => {
 			'Task to edit', 
 			'Updated task title', 
 			'Updated description from E2E test',
-			'tests/e2e/__steps__/task-management/02a-edit-task-editor.png'
+			'02a-edit-task-editor.png'
 		);
 		
 		// Verify the task was updated
@@ -42,7 +43,7 @@ test.describe('Task Management Flow', () => {
 		expect(updatedTaskExists).toBeTruthy();
 		
 		// Take screenshot
-		await taskManager.screenshot('tests/e2e/__steps__/task-management/02b-task-edited.png');
+		await taskManager.screenshot('02b-task-edited.png');
 	});
 
 	test('Complete a task', async () => {
@@ -53,6 +54,6 @@ test.describe('Task Management Flow', () => {
 		await taskManager.completeTask('Task to complete');
 		
 		// Take screenshot
-		await taskManager.screenshot('tests/e2e/__steps__/task-management/03-task-completed.png');
+		await taskManager.screenshot('03-task-completed.png');
 	});
 });

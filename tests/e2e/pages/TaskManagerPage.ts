@@ -5,7 +5,10 @@ import { type Page, expect } from '@playwright/test';
  * High-level methods for interacting with tasks
  */
 export class TaskManagerPage {
-	constructor(private page: Page) {}
+	constructor(
+		private page: Page,
+		private screenshotBasePath?: string
+	) {}
 
 	/**
 	 * Navigate to the app
@@ -18,14 +21,14 @@ export class TaskManagerPage {
 	/**
 	 * Create a new task with given title and optional description
 	 */
-	async createTask(title: string, description?: string, screenshotPath?: string) {
+	async createTask(title: string, description?: string, screenshotName?: string) {
 		// Press 'n' to open new task editor
 		await this.page.keyboard.press('n');
 		await this.page.waitForTimeout(500);
 		
-		// Take screenshot after opening editor if path provided
-		if (screenshotPath) {
-			await this.screenshot(screenshotPath);
+		// Take screenshot after opening editor if name provided
+		if (screenshotName) {
+			await this.screenshot(screenshotName);
 		}
 		
 		// Fill in title
@@ -59,16 +62,16 @@ export class TaskManagerPage {
 	/**
 	 * Edit an existing task
 	 */
-	async editTask(oldTitle: string, newTitle: string, newDescription?: string, screenshotPath?: string) {
+	async editTask(oldTitle: string, newTitle: string, newDescription?: string, screenshotName?: string) {
 		// Click on the task to open inline editor
 		await this.page.locator(`text="${oldTitle}"`).first().click();
 		
 		// Wait for inline editor to appear
 		await this.page.waitForTimeout(500);
 		
-		// Take screenshot after opening editor if path provided
-		if (screenshotPath) {
-			await this.screenshot(screenshotPath);
+		// Take screenshot after opening editor if name provided
+		if (screenshotName) {
+			await this.screenshot(screenshotName);
 		}
 		
 		// Find the inline editor that appears after clicking the task
@@ -193,7 +196,10 @@ export class TaskManagerPage {
 	/**
 	 * Take a screenshot
 	 */
-	async screenshot(path: string) {
+	async screenshot(filename: string) {
+		const path = this.screenshotBasePath 
+			? `${this.screenshotBasePath}/${filename}`
+			: filename;
 		await this.page.screenshot({ path, fullPage: true });
 	}
 }
