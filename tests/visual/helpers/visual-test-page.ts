@@ -71,6 +71,7 @@ export class VisualTestPage {
 	 */
 	async setup(options?: {
 		emptyState?: boolean;
+		withCompleted?: boolean;
 		workspace?: string;
 		perspective?: string;
 		projectView?: 'all' | 'single';
@@ -82,6 +83,9 @@ export class VisualTestPage {
 		// Set up empty state if requested
 		if (options?.emptyState) {
 			await setupEmptyState(this.page);
+		} else if (options?.withCompleted) {
+			// Set up state with completed tasks
+			await this.setupWithCompletedTasks();
 		}
 		
 		// Navigate to the requested view
@@ -112,6 +116,18 @@ export class VisualTestPage {
 				// Fallback
 				localStorage.clear();
 				localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
+			}
+		});
+	}
+
+	/**
+	 * Set up state with completed tasks for visual testing
+	 */
+	async setupWithCompletedTasks() {
+		await this.page.addInitScript(() => {
+			const facade = (window as any).__testingFacade;
+			if (facade) {
+				facade.setupCompletedTasks();
 			}
 		});
 	}

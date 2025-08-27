@@ -11,7 +11,6 @@
   - [x] remove duplicate and unused code from test-utils (setupVisualTest, etc.)
   - [x] extract page objects for interaction tests
   - [x] cover remaining interaction scenarios (write a list first)
-  - [ ] cover completed items with visual test
 - [ ] ...
 
 ### Core Features

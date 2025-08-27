@@ -4,6 +4,7 @@
 
 ### Testing & Quality
 - [x] Cover remaining interaction scenarios (write a list first) - Created comprehensive E2E tests for perspective navigation, workspace switching, and keyboard shortcuts
+- [x] Cover completed items with visual test - Added visual regression tests for all views showing completed tasks in Done section
 
 ### UI/UX Improvements
 - [x] Make all buttons little bigger
