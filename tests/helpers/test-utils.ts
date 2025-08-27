@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import {type Page, expect } from '@playwright/test';
 
 /**
  * Freeze time to a fixed date for deterministic testing
@@ -14,6 +14,7 @@ export async function freezeTime(page: Page, date: Date = new Date('2024-01-15T1
 				if (args.length === 0) {
 					super(frozenDate);
 				} else {
+					// @ts-ignore
 					super(...args);
 				}
 			}
@@ -29,8 +30,7 @@ export async function freezeTime(page: Page, date: Date = new Date('2024-01-15T1
 		
 		// Override setTimeout and setInterval to run immediately in tests
 		const originalSetTimeout = window.setTimeout;
-		const originalSetInterval = window.setInterval;
-		
+
 		(window as any).setTimeout = (fn: Function, delay?: number) => {
 			if (delay === 0 || delay === 1) {
 				return originalSetTimeout(fn, delay);
@@ -40,7 +40,7 @@ export async function freezeTime(page: Page, date: Date = new Date('2024-01-15T1
 			return Math.random();
 		};
 		
-		(window as any).setInterval = (fn: Function, delay?: number) => {
+		(window as any).setInterval = (fn: Function) => {
 			// Run once immediately, then stop
 			Promise.resolve().then(() => fn());
 			return Math.random();
