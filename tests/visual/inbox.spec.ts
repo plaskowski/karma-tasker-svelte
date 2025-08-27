@@ -42,10 +42,6 @@ test.describe('Inbox Page - Visual Tests', () => {
 		// Wait a bit more for any animations or async updates
 		await page.waitForTimeout(1000);
 		
-		// Debug: Log the page content to see what's rendered
-		const bodyText = await page.textContent('body');
-		console.log('Page body text:', bodyText?.substring(0, 200));
-		
 		// Take screenshot
 		await expect(page).toHaveScreenshot('inbox-full.png', {
 			fullPage: true,
