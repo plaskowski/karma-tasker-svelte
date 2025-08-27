@@ -57,14 +57,26 @@
 	<div class="flex-shrink-0 mr-2 self-baseline flex gap-2">
 		<!-- Perspective badge -->
 		{#if showPerspectiveBadge && perspectiveName}
-			<span class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded">
+			<span 
+				class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded"
+				data-testid="perspective-badge"
+				data-perspective={task.perspectiveId}
+				role="status"
+				aria-label="Perspective: {perspectiveName}"
+			>
 				{perspectiveName}
 			</span>
 		{/if}
 		
 		<!-- Project badge -->
 		{#if task.projectId && showProjectBadge}
-			<span class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded">
+			<span 
+				class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded"
+				data-testid="project-badge"
+				data-project={task.projectId}
+				role="status"
+				aria-label="Project: {projectName || task.projectId}"
+			>
 				{projectName || task.projectId}
 			</span>
 		{/if}
