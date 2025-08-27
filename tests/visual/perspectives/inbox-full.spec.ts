@@ -1,20 +1,16 @@
 import { test, expect } from '@playwright/test';
 import { prepareForScreenshot, waitForAppReady } from '../../helpers/test-utils';
 
-test('Search - no results', async ({ page }) => {
+test('Inbox perspective - full state', async ({ page }) => {
 	// Set up deterministic environment
 	await prepareForScreenshot(page);
 	
-	// Navigate to the app
+	// Navigate to the app with default mock data (defaults to Inbox perspective)
 	await page.goto('/');
 	await waitForAppReady(page);
 	
-	// Search for something that won't match
-	await page.fill('input[placeholder*="Search"], input[type="search"]', 'xyzabc123');
-	await page.waitForTimeout(500);
-	
 	// Take screenshot
-	await expect(page).toHaveScreenshot('search-no-results.png', {
+	await expect(page).toHaveScreenshot('inbox-full.png', {
 		fullPage: true,
 		animations: 'disabled',
 		maxDiffPixels: 100
