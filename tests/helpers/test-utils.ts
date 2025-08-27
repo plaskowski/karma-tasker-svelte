@@ -163,39 +163,33 @@ export async function setupEmptyState(page: Page) {
 }
 
 /**
- * Navigate to a specific perspective
+ * Build URL with query parameters for direct navigation
  */
-export async function navigateToPerspective(page: Page, perspectiveName: string) {
-	// Special handling for "All" perspective - click first occurrence
-	if (perspectiveName === 'All') {
-		await page.click('button:has-text("All"):first-of-type');
-	} else {
-		await page.click(`button:has-text("${perspectiveName}")`);
+export function buildAppUrl(options?: {
+	workspace?: string;
+	view?: 'perspective' | 'project' | 'project-all' | 'all';
+	perspective?: string;
+	project?: string;
+}): string {
+	const params = new URLSearchParams();
+	
+	if (options?.workspace) {
+		params.set('workspace', options.workspace);
 	}
-	await page.waitForTimeout(500);
-}
-
-/**
- * Navigate to project views
- */
-export async function navigateToProjectView(page: Page, viewType: 'all' | 'single', projectName?: string) {
-	if (viewType === 'all') {
-		// Click on All Projects button (last occurrence, under Projects section)
-		await page.click('button:has-text("All"):last-of-type');
-	} else if (viewType === 'single' && projectName) {
-		await page.click(`button:has-text("${projectName}")`);
+	
+	if (options?.view) {
+		params.set('view', options.view);
+		
+		if (options.view === 'perspective' && options.perspective) {
+			params.set('perspective', options.perspective);
+		}
+		
+		if (options.view === 'project' && options.project) {
+			params.set('project', options.project);
+		}
 	}
-	await page.waitForTimeout(500);
-}
-
-/**
- * Switch workspace
- */
-export async function switchWorkspace(page: Page, workspaceName: string) {
-	await page.click('button[title*="Switch workspace"]');
-	await page.waitForTimeout(200);
-	await page.click(`button:has-text("${workspaceName}")`);
-	await page.waitForTimeout(500);
+	
+	return params.toString() ? `/?${params.toString()}` : '/';
 }
 
 /**
@@ -225,24 +219,49 @@ export async function setupVisualTest(page: Page, options?: {
 		await setupEmptyState(page);
 	}
 	
-	// Navigate to the app
-	await page.goto('/');
+	// Build URL based on options
+	let url: string;
+	
+	if (options?.perspective === 'All') {
+		// "All" is a special view type, not a perspective
+		url = buildAppUrl({
+			workspace: options.workspace || 'personal',
+			view: 'all'
+		});
+	} else if (options?.perspective) {
+		// Regular perspective view
+		url = buildAppUrl({
+			workspace: options.workspace || 'personal',
+			view: 'perspective',
+			perspective: options.perspective.toLowerCase()
+		});
+	} else if (options?.projectView === 'all') {
+		// All projects view
+		url = buildAppUrl({
+			workspace: options.workspace || 'personal',
+			view: 'project-all'
+		});
+	} else if (options?.projectView === 'single' && options?.projectName) {
+		// Single project view - map project names to their IDs
+		let projectId = options.projectName.toLowerCase();
+		if (options.projectName === 'Personal Default') {
+			projectId = 'personal-default';
+		}
+		url = buildAppUrl({
+			workspace: options.workspace || 'personal',
+			view: 'project',
+			project: projectId
+		});
+	} else {
+		// Default navigation
+		url = buildAppUrl({
+			workspace: options?.workspace || 'personal'
+		});
+	}
+	
+	// Navigate to the app with the constructed URL
+	await page.goto(url);
 	await waitForAppReady(page);
-	
-	// Switch workspace if specified
-	if (options?.workspace) {
-		await switchWorkspace(page, options.workspace);
-	}
-	
-	// Navigate to perspective if specified
-	if (options?.perspective) {
-		await navigateToPerspective(page, options.perspective);
-	}
-	
-	// Navigate to project view if specified
-	if (options?.projectView) {
-		await navigateToProjectView(page, options.projectView, options.projectName);
-	}
 }
 
 /**
