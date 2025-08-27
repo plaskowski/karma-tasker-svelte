@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { prepareForScreenshot, waitForAppReady } from '../helpers/test-utils';
+import { prepareForScreenshot, waitForAppReady } from '../../helpers/test-utils';
 
-test.describe('Task Interactions - Visual Tests', () => {
-	test('Task detail modal', async ({ page }) => {
+test.describe('Search and Filter - Visual Tests', () => {
+	test('Search bar empty state', async ({ page }) => {
 		// Set up deterministic environment
 		await prepareForScreenshot(page);
 		
@@ -10,19 +10,19 @@ test.describe('Task Interactions - Visual Tests', () => {
 		await page.goto('/');
 		await waitForAppReady(page);
 		
-		// Click on the first task to open detail modal
-		await page.click('.task-item >> nth=0');
-		await page.waitForTimeout(500);
+		// Focus on search bar
+		await page.click('input[placeholder*="Search"], input[type="search"]');
+		await page.waitForTimeout(200);
 		
 		// Take screenshot
-		await expect(page).toHaveScreenshot('task-detail-modal.png', {
+		await expect(page).toHaveScreenshot('search-empty.png', {
 			fullPage: true,
 			animations: 'disabled',
 			maxDiffPixels: 100
 		});
 	});
 
-	test('Task edit mode', async ({ page }) => {
+	test('Search with results', async ({ page }) => {
 		// Set up deterministic environment
 		await prepareForScreenshot(page);
 		
@@ -30,19 +30,19 @@ test.describe('Task Interactions - Visual Tests', () => {
 		await page.goto('/');
 		await waitForAppReady(page);
 		
-		// Double-click on the first task to enter edit mode
-		await page.dblclick('.task-item >> nth=0');
+		// Search for "client"
+		await page.fill('input[placeholder*="Search"], input[type="search"]', 'client');
 		await page.waitForTimeout(500);
 		
 		// Take screenshot
-		await expect(page).toHaveScreenshot('task-edit-inline.png', {
+		await expect(page).toHaveScreenshot('search-results.png', {
 			fullPage: true,
 			animations: 'disabled',
 			maxDiffPixels: 100
 		});
 	});
 
-	test('New task dialog', async ({ page }) => {
+	test('Search with no results', async ({ page }) => {
 		// Set up deterministic environment
 		await prepareForScreenshot(page);
 		
@@ -50,12 +50,12 @@ test.describe('Task Interactions - Visual Tests', () => {
 		await page.goto('/');
 		await waitForAppReady(page);
 		
-		// Click on the new task button (assuming it's a + button or "New Task")
-		await page.keyboard.press('n'); // Common keyboard shortcut
+		// Search for something that won't match
+		await page.fill('input[placeholder*="Search"], input[type="search"]', 'xyzabc123');
 		await page.waitForTimeout(500);
 		
 		// Take screenshot
-		await expect(page).toHaveScreenshot('new-task-dialog.png', {
+		await expect(page).toHaveScreenshot('search-no-results.png', {
 			fullPage: true,
 			animations: 'disabled',
 			maxDiffPixels: 100

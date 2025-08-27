@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepareForScreenshot, waitForAppReady } from '../helpers/test-utils';
+import { prepareForScreenshot, waitForAppReady } from '../../helpers/test-utils';
 
 test.describe('GTD Perspectives - Visual Tests', () => {
 	// Test only key perspectives - others follow same pattern

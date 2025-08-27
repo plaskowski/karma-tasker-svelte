@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { navigateToApp, prepareForScreenshot } from '../helpers/test-utils';
+import { navigateToApp, prepareForScreenshot } from '../../helpers/test-utils';
 
 test.describe('Inbox Page - Visual Tests', () => {
 	// test('empty state', async ({ page }) => {

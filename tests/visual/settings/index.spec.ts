@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepareForScreenshot, waitForAppReady } from '../helpers/test-utils';
+import { prepareForScreenshot, waitForAppReady } from '../../helpers/test-utils';
 
 test.describe('Settings and Preferences - Visual Tests', () => {
 	test('Theme - dark mode', async ({ page }) => {

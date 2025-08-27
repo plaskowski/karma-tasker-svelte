@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepareForScreenshot, waitForAppReady } from '../helpers/test-utils';
+import { prepareForScreenshot, waitForAppReady } from '../../helpers/test-utils';
 
 test.describe('Projects - Visual Tests', () => {
 	test('All Projects view - empty state', async ({ page }) => {
@@ -15,8 +15,7 @@ test.describe('Projects - Visual Tests', () => {
 		await page.goto('/');
 		await waitForAppReady(page);
 		
-		// Click on All Projects in sidebar
-		await page.click('text=Projects').first();
+		// Click on All Projects button in sidebar (under Projects section)
 		await page.click('button:has-text("All"):last-of-type');
 		await page.waitForTimeout(500);
 		
@@ -36,8 +35,7 @@ test.describe('Projects - Visual Tests', () => {
 		await page.goto('/');
 		await waitForAppReady(page);
 		
-		// Click on All Projects in sidebar
-		await page.click('text=Projects').first();
+		// Click on All Projects button in sidebar (under Projects section)
 		await page.click('button:has-text("All"):last-of-type');
 		await page.waitForTimeout(500);
 		
