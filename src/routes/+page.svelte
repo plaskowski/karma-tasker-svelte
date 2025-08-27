@@ -313,37 +313,13 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
             return;
         }
 
-		// Workspace navigation (Ctrl+1, Ctrl+2, Ctrl+3)
+		// New task (Ctrl+N)
 		if (event.ctrlKey || event.metaKey) {
-			const workspaceKeys = ['1', '2', '3'];
-			const keyIndex = workspaceKeys.indexOf(event.key);
-			if (keyIndex !== -1) {
-				const workspace = $workspaces[keyIndex];
-				if (workspace) {
-					handleWorkspaceChange(workspace.id);
-					event.preventDefault();
-				}
-				return;
-			}
-
-            // New task (Ctrl+N)
             if (event.key === 'n' || event.key === 'N') {
                 showCreateEditor = true;
 				event.preventDefault();
 				return;
 			}
-		}
-
-		// Perspective navigation (1, 2, 3, 4...)
-		const perspectiveKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-		const perspectiveIndex = perspectiveKeys.indexOf(event.key);
-		if (perspectiveIndex !== -1) {
-			const perspective = $workspacePerspectivesOrdered[perspectiveIndex];
-			if (perspective) {
-				handleViewChange('perspective', perspective.id);
-				event.preventDefault();
-			}
-			return;
 		}
 
         // New task (N key)

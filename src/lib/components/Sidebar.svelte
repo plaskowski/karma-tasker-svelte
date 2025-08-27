@@ -130,7 +130,7 @@
 			<button
 				onclick={() => isWorkspaceDropdownOpen = !isWorkspaceDropdownOpen}
 				class="flex items-center gap-2 text-lg font-medium text-gray-900 dark:text-gray-100 tracking-wide hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-				title="Switch workspace (Ctrl+1,2,3)"
+				title="Switch workspace"
 			>
 				<span>{getHeaderTitle()}</span>
 				<ChevronDown class="w-4 h-4 transition-transform {isWorkspaceDropdownOpen ? 'rotate-180' : ''}" />

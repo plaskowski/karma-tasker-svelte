@@ -53,56 +53,6 @@ test.describe('Keyboard Shortcuts', () => {
 		await expect(page.locator('text="Task created with Ctrl+N"')).toBeVisible();
 	});
 
-	test('Navigate perspectives with number keys', async ({ page }) => {
-		// Press '1' for Inbox
-		await page.keyboard.press('1');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=inbox');
-		
-		// Press '2' for Next
-		await page.keyboard.press('2');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=next');
-		
-		// Press '3' for Waiting
-		await page.keyboard.press('3');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=waiting');
-		
-		// Press '4' for Scheduled
-		await page.keyboard.press('4');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=scheduled');
-		
-		// Press '5' for Someday
-		await page.keyboard.press('5');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=someday');
-	});
-
-	test('Switch workspaces with Ctrl+number keys', async ({ page }) => {
-		// Press Ctrl+1 for Personal
-		await page.keyboard.down('Control');
-		await page.keyboard.press('1');
-		await page.keyboard.up('Control');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('workspace=personal');
-		
-		// Press Ctrl+2 for Work
-		await page.keyboard.down('Control');
-		await page.keyboard.press('2');
-		await page.keyboard.up('Control');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('workspace=work');
-		
-		// Press Ctrl+3 for Hobby
-		await page.keyboard.down('Control');
-		await page.keyboard.press('3');
-		await page.keyboard.up('Control');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('workspace=hobby');
-	});
-
 	test('Escape key behavior in task editor', async ({ page }) => {
 		// Open new task editor
 		await page.keyboard.press('n');
@@ -127,8 +77,11 @@ test.describe('Keyboard Shortcuts', () => {
 		// First create a task
 		await taskManager.createTask('Task to edit inline');
 		
+		// Wait a bit more to ensure the task is fully created and editor closed
+		await page.waitForTimeout(1000);
+		
 		// Click on task to open inline editor
-		await page.locator('text="Task to edit inline"').click();
+		await page.locator('text="Task to edit inline"').first().click();
 		await page.waitForTimeout(500);
 		
 		// Verify inline editor is open
@@ -173,25 +126,4 @@ test.describe('Keyboard Shortcuts', () => {
 		await expect(page.locator('text="Task to save with shortcut"')).not.toBeVisible();
 	});
 
-	test('Number key shortcuts disabled when editing', async ({ page }) => {
-		// Open new task editor
-		await page.keyboard.press('n');
-		await page.waitForTimeout(500);
-		
-		const titleInput = page.locator('input[type="text"]').first();
-		await expect(titleInput).toBeVisible();
-		
-		// Type numbers - they should appear in the input, not navigate
-		await titleInput.fill('Task with numbers 12345');
-		
-		// Verify we're still in the editor and haven't navigated
-		await expect(titleInput).toBeVisible();
-		await expect(titleInput).toHaveValue('Task with numbers 12345');
-		
-		// URL should not have changed to different perspectives
-		expect(page.url()).toContain('perspective=inbox');
-		
-		// Close editor
-		await page.keyboard.press('Escape');
-	});
 });

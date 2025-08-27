@@ -43,36 +43,6 @@ test.describe('Workspace Switching', () => {
 		expect(page.url()).toContain('workspace=personal');
 	});
 
-	test('Switch workspaces using keyboard shortcuts', async ({ page }) => {
-		// Press Ctrl+1 for Personal (should stay on Personal)
-		await page.keyboard.down('Control');
-		await page.keyboard.press('1');
-		await page.keyboard.up('Control');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('workspace=personal');
-		
-		// Press Ctrl+2 for Work
-		await page.keyboard.down('Control');
-		await page.keyboard.press('2');
-		await page.keyboard.up('Control');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('workspace=work');
-		
-		// Press Ctrl+3 for Hobby
-		await page.keyboard.down('Control');
-		await page.keyboard.press('3');
-		await page.keyboard.up('Control');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('workspace=hobby');
-		
-		// Go back to Personal
-		await page.keyboard.down('Control');
-		await page.keyboard.press('1');
-		await page.keyboard.up('Control');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('workspace=personal');
-	});
-
 	test('Workspace-specific task filtering', async ({ page }) => {
 		// Create a task in Personal workspace
 		await taskManager.createTask('Personal Task');
@@ -120,7 +90,7 @@ test.describe('Workspace Switching', () => {
 
 	test('Perspective availability per workspace', async ({ page }) => {
 		// In Personal workspace, verify available perspectives
-		const personalPerspectives = ['Inbox', 'Next', 'Waiting', 'Scheduled', 'Someday'];
+		const personalPerspectives = ['Inbox', 'First', 'Next', 'Someday'];
 		for (const perspective of personalPerspectives) {
 			await expect(page.locator(`button:has-text("${perspective}")`)).toBeVisible();
 		}
@@ -132,9 +102,9 @@ test.describe('Workspace Switching', () => {
 		await page.locator('text="Work"').click();
 		await page.waitForTimeout(500);
 		
-		// Verify Work workspace perspectives (might be different)
-		// For now, assuming same perspectives
-		for (const perspective of personalPerspectives) {
+		// Verify Work workspace perspectives
+		const workPerspectives = ['Inbox', 'First', 'Next', 'Review'];
+		for (const perspective of workPerspectives) {
 			await expect(page.locator(`button:has-text("${perspective}")`)).toBeVisible();
 		}
 	});
@@ -156,8 +126,8 @@ test.describe('Workspace Switching', () => {
 		expect(page.url()).toContain('workspace=work');
 		expect(page.url()).toContain('perspective=next');
 		
-		// Navigate to Waiting perspective
-		await page.locator('button:has-text("Waiting")').click();
+		// Navigate to First perspective  
+		await page.locator('button:has-text("First")').click();
 		await page.waitForTimeout(500);
 		
 		// Switch back to Personal
@@ -168,6 +138,6 @@ test.describe('Workspace Switching', () => {
 		
 		// Verify workspace changed and perspective is maintained
 		expect(page.url()).toContain('workspace=personal');
-		expect(page.url()).toContain('perspective=waiting');
+		expect(page.url()).toContain('perspective=first');
 	});
 });

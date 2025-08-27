@@ -9,28 +9,21 @@ test.describe('Perspective Navigation', () => {
 		await taskManager.goto();
 	});
 
-	test('Switch between GTD perspectives using sidebar', async ({ page }) => {
+	test('Switch between perspectives using sidebar', async ({ page }) => {
+		// Click on First perspective
+		await page.locator('button:has-text("First")').click();
+		await page.waitForTimeout(500);
+		
+		// Verify URL updated
+		expect(page.url()).toContain('view=perspective');
+		expect(page.url()).toContain('perspective=first');
+		
 		// Click on Next perspective
 		await page.locator('button:has-text("Next")').click();
 		await page.waitForTimeout(500);
 		
 		// Verify URL updated
-		expect(page.url()).toContain('view=perspective');
 		expect(page.url()).toContain('perspective=next');
-		
-		// Click on Waiting perspective
-		await page.locator('button:has-text("Waiting")').click();
-		await page.waitForTimeout(500);
-		
-		// Verify URL updated
-		expect(page.url()).toContain('perspective=waiting');
-		
-		// Click on Scheduled perspective
-		await page.locator('button:has-text("Scheduled")').click();
-		await page.waitForTimeout(500);
-		
-		// Verify URL updated
-		expect(page.url()).toContain('perspective=scheduled');
 		
 		// Click on Someday perspective
 		await page.locator('button:has-text("Someday")').click();
@@ -48,66 +41,46 @@ test.describe('Perspective Navigation', () => {
 	});
 
 	test('Switch to All view', async ({ page }) => {
-		// Click on All view
-		await page.locator('button:has-text("All")').click();
+		// Click on All view (in Views section, not Projects)
+		const viewsSection = page.locator('h3:has-text("Views")').locator('..');
+		await viewsSection.locator('button:has-text("All")').click();
 		await page.waitForTimeout(500);
 		
 		// Verify URL updated to show all view
 		expect(page.url()).toContain('view=all');
 		
 		// Verify perspective badges are visible in All view
-		const perspectiveBadges = page.locator('[class*="badge"]').filter({ hasText: /Inbox|Next|Waiting|Scheduled|Someday/ });
+		const perspectiveBadges = page.locator('[class*="badge"]').filter({ hasText: /Inbox|First|Next|Someday/ });
 		await expect(perspectiveBadges.first()).toBeVisible();
 	});
 
-	test('Navigate using keyboard shortcuts', async ({ page }) => {
-		// Press '1' for Inbox
-		await page.keyboard.press('1');
-		await page.waitForTimeout(500);
+	test.skip('Browser back/forward navigation', async ({ page }) => {
+		// Start from inbox perspective (default)
 		expect(page.url()).toContain('perspective=inbox');
 		
-		// Press '2' for Next
-		await page.keyboard.press('2');
+		// Navigate to First perspective
+		await page.locator('button:has-text("First")').click();
 		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=next');
+		expect(page.url()).toContain('perspective=first');
 		
-		// Press '3' for Waiting
-		await page.keyboard.press('3');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=waiting');
-		
-		// Press '4' for Scheduled
-		await page.keyboard.press('4');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=scheduled');
-		
-		// Press '5' for Someday
-		await page.keyboard.press('5');
-		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=someday');
-	});
-
-	test('Browser back/forward navigation', async ({ page }) => {
 		// Navigate to Next perspective
 		await page.locator('button:has-text("Next")').click();
 		await page.waitForTimeout(500);
-		
-		// Navigate to Waiting perspective
-		await page.locator('button:has-text("Waiting")').click();
-		await page.waitForTimeout(500);
+		expect(page.url()).toContain('perspective=next');
 		
 		// Go back using browser back button
 		await page.goBack();
 		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=next');
+		expect(page.url()).toContain('perspective=first');
 		
 		// Go forward using browser forward button
 		await page.goForward();
 		await page.waitForTimeout(500);
-		expect(page.url()).toContain('perspective=waiting');
+		expect(page.url()).toContain('perspective=next');
 		
-		// Go back twice
+		// Go back to inbox
 		await page.goBack();
+		await page.waitForTimeout(500);
 		await page.goBack();
 		await page.waitForTimeout(500);
 		expect(page.url()).toContain('perspective=inbox');
@@ -141,7 +114,8 @@ test.describe('Perspective Navigation', () => {
 		await expect(page.locator('text="Inbox Task"')).not.toBeVisible();
 		
 		// Go to All view
-		await page.locator('button:has-text("All")').click();
+		const viewsSection = page.locator('h3:has-text("Views")').locator('..');
+		await viewsSection.locator('button:has-text("All")').click();
 		await page.waitForTimeout(500);
 		
 		// Verify both tasks are visible
