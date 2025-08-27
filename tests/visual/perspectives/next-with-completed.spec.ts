@@ -5,6 +5,7 @@ test('Next perspective - with completed tasks', async ({ page }) => {
 	const visualTest = new VisualTestPage(page);
 	await visualTest.setup({
 		withCompleted: true,
+		workspace: 'hobby',
 		perspective: 'Next'
 	});
 	await visualTest.expectScreenshot('next-with-completed.png');

@@ -142,7 +142,7 @@ export class VisualTestPage {
 		await this.page.evaluate(async ({ ws, persp }) => {
 			const facade = (window as any).__testingFacade;
 			if (facade && facade.completeHalfOfTasks) {
-				await facade.completeHalfOfTasks(ws || 'personal', persp);
+				await facade.completeHalfOfTasks(ws, persp);
 			}
 		}, { ws: workspace, persp: perspective });
 	}

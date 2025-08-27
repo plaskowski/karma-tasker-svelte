@@ -5,6 +5,7 @@ test('All view - with completed tasks', async ({ page }) => {
 	const visualTest = new VisualTestPage(page);
 	await visualTest.setup({
 		withCompleted: true,
+		workspace: 'hobby',
 		perspective: 'All'
 	});
 	await visualTest.expectScreenshot('all-with-completed.png');

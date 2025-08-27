@@ -5,6 +5,7 @@ test('Inbox perspective - with completed tasks', async ({ page }) => {
 	const visualTest = new VisualTestPage(page);
 	await visualTest.setup({
 		withCompleted: true,
+		workspace: 'hobby',
 		perspective: 'Inbox'
 	});
 	await visualTest.expectScreenshot('inbox-with-completed.png');
