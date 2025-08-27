@@ -44,18 +44,15 @@ export class TaskManagerPage {
 			}
 		}
 		
-		// Save the task
-		const saveButton = this.page.locator('button').filter({ hasText: /save|create|add/i }).first();
-		if (await saveButton.isVisible()) {
-			await saveButton.click();
-		} else {
-			await titleInput.press('Enter');
-		}
+		// Save the task - be more specific with the button selector
+		const saveButton = this.page.locator('button:has-text("Save")');
+		await expect(saveButton).toBeVisible();
+		await saveButton.click();
 		
-		// Wait for editor to close
-		await this.page.waitForTimeout(1000);
+		// Wait for editor to close - verify it's actually closed
+		await expect(titleInput).not.toBeVisible({ timeout: 5000 });
 		
-		// Verify task was created
+		// Then verify task was created
 		await expect(this.page.locator(`text="${title}"`)).toBeVisible({ timeout: 5000 });
 	}
 
