@@ -12,6 +12,21 @@
   - [x] Cover remaining interaction scenarios - Created comprehensive E2E tests for perspective navigation, workspace switching, and keyboard shortcuts
   - [x] Cover completed items with visual test - Added visual regression tests for all views showing completed tasks in Done section
 
+### Core Features (Recent Session)
+- [x] Task editing and detailed view - Full task editor with title, description, project, and perspective selection
+- [x] "All" view - Comprehensive view showing all tasks grouped by perspective/project
+- [x] Task notes/descriptions support - Textarea in editor, display in TaskItem component
+- [x] "All" view in Projects - Groups by perspective, then orders by project
+- [x] Show perspective badge in View > All - Visual indicators for task perspectives
+- [x] No special view for "First" perspective - Unified perspective handling
+- [x] Project badge display fix - Shows "Personal Actions" instead of "personal-default"
+- [x] Add task defaults to current perspective/project - Context-aware task creation
+- [x] Define tasks order within project - Order field on Task with sorting applied in all views
+- [x] Consolidate mockData and sampleData - Moved sampleData out of store file
+- [x] Project badge styling - Matches perspective badge appearance (blue color scheme)
+- [x] Show completed items in Inbox - Fixed perspective view to display Done section
+- [x] "All" view respects project order - Proper sorting when displaying project groups
+
 ### UI/UX Improvements
 - [x] Make all buttons little bigger
 - [x] Add new item should inherit project or perspective from current view
