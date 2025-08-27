@@ -11,7 +11,7 @@ Two complementary test types to protect against regressions and AI sloppiness:
 - Freeze time, RNG, and network: deterministic fixtures.
 - Disable animations via `prefers-reduced-motion` + CSS guard.
 - Fixed browser (Chromium in PRs), fixed viewport (1280×800), fixed timezone (Europe/Warsaw).
-- Fixed fonts and themes (light/dark).
+- Fixed theme: **dark mode only** (default for all tests).
 - Mock mode: either app env flag or Playwright `route()` interception.
 - PRs fail on visual diffs unless approved; interaction tests must always pass.
 
