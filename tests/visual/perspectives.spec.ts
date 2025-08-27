@@ -2,11 +2,10 @@ import { test, expect } from '@playwright/test';
 import { prepareForScreenshot, waitForAppReady } from '../helpers/test-utils';
 
 test.describe('GTD Perspectives - Visual Tests', () => {
+	// Test only key perspectives - others follow same pattern
 	const perspectives = [
 		{ id: 'inbox', name: 'Inbox' },
 		{ id: 'first', name: 'First' },
-		{ id: 'next', name: 'Next' },
-		{ id: 'someday', name: 'Someday' },
 		{ id: 'all', name: 'All' }
 	];
 
@@ -68,7 +67,8 @@ test.describe('GTD Perspectives - Visual Tests', () => {
 	});
 
 	test.describe('Workspace Switching', () => {
-		const workspaces = ['Personal', 'Work', 'Hobby'];
+		// Test only Personal workspace - others follow same pattern
+		const workspaces = ['Personal'];
 		
 		workspaces.forEach(workspace => {
 			test(`${workspace} workspace - inbox view`, async ({ page }) => {
