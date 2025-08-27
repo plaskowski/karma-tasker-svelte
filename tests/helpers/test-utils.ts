@@ -270,3 +270,26 @@ export async function setupVisualTest(page: Page, options?: {
 export async function expectScreenshot(page: Page, name: string) {
 	await expect(page).toHaveScreenshot(name, SCREENSHOT_OPTIONS);
 }
+
+/**
+ * Configuration for a visual test
+ */
+export interface VisualTestConfig {
+	name: string;
+	screenshotName: string;
+	options?: {
+		workspace?: string;
+		perspective?: string;
+		projectView?: 'all' | 'single';
+		projectName?: string;
+		emptyState?: boolean;
+	};
+}
+
+/**
+ * Run a visual test with the given configuration
+ */
+export async function runVisualTest(page: Page, config: VisualTestConfig) {
+	await setupVisualTest(page, config.options);
+	await expectScreenshot(page, config.screenshotName);
+}

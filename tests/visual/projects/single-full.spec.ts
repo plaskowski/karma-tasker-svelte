@@ -1,7 +1,10 @@
 import { test } from '@playwright/test';
-import { setupVisualTest, expectScreenshot } from '../../helpers/test-utils';
+import { runVisualTest } from '../../helpers/test-utils';
 
 test('Single Project - full state', async ({ page }) => {
-	await setupVisualTest(page, { projectView: 'single', projectName: 'Personal Default' });
-	await expectScreenshot(page, 'single-full.png');
+	await runVisualTest(page, {
+		name: 'Single Project - full state',
+		screenshotName: 'single-full.png',
+		options: { projectView: 'single', projectName: 'Personal Default' }
+	});
 });

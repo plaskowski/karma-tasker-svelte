@@ -1,7 +1,10 @@
 import { test } from '@playwright/test';
-import { setupVisualTest, expectScreenshot } from '../../helpers/test-utils';
+import { runVisualTest } from '../../helpers/test-utils';
 
 test('All Projects - empty state', async ({ page }) => {
-	await setupVisualTest(page, { projectView: 'all', emptyState: true });
-	await expectScreenshot(page, 'all-empty.png');
+	await runVisualTest(page, {
+		name: 'All Projects - empty state',
+		screenshotName: 'all-empty.png',
+		options: { projectView: 'all', emptyState: true }
+	});
 });
