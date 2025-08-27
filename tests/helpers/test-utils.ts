@@ -288,6 +288,7 @@ export interface VisualTestConfig {
 
 /**
  * Run a visual test with the given configuration
+ * @deprecated Use VisualTestPage instead
  */
 export async function runVisualTest(page: Page, config: VisualTestConfig) {
 	await setupVisualTest(page, config.options);

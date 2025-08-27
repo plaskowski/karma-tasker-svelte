@@ -5,8 +5,8 @@
 
 ### Next steps
 - [ ] automated test coverage - see [doc](docs/test_implementation_plan.md)
-  - [ ] factor out common code
-  - [ ] introduce a visual-test(page) object with all the new methods
+  - [x] factor out common code
+  - [x] introduce a visual-test(page) object with all the new methods
   - [ ] don't use localStorage directly from test, expose a testing facade in window object so test can interact with the app
   - [ ] setupVisualTest#workspace param is unused (and method that it caused to call)
   - [ ] ...

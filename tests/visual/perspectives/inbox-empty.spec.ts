@@ -1,10 +1,8 @@
 import { test } from '@playwright/test';
-import { runVisualTest } from '../../helpers/test-utils';
+import { VisualTestPage } from '../../helpers/visual-test-page';
 
 test('Inbox perspective - empty state', async ({ page }) => {
-	await runVisualTest(page, {
-		name: 'Inbox perspective - empty state',
-		screenshotName: 'inbox-empty.png',
-		options: { emptyState: true }
-	});
+	const visualTest = new VisualTestPage(page);
+	await visualTest.setup({ emptyState: true });
+	await visualTest.expectScreenshot('inbox-empty.png');
 });

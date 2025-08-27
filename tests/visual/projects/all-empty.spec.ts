@@ -1,10 +1,8 @@
 import { test } from '@playwright/test';
-import { runVisualTest } from '../../helpers/test-utils';
+import { VisualTestPage } from '../../helpers/visual-test-page';
 
 test('All Projects - empty state', async ({ page }) => {
-	await runVisualTest(page, {
-		name: 'All Projects - empty state',
-		screenshotName: 'all-empty.png',
-		options: { projectView: 'all', emptyState: true }
-	});
+	const visualTest = new VisualTestPage(page);
+	await visualTest.setup({ projectView: 'all', emptyState: true });
+	await visualTest.expectScreenshot('all-empty.png');
 });

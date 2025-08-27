@@ -1,10 +1,8 @@
 import { test } from '@playwright/test';
-import { runVisualTest } from '../../helpers/test-utils';
+import { VisualTestPage } from '../../helpers/visual-test-page';
 
 test('All perspective - full state', async ({ page }) => {
-	await runVisualTest(page, {
-		name: 'All perspective - full state',
-		screenshotName: 'all-full.png',
-		options: { perspective: 'All' }
-	});
+	const visualTest = new VisualTestPage(page);
+	await visualTest.setup({ perspective: 'All' });
+	await visualTest.expectScreenshot('all-full.png');
 });
