@@ -211,11 +211,11 @@ export const SCREENSHOT_OPTIONS = {
  * Setup and navigate for a visual test
  */
 export async function setupVisualTest(page: Page, options?: {
-	emptyState?: boolean;
 	workspace?: string;
 	perspective?: string;
 	projectView?: 'all' | 'single';
 	projectName?: string;
+	emptyState?: boolean;
 }) {
 	// Set up deterministic environment
 	await prepareForScreenshot(page);
