@@ -19,25 +19,25 @@ Based on the test strategy document, this plan outlines the step-by-step impleme
 
 ## Phase 2: Visual (Screenshot) Tests
 
-### 3. Empty State Coverage
-Create screenshot tests for all screens with no data:
-- File structure: `tests/visual/[screen].spec.ts`
-- One test per screen variant
-- Store baselines: `tests/visual/__screenshots__/[screen]/empty.png`
+### 3. Test Structure
+Organized test structure with one test per file:
+- File structure: `tests/visual/[category]/[test-name].spec.ts`
+- Each test in its own file for better isolation
+- Store baselines: `tests/visual/[category]/__screenshots__/[test-name].png`
 
-### 4. Full State Coverage
-Create screenshot tests with complete mock data:
-- Use existing `mockData.ts` dataset
-- Cover all screens in loaded state
-- Store baselines: `tests/visual/__screenshots__/[screen]/full.png`
-- Include light and dark theme variants where applicable
+### 4. Loaded State Coverage
+Focus on loaded state screenshots only (no interaction states):
+- Empty state: Views with no data
+- Full state: Views with mock data
+- Test key perspectives: Inbox, First, All
+- Test projects view
+- Test search results
 
-Screens to cover:
-- Task list views (Inbox, Next, Waiting, Scheduled, Someday)
-- Task detail/edit modal
-- Search/filter states
-- Settings/preferences
-- Empty states with helpful messages
+Simplified coverage:
+- GTD perspectives (Inbox, First, All) - empty and full states
+- Projects view - empty and full states  
+- Search view - with and without results
+- No hover states, modals, or interaction screenshots
 
 ## Phase 3: Interaction Tests
 
