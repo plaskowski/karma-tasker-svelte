@@ -20,40 +20,21 @@ Two complementary test types to protect against regressions and AI sloppiness:
 ## A) Screenshot (Visual) Tests
 
 ### Goal
-One screenshot per **screen/route** in a stable "loaded" state, with minimal variants.
-
-### Screen Map
-Maintain `tests/visual/screen-map.yml` with:
-- `id`, `path`, `setup`, `variants`, `notes`.
+One screenshot per **screen/view** in a stable "loaded" state, with minimal set of variants.
 
 ### Baseline Policy
-- Store under `tests/visual/__screenshots__/<id>/<variant>.png`.
-- Thresholds: start at `0.01`, ratchet down to `0.003`.
-- Mask nondeterministic widgets (e.g., avatars).
+- Have one test file per screen/view under `tests/visual/[id].spec.ts` with test per variant.
+- Store screenshot under `tests/visual/__screenshots__/[id]/[variant].png`.
 
 ### Coverage
-- 100% of navigable screens.
-- At least one "long content" variant for scrollable screens.
-
-### Flake Hardening
-- Wait for network idle + key selectors.
-- Ensure fonts are loaded.
-- Retry capture if DOM hash unchanged but diff > threshold.
+- 100% of navigable screens in both empty and full state.
 
 ---
 
 ## B) Interaction (Flow) Tests
 
 ### Goal
-Cover **core flows** with Playwright; allow opt-in screenshots after each step.
-
-### Flow Catalog
-Maintain `tests/e2e/flows.yml`:
-- `id`, `preconditions`, `steps` (action, selector, assert, snap, mask).
-
-### Snapshot Policy
-- Snap at start/end, after transitions, and complex states.
-- Optional: snap at every step if flow is fragile.
+Cover **core flows** with Playwright; allow opt-in screenshots after each step to cover complex states.
 
 ### Assertion Style
 - State assertions (`toBeVisible`, `toHaveText`, `toHaveCount`) preferred.
@@ -62,34 +43,22 @@ Maintain `tests/e2e/flows.yml`:
 ---
 
 ## Fixtures & Scenarios
-- Global dataset: one JSON tree (`user.json`, `projects.json`, `tasks.json`).
-- Variants: short/medium/long lists.
-- Edge packs: empty states, max lists, i18n, failed sync.
-- Fixtures versioned in git.
-
----
-
-## Variants Matrix
-- **PRs**: Desktop, light theme.
-- **Nightly**: Desktop (light+dark), mobile (390×844).
-- Expand only when responsive differences matter.
+- Use existing mockData.ts dataset
+- Screenshots for after every major expected visual change (e.g. dialog opened, item added, filter applied).
 
 ---
 
 ## Naming Conventions
 - Tests: `tests/visual/[id].spec.ts`, `tests/e2e/[flow].spec.ts`.
-- Baselines: `__screenshots__/[id]/[variant].png`.
-- Step screenshots: `__steps__/[flow]/[NN]-[slug].png`.
-- Data-test IDs: semantic and stable.
+- Baselines: `tests/visual/__screenshots__/[id]/[variant].png`.
+- Step screenshots: `tests/e2e/__steps__/[flow]/[NN]-[slug].png`.
+- Introduce data-test IDs where needed.
 
 ---
 
 ## Gating & Review
 - PR check 1: Visual diffs must be approved with a one-liner "why changed".
 - PR check 2: Interaction flows must pass; failing step shows trace + screenshot.
-- Labels:
-  - `ui-sensitive`: run dark theme + mobile on PR.
-  - `visual-update`: baseline update intended; auto-post diffs.
 - Fail if new interactive element lacks `data-testid`.
 
 ---
@@ -102,26 +71,3 @@ Maintain `tests/e2e/flows.yml`:
 
 ---
 
-## Reports & Artifacts
-- Publish:
-  - Visual diffs (gallery).
-  - Playwright HTML report + traces/videos.
-  - Flow coverage table (flows × steps × screenshots).
-- Keep last 20 PR runs of screenshot diffs.
-
----
-
-## Incremental Rollout
-**Day 1–2**: Mock mode, fixtures, freeze time, disable animations.  
-**Day 3–4**: First 10 screen baselines, 3 core flows.  
-**Day 5**: Wire CI (visual gating, e2e flows, artifacts).  
-**Day 6–7**: Expand to full sitemap, add edge cases, nightly dark+mobile+cross-browser.
-
----
-
-## Reviewer Rules
-- Baseline changes require "why changed" note + UX explanation.
-- New flows/screens require fixtures and catalog updates.
-- Reject tests with arbitrary sleeps instead of state assertions.
-
----
