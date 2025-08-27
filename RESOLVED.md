@@ -3,8 +3,14 @@
 ## ✅ Completed Features
 
 ### Testing & Quality
-- [x] Cover remaining interaction scenarios (write a list first) - Created comprehensive E2E tests for perspective navigation, workspace switching, and keyboard shortcuts
-- [x] Cover completed items with visual test - Added visual regression tests for all views showing completed tasks in Done section
+- [x] Automated test coverage - Comprehensive testing infrastructure with visual and E2E tests
+  - [x] Factor out common code - Extracted shared test utilities
+  - [x] Introduce a visual-test(page) object with all the new methods - Created VisualTestPage class
+  - [x] Don't use localStorage directly from test, expose a testing facade in window object - Created TestingFacade
+  - [x] Remove duplicate and unused code from test-utils - Cleaned up test utilities
+  - [x] Extract page objects for interaction tests - Created InteractionTestPage with TaskPage
+  - [x] Cover remaining interaction scenarios - Created comprehensive E2E tests for perspective navigation, workspace switching, and keyboard shortcuts
+  - [x] Cover completed items with visual test - Added visual regression tests for all views showing completed tasks in Done section
 
 ### UI/UX Improvements
 - [x] Make all buttons little bigger

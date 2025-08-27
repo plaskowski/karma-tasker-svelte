@@ -4,13 +4,6 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] automated test coverage - see [doc](docs/test_implementation_plan.md)
-  - [x] factor out common code
-  - [x] introduce a visual-test(page) object with all the new methods
-  - [x] don't use localStorage directly from test, expose a testing facade in window object so test can interact with the app
-  - [x] remove duplicate and unused code from test-utils (setupVisualTest, etc.)
-  - [x] extract page objects for interaction tests
-  - [x] cover remaining interaction scenarios (write a list first)
 - [ ] ...
 
 ### Core Features
