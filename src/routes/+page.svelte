@@ -9,25 +9,20 @@
 		tasks,
 		projects,
 		workspaces,
-		workspacePerspectives,
-		currentView,
-		currentPerspectiveId,
-		currentProjectId,
 		currentWorkspace,
-
 		filteredTasks,
-
 		toggleTaskComplete,
-
 		addTask,
+		updateTask,
 		resetToInitialState
 	} from '$lib/stores/taskStore';
+	import { navigation } from '$lib/stores/navigationStore';
+	import { workspaceContext } from '$lib/stores/workspaceContext';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-    import { onMount } from 'svelte';
-    import Sidebar from '$lib/components/Sidebar.svelte';
-    import TaskList from '$lib/components/TaskList.svelte';
-import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
+	import { onMount } from 'svelte';
+	import Sidebar from '$lib/components/Sidebar.svelte';
+	import TaskList from '$lib/components/TaskList.svelte';
     import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
     import TaskInlineEditor from '$lib/components/TaskInlineEditor.svelte';
     import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
@@ -74,20 +69,18 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 
 	// Handle view changes
 	function handleViewChange(view: import('$lib/types').ViewType, perspectiveId?: string) {
-		currentView.set(view);
 		if (view === 'perspective' && perspectiveId) {
-			currentPerspectiveId.set(perspectiveId);
-			currentProjectId.set(undefined);
+			navigation.setPerspectiveView(perspectiveId);
 			updateURL(view, perspectiveId);
 		} else if (view === 'all') {
-			currentProjectId.set(undefined);
+			navigation.setAllView();
 			updateURL(view);
 		} else if (view === 'project-all') {
-			currentProjectId.set(undefined);
+			navigation.setProjectAllView();
 			updateURL(view);
 		} else if (view === 'project') {
 			// Keep current project if switching to project view
-			const projectId = $currentProjectId;
+			const projectId = $navigation.currentProjectId;
 			if (projectId) {
 				updateURL(view, undefined, projectId);
 			}
@@ -96,9 +89,11 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 
 	// Handle project selection
 	function handleProjectSelect(projectId: string | undefined) {
-		currentProjectId.set(projectId);
 		if (projectId) {
+			navigation.setProjectView(projectId);
 			updateURL('project', undefined, projectId);
+		} else {
+			navigation.update(state => ({ ...state, currentProjectId: undefined }));
 		}
 	}
 
@@ -107,29 +102,27 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		currentWorkspace.set(workspaceId);
 		
 		// If we're in project view, switch to first perspective since projects are workspace-specific
-		if ($currentView === 'project' || $currentView === 'project-all') {
-			const firstPerspective = $workspacePerspectivesOrdered[0];
+		if ($navigation.currentView === 'project' || $navigation.currentView === 'project-all') {
+			const firstPerspective = $workspaceContext.getDefaultPerspective();
 			if (firstPerspective) {
-				currentView.set('perspective');
-				currentPerspectiveId.set(firstPerspective.id);
-				currentProjectId.set(undefined);
+				navigation.setPerspectiveView(firstPerspective.id);
 				updateURL('perspective', firstPerspective.id, undefined, workspaceId);
 			}
-		} else if ($currentView === 'perspective') {
+		} else if ($navigation.currentView === 'perspective') {
 			// Keep current perspective if it exists in new workspace, otherwise use first
-			const perspectiveExists = $workspacePerspectivesOrdered.some(p => p.id === $currentPerspectiveId);
+			const perspectiveExists = $navigation.currentPerspectiveId ? $workspaceContext.hasPerspective($navigation.currentPerspectiveId) : false;
 			if (!perspectiveExists) {
-				const firstPerspective = $workspacePerspectivesOrdered[0];
+				const firstPerspective = $workspaceContext.getDefaultPerspective();
 				if (firstPerspective) {
-					currentPerspectiveId.set(firstPerspective.id);
+					navigation.setPerspectiveView(firstPerspective.id);
 					updateURL('perspective', firstPerspective.id, undefined, workspaceId);
 				}
 			} else {
-				updateURL('perspective', $currentPerspectiveId, undefined, workspaceId);
+				updateURL('perspective', $navigation.currentPerspectiveId, undefined, workspaceId);
 			}
 		} else {
 			// Keep current view for 'all' view
-			updateURL($currentView, undefined, undefined, workspaceId);
+			updateURL($navigation.currentView, undefined, undefined, workspaceId);
 		}
 	}
 
@@ -147,53 +140,50 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 		}
 
 		if (view && ['perspective', 'project', 'project-all', 'all'].includes(view)) {
-			currentView.set(view);
+			// View will be set based on specific conditions below
 			
 			if (view === 'perspective') {
 				// Validate perspective exists in current workspace
-				if (perspective && $workspacePerspectivesOrdered.some(p => p.id === perspective)) {
-					currentPerspectiveId.set(perspective);
+				if (perspective && $workspaceContext.hasPerspective(perspective)) {
+					navigation.setPerspectiveView(perspective);
 				} else {
 					// Use first perspective as fallback
-					const firstPerspective = $workspacePerspectivesOrdered[0];
+					const firstPerspective = $workspaceContext.getDefaultPerspective();
 					if (firstPerspective) {
-						currentPerspectiveId.set(firstPerspective.id);
+						navigation.setPerspectiveView(firstPerspective.id);
 						updateURL('perspective', firstPerspective.id);
 					}
 				}
 			} else if (view === 'project' && project) {
 				// Validate project exists in current workspace
-				const projectExists = $workspaceProjects.some(p => p.id === project);
-				if (projectExists) {
-					currentProjectId.set(project);
+				if ($workspaceContext.hasProject(project)) {
+					navigation.setProjectView(project);
 				} else {
 					// Project doesn't exist, default to first perspective
-					const firstPerspective = $workspacePerspectivesOrdered[0];
+					const firstPerspective = $workspaceContext.getDefaultPerspective();
 					if (firstPerspective) {
-						currentView.set('perspective');
-						currentPerspectiveId.set(firstPerspective.id);
-						currentProjectId.set(undefined);
+						navigation.setPerspectiveView(firstPerspective.id);
 						updateURL('perspective', firstPerspective.id);
 					}
 				}
-			} else if (view === 'project-all' || view === 'all') {
-				currentProjectId.set(undefined);
+			} else if (view === 'project-all') {
+				navigation.setProjectAllView();
+			} else if (view === 'all') {
+				navigation.setAllView();
 			}
 		} else {
 			// Invalid or missing view, default to first workspace perspective
-			const firstPerspective = $workspacePerspectivesOrdered[0];
+			const firstPerspective = $workspaceContext.getDefaultPerspective();
 			if (firstPerspective) {
-				currentView.set('perspective');
-				currentPerspectiveId.set(firstPerspective.id);
-				currentProjectId.set(undefined);
+				navigation.setPerspectiveView(firstPerspective.id);
 				updateURL('perspective', firstPerspective.id);
 			}
 		}
 
 		// Always update URL to ensure workspace is included
-		const finalView = $currentView;
-		const finalPerspective = $currentPerspectiveId;
-		const finalProject = $currentProjectId;
+		const finalView = $navigation.currentView;
+		const finalPerspective = $navigation.currentPerspectiveId;
+		const finalProject = $navigation.currentProjectId;
 		updateURLIfChanged(finalView, finalPerspective, finalProject);
 
         // Add keyboard navigation
@@ -250,12 +240,8 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 			title: '',
 			description: '',
 			completed: false,
-			projectId: $currentView === 'project' && $currentProjectId
-				? $currentProjectId
-				: ($workspaceProjects[0]?.id || ''),
-			perspective: $currentView === 'perspective'
-				? $currentPerspectiveId
-				: ($workspacePerspectivesOrdered[0]?.id || ''),
+			projectId: $workspaceContext.getEffectiveProjectId($navigation),
+			perspective: $workspaceContext.getEffectivePerspectiveId($navigation),
 			workspaceId: $currentWorkspace,
 			order: 0, // Will be calculated when task is actually saved
 			createdAt: new Date(),
@@ -272,10 +258,9 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 			throw new Error('No workspaces defined. At least one workspace is required.');
 		}
 		const firstWorkspaceId = $workspaces[0].id;
-		const firstPerspective = $workspacePerspectivesOrdered[0];
+		const firstPerspective = $workspaceContext.getDefaultPerspective();
 		if (firstPerspective) {
-			currentView.set('perspective');
-			currentPerspectiveId.set(firstPerspective.id);
+			navigation.setPerspectiveView(firstPerspective.id);
 			updateURL('perspective', firstPerspective.id, undefined, firstWorkspaceId);
 		}
 	}
@@ -287,13 +272,11 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
         }
     });
 
-    // Close inline/create editors when navigating away from the current view
+    // Close inline/create editors when navigation changes
     $effect(() => {
-        // React to currentView, currentPerspectiveId or currentProjectId changes
-        const v = $currentView;
-        const persp = $currentPerspectiveId;
-        const p = $currentProjectId;
-        // When these change, ensure creation editor is closed
+        // React to any navigation changes
+        $navigation;
+        // Close the creation editor when navigating
         showCreateEditor = false;
     });
 
@@ -336,13 +319,10 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
 <div class="h-full flex dark">
 	<!-- Sidebar -->
         <Sidebar
-		currentView={$currentView}
-		currentPerspectiveId={$currentPerspectiveId}
-		currentProjectId={$currentProjectId}
+		navigation={$navigation}
+		workspace={$workspaceContext}
 		currentWorkspace={$currentWorkspace}
 		workspaces={$workspaces}
-		perspectives={$workspacePerspectives}
-		projects={$workspaceProjects}
 		onViewChange={handleViewChange}
 		onProjectSelect={handleProjectSelect}
 		onWorkspaceChange={handleWorkspaceChange}
@@ -353,13 +333,14 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
         <!-- Task List fills remaining space -->
         <TaskList
             tasks={$filteredTasks}
-            projects={$workspaceProjects}
-            currentView={$currentView}
-            currentPerspectiveId={$currentPerspectiveId}
-            currentProjectId={$currentProjectId}
+            workspace={$workspaceContext}
+            navigation={$navigation}
             onTaskToggle={handleTaskToggle}
 
             onTaskClick={handleTaskClick}
+            onUpdateTask={async (id, updates) => {
+                await updateTask(id, updates);
+            }}
 
             showCompleted={true}
             onNewTask={handleNewTask}
@@ -377,8 +358,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
                 >
                     <TaskEditorForm
                         task={createNewTaskWithDefaults()}
-                        projects={$workspaceProjects}
-                        perspectives={$workspacePerspectivesOrdered}
+                        workspace={$workspaceContext}
                         save={async ({ title, description, projectId, perspective }) => {
                             await addTask({
                                 title,
@@ -386,7 +366,7 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
                                 projectId,
                                 workspaceId: $currentWorkspace,
                                 completed: false,
-                                perspective: perspective || ($workspacePerspectivesOrdered[0]?.id ?? '')
+                                perspective: perspective || ($workspaceContext.getDefaultPerspective()?.id ?? '')
                             });
                             // Close after successful create
                             handleCreateClose();
@@ -402,4 +382,12 @@ import { workspaceProjects, workspacePerspectivesOrdered } from '$lib/stores/tas
     
 
 <!-- Task Details Modal -->
-<TaskDetailsDialog open={showTaskDetailsDialog} task={selectedTask} on:close={handleTaskDetailsClose} />
+<TaskDetailsDialog 
+	open={showTaskDetailsDialog} 
+	task={selectedTask} 
+	workspace={$workspaceContext}
+	onUpdateTask={async (id, updates) => {
+		await updateTask(id, updates);
+	}}
+	on:close={handleTaskDetailsClose} 
+/>

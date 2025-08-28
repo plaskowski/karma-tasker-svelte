@@ -28,6 +28,8 @@
 - [x] "All" view respects project order - Proper sorting when displaying project groups
 
 ### UI/UX Improvements
+- [x] why it pass projects but takes $workspacePerspectivesOrdered itself
+- [x] pack "currentView: ViewType; currentPerspectiveId?: string; currentProjectId?: string;" into object
 - [x] Task editing and detailed view
 - [x] "All" view
 - [x] Task notes/descriptions support

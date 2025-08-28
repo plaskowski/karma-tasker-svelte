@@ -1,5 +1,6 @@
 <script lang="ts">
-	import type { Task, Project, PerspectiveConfig } from '$lib/types';
+	import type { Task } from '$lib/types';
+	import type { WorkspaceContext } from '$lib/stores/workspaceContext';
 	import TaskEditorForm from './TaskEditorForm.svelte';
 	import { createEventDispatcher } from 'svelte';
 	
@@ -16,15 +17,15 @@
 
 	interface Props {
 		task: Task;
-		projects: Project[];
-		perspectives: PerspectiveConfig[];
+		workspace: WorkspaceContext;
+		onUpdateTask: (id: string, updates: Partial<Task>) => Promise<void>;
 	}
 
-	let { task, projects, perspectives }: Props = $props();
+	let { task, workspace, onUpdateTask }: Props = $props();
 
 	const dispatch = createEventDispatcher<{ close: void }>();
 </script>
 
 <section class="mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-4" aria-label="Task inline editor">
-	<TaskEditorForm {task} {projects} {perspectives} on:close={() => dispatch('close')} />
+	<TaskEditorForm {task} {workspace} {onUpdateTask} on:close={() => dispatch('close')} />
 </section>

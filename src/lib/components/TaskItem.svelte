@@ -60,7 +60,7 @@
 			<span 
 				class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded"
 				data-testid="perspective-badge"
-				data-perspective={task.perspectiveId}
+				data-perspective={task.perspective}
 				role="status"
 				aria-label="Perspective: {perspectiveName}"
 			>

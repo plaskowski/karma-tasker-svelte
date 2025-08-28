@@ -29,3 +29,5 @@ vite.config.ts.timestamp-*
 /playwright/.cache/
 tests/visual/__screenshots__/
 tests/e2e/__steps__/
+# Playwright actual snapshots (generated on test failures)
+tests/**/*-snapshots/

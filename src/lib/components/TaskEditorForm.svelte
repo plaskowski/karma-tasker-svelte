@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Task, Project, PerspectiveConfig } from '$lib/types';
+	import type { Task } from '$lib/types';
+	import type { WorkspaceContext } from '$lib/stores/workspaceContext';
 	import { createEventDispatcher } from 'svelte';
-	import { updateTask } from '$lib/stores/taskStore';
     import { ChevronDown } from 'lucide-svelte';
     import { onMount } from 'svelte';
 
@@ -14,20 +14,21 @@
 
     interface Props {
         task: Task;
-        projects: Project[];
-        perspectives: PerspectiveConfig[];
+        workspace: WorkspaceContext;
         // Optional custom save handler; when provided, creation/update is delegated to parent
         save?: (fields: SaveFields) => Promise<void>;
+        // Optional update handler for when save is not provided
+        onUpdateTask?: (id: string, updates: Partial<Task>) => Promise<void>;
     }
 
-    let { task, projects, perspectives, save }: Props = $props();
+    let { task, workspace, save, onUpdateTask }: Props = $props();
 
     const dispatch = createEventDispatcher();
 
 	let title = $state(task.title);
 	let description = $state(task.description ?? '');
 	let projectId = $state(task.projectId);
-    let perspective = $state(task.perspective ?? (perspectives[0]?.id ?? ''));
+    let perspective = $state(task.perspective ?? (workspace.getDefaultPerspective()?.id ?? ''));
 	let submitting = $state(false);
 
     const titleId = `title-${task.id}`;
@@ -54,8 +55,10 @@
 
             if (save) {
                 await save(fields);
+            } else if (onUpdateTask) {
+                await onUpdateTask(task.id, fields);
             } else {
-                await updateTask(task.id, fields);
+                throw new Error('No save or update handler provided');
             }
 			dispatch('close');
 		} catch (err) {
@@ -121,7 +124,7 @@
 					{#if !projectId}
 						<option value="" disabled selected>Project</option>
 					{/if}
-					{#each projects as p}
+					{#each workspace.getProjects() as p}
 						<option value={p.id}>{p.name}</option>
 					{/each}
 				</select>
@@ -134,7 +137,7 @@
 					class="w-full appearance-none px-3 pr-12 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
 				>
-                    {#each perspectives as p}
+                    {#each workspace.getPerspectives() as p}
                         <option value={p.id}>{p.name}</option>
                     {/each}
 				</select>

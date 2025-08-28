@@ -6,8 +6,9 @@
 
 import { writable, derived, get } from 'svelte/store';
 import { persisted } from 'svelte-persisted-store';
-import type { Task, Project, Workspace, ViewType } from '$lib/types';
+import type { Task, Project, Workspace } from '$lib/types';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
+import { navigation } from './navigationStore';
 
 // Storage key for persistence
 const STORAGE_KEY = 'karma-tasks';
@@ -22,14 +23,13 @@ export const projects = persisted(STORAGE_KEY + '-projects', mockProjects);
 export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces);
 
 // MIGRATION: UI state stores - these can stay here or move to lib/stores/uiStore.ts
-// Current state stores
-// Default to perspective view; will be set on mount based on workspace config
-export const currentView = writable<ViewType>('perspective');
-// Default perspective will be set from first workspace's first perspective
+// Re-export navigation store
+export { navigation };
+
+// Initialize navigation with defaults
 const firstWorkspace = mockWorkspaces[0];
 const defaultPerspective = firstWorkspace?.perspectives?.[0]?.id || '';
-export const currentPerspectiveId = writable<string>(defaultPerspective);
-export const currentProjectId = writable<string | undefined>();
+navigation.setPerspectiveView(defaultPerspective);
 // Use first workspace as default
 if (!mockWorkspaces[0]?.id) {
   throw new Error('No workspaces defined. At least one workspace is required.');
@@ -114,29 +114,29 @@ export const workspacePerspectivesOrdered = derived(
 // MIGRATION: Complex filtering logic could be extracted to lib/domain/task/logic.ts
 // as pure functions like filterTasksByView(tasks, view, perspectiveId, projectId, workspaceId)
 export const filteredTasks = derived(
-  [tasks, currentView, currentPerspectiveId, currentProjectId, currentWorkspace, workspacePerspectivesOrdered],
-  ([$tasks, $currentView, $currentPerspectiveId, $currentProjectId, $currentWorkspace, $workspacePerspectivesOrdered]) => {
+  [tasks, navigation, currentWorkspace, workspacePerspectivesOrdered],
+  ([$tasks, $navigation, $currentWorkspace, $workspacePerspectivesOrdered]) => {
     // Filter by current workspace first
     let filtered = $tasks.filter(task => {
       return task.workspaceId === $currentWorkspace;
     });
 
     // Filter by view
-    if ($currentView === 'perspective') {
+    if ($navigation.currentView === 'perspective') {
       // Perspective view: filter by perspective id
-      const perspectiveId = $currentPerspectiveId;
+      const perspectiveId = $navigation.currentPerspectiveId;
       const isKnownPerspective = $workspacePerspectivesOrdered.some(p => p.id === perspectiveId);
       const effectivePerspective = isKnownPerspective ? perspectiveId : $workspacePerspectivesOrdered[0]?.id;
       filtered = filtered.filter(task => task.perspective === effectivePerspective);
-    } else if ($currentView === 'project') {
+    } else if ($navigation.currentView === 'project') {
       // Project view: specific project tasks
-      if ($currentProjectId) {
-        filtered = filtered.filter(task => task.projectId === $currentProjectId);
+      if ($navigation.currentProjectId) {
+        filtered = filtered.filter(task => task.projectId === $navigation.currentProjectId);
       }
-    } else if ($currentView === 'project-all') {
+    } else if ($navigation.currentView === 'project-all') {
       // Project All view: all tasks in workspace (excluding those without projects)
       filtered = filtered.filter(task => task.projectId);
-    } else if ($currentView === 'all') {
+    } else if ($navigation.currentView === 'all') {
       // All view: keep all tasks for current workspace (both active and completed)
       // No additional filtering
     }
@@ -193,10 +193,10 @@ export function resetToInitialState() {
   const ws = mockWorkspaces[0];
   const firstPerspective = ws.perspectives?.[0];
   if (firstPerspective) {
-    currentView.set('perspective');
-    currentPerspectiveId.set(firstPerspective.id);
+    navigation.setPerspectiveView(firstPerspective.id);
+  } else {
+    navigation.reset();
   }
-  currentProjectId.set(undefined);
   showCompleted.set(false);
 }
 

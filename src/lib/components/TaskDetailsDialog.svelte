@@ -1,15 +1,17 @@
 <script lang="ts">
 	import type { Task } from '$lib/types';
+	import type { WorkspaceContext } from '$lib/stores/workspaceContext';
 	import { createEventDispatcher } from 'svelte';
-import { workspaceProjects, workspacePerspectives } from '$lib/stores/taskStore';
 	import TaskEditorForm from './TaskEditorForm.svelte';
 
 	interface Props {
 		open: boolean;
 		task: Task | null;
+		workspace: WorkspaceContext;
+		onUpdateTask: (id: string, updates: Partial<Task>) => Promise<void>;
 	}
 
-	let { open, task }: Props = $props();
+	let { open, task, workspace, onUpdateTask }: Props = $props();
 
 	const dispatch = createEventDispatcher();
 
@@ -24,7 +26,7 @@ import { workspaceProjects, workspacePerspectives } from '$lib/stores/taskStore'
 			</header>
 
 			{#if task}
-				<TaskEditorForm task={task} projects={$workspaceProjects} perspectives={$workspacePerspectives} on:close={handleClose} />
+				<TaskEditorForm {task} {workspace} {onUpdateTask} on:close={handleClose} />
 			{/if}
 		</div>
 	</div>

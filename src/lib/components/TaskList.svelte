@@ -1,342 +1,97 @@
-<!-- MIGRATION: This component should be split:
-     - TaskList.svelte stays as container component (lib/components/tasks/TaskList.svelte)
-     - Grouping logic moves to lib/domain/task/logic.ts
-     - View title logic moves to a view service or helper
--->
 <script lang="ts">
-	import type { Task, ViewType, Project } from '$lib/types';
+	import type { Task } from '$lib/types';
 	import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
+	import { writable } from 'svelte/store';
 	import TaskItem from './TaskItem.svelte';
 	import TaskInlineEditor from './TaskInlineEditor.svelte';
-import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores/taskStore';
+	import { createTaskListViewModel } from './taskListViewModel';
+	import type { TaskListViewState, TaskListActions } from './taskListViewModel';
 
-	interface Props {
-		tasks: Task[];
-		projects: Project[];
-		currentView: ViewType;
-		currentPerspectiveId?: string;
-		currentProjectId?: string;
-		onTaskToggle: (id: string) => void;
-		onTaskClick: (task: Task) => void;
-
-		showCompleted?: boolean;
-		onNewTask?: () => void;
-		onCleanup?: () => void;
-		onRefresh?: () => void;
-	}
+	interface Props extends TaskListViewState, TaskListActions {}
 
 	let {
 		tasks,
-		projects,
-		currentView,
-		currentPerspectiveId,
-		currentProjectId,
+		workspace,
+		navigation,
 		onTaskToggle,
 		onTaskClick,
+		onUpdateTask,
 		showCompleted = false,
 		onNewTask,
 		onCleanup,
 		onRefresh
 	}: Props = $props();
 
-	// MIGRATION: Move to lib/services/viewService.ts or lib/domain/view/logic.ts
-	function getViewTitle() {
-		// Special views
-		if (currentView === 'all') {
-			return 'All';
-		}
-		if (currentView === 'project-all') {
-			return 'All Projects';
-		}
-		if (currentView === 'project') {
-			if (currentProjectId) {
-				const project = projects.find(p => p.id === currentProjectId);
-				return project ? project.name : 'Project';
-			}
-			return 'Project';
-		}
-		if (currentView === 'perspective') {
-			// Look up perspective name
-			const perspective = $workspacePerspectives.find(p => p.id === currentPerspectiveId);
-			return perspective?.name || 'Tasks';
-		}
-		return 'Tasks';
-	}
+	// Inline editor state as a store
+	const inlineEditingTaskId = writable<string | null>(null);
+	
+	// Build view state - no complex expressions
+	const viewState = $derived<TaskListViewState>({
+		tasks,
+		workspace,
+		navigation,
+		showCompleted
+	});
 
+	// Define actions
+	const actions: TaskListActions = {
+		onTaskToggle,
+		onTaskClick,
+		onUpdateTask,
+		onNewTask,
+		onCleanup,
+		onRefresh
+	};
 
+	// Create view model with inline editing store
+	const vm = $derived(createTaskListViewModel(
+		viewState, 
+		actions,
+		inlineEditingTaskId
+	));
 
-	const activeTasks = $derived(tasks.filter(task => !task.completed));
-
-	// Inline editor state
-	let inlineEditingTaskId: string | null = $state(null);
-
-	function toggleInlineEditor(taskId: string) {
-		inlineEditingTaskId = inlineEditingTaskId === taskId ? null : taskId;
-	}
-
-	function closeInlineEditor() {
-		inlineEditingTaskId = null;
-	}
-
-	// Close inline editor when view or selected project changes
+	// Close inline editor when view changes
 	$effect(() => {
-		const v = currentView;
-		const p = currentProjectId;
-		inlineEditingTaskId = null;
+		navigation;
+		vm.closeInlineEditor();
 	});
-	const completedTasks = $derived(tasks.filter(task => task.completed));
-
-	// MIGRATION: All grouping logic should move to lib/domain/task/logic.ts
-	// as pure functions like groupTasksByProject(), groupTasksByPerspective()
-	// Group tasks by project for certain views
-	const shouldGroupByProject = $derived(currentView === 'perspective' || currentView === 'all');
-	const shouldGroupByPerspective = $derived(currentView === 'project');
-	const shouldGroupByPerspectiveThenProject = $derived(currentView === 'project-all');
-	
-	function groupTasksByProject(taskList: Task[]) {
-		if (!shouldGroupByProject) return { ungrouped: taskList };
-		
-		// Build perspective order map for sorting within each project group
-		const perspectiveOrder = new Map($workspacePerspectivesOrdered.map((p, idx) => [p.id, idx] as const));
-		
-		const grouped: { [key: string]: Task[] } = {};
-		const ungrouped: Task[] = [];
-		
-		taskList.forEach(task => {
-			if (task.projectId) {
-				if (!grouped[task.projectId]) grouped[task.projectId] = [];
-				grouped[task.projectId].push(task);
-			} else {
-				ungrouped.push(task);
-			}
-		});
-		
-		// Sort tasks inside each project by perspective order, then by task order
-		Object.keys(grouped).forEach(projectId => {
-			grouped[projectId].sort((a, b) => {
-				const perspA = perspectiveOrder.get(a.perspective || '') ?? Number.MAX_SAFE_INTEGER;
-				const perspB = perspectiveOrder.get(b.perspective || '') ?? Number.MAX_SAFE_INTEGER;
-				if (perspA !== perspB) return perspA - perspB;
-				// If same perspective, sort by task order
-				return a.order - b.order;
-			});
-		});
-		
-		// Sort ungrouped tasks by order as well
-		ungrouped.sort((a, b) => a.order - b.order);
-		
-		return { grouped, ungrouped };
-	}
-
-
-
-	function groupTasksByPerspective(taskList: Task[]) {
-		if (!shouldGroupByPerspective) return { ungrouped: taskList };
-		
-		const perspectiveGroups: Record<string, Task[]> = {};
-		
-		// Initialize groups for all workspace perspectives
-		$workspacePerspectivesOrdered.forEach(p => {
-			perspectiveGroups[p.id] = [];
-		});
-		
-		taskList.forEach(task => {
-			if (task.completed) return; // Skip completed tasks
-			
-			// Group by explicit perspective field
-			const perspectiveId = task.perspective || $workspacePerspectivesOrdered[0]?.id;
-			
-			if (perspectiveId) {
-				if (!perspectiveGroups[perspectiveId]) {
-					perspectiveGroups[perspectiveId] = [];
-				}
-				perspectiveGroups[perspectiveId].push(task);
-			}
-		});
-		
-		// Sort tasks within each perspective group by order
-		Object.values(perspectiveGroups).forEach(tasks => {
-			tasks.sort((a, b) => a.order - b.order);
-		});
-		
-		return perspectiveGroups;
-	}
-
-	const { grouped: groupedActiveTasks = {}, ungrouped: ungroupedActiveTasks = [] } = $derived(groupTasksByProject(activeTasks));
-	const perspectiveGroupedActiveTasks = $derived(groupTasksByPerspective(activeTasks));
-	
-	// Group tasks by perspective, then order by project within each perspective
-	function groupTasksByPerspectiveThenOrderByProject(taskList: Task[]) {
-		if (!shouldGroupByPerspectiveThenProject) return {};
-		
-		const perspectiveGroups: Record<string, Task[]> = {};
-		
-		// Initialize perspective groups
-		$workspacePerspectivesOrdered.forEach(p => {
-			perspectiveGroups[p.id] = [];
-		});
-		
-		taskList.forEach(task => {
-			if (task.completed) return; // Skip completed tasks
-			
-			const perspectiveId = task.perspective || $workspacePerspectivesOrdered[0]?.id;
-			
-			if (!perspectiveGroups[perspectiveId]) {
-				perspectiveGroups[perspectiveId] = [];
-			}
-			
-			perspectiveGroups[perspectiveId].push(task);
-		});
-		
-		// Sort tasks within each perspective group by project order, then by task order within project
-		Object.values(perspectiveGroups).forEach(tasks => {
-			tasks.sort((a, b) => {
-				// First sort by project order
-				const projectA = projects.find(p => p.id === a.projectId);
-				const projectB = projects.find(p => p.id === b.projectId);
-				const orderA = projectA?.order ?? Number.MAX_SAFE_INTEGER;
-				const orderB = projectB?.order ?? Number.MAX_SAFE_INTEGER;
-				if (orderA !== orderB) return orderA - orderB;
-				// Then sort by task order within same project
-				return a.order - b.order;
-			});
-		});
-		
-		return perspectiveGroups;
-	}
-	
-	const perspectiveThenProjectGroups = $derived(groupTasksByPerspectiveThenOrderByProject(activeTasks));
-
-	function getProjectName(projectId: string): string {
-		return projects.find(p => p.id === projectId)?.name || projectId;
-	}
-
-	function getPerspectiveGroupLabel(groupKey: string): string {
-		// Look up the perspective definition to get its proper name
-		const perspective = $workspacePerspectives.find(p => p.id === groupKey);
-		return perspective?.name || groupKey;
-	}
-
-	// Unified task groups for rendering
-	const taskGroups = $derived(() => {
-		const groups: Array<{
-			id: string;
-			title: string; 
-			tasks: Task[];
-		}> = [];
-
-		// Single ungrouped view (for views that don't match any grouping criteria)
-		if (!shouldGroupByProject && !shouldGroupByPerspective && !shouldGroupByPerspectiveThenProject) {
-			if (activeTasks.length > 0) {
-				groups.push({ id: 'ungrouped', title: 'Tasks', tasks: activeTasks });
-			}
-		}
-		// Project-grouped views (Inbox, Next, Waiting, etc.)
-		else if (shouldGroupByProject) {
-			// Add Actions section if there are ungrouped tasks
-			if (ungroupedActiveTasks.length > 0) {
-				groups.push({
-					id: 'actions',
-					title: 'Actions',
-					tasks: ungroupedActiveTasks
-				});
-			}
-			
-			// Add project groups sorted by project order
-			const sortedProjectIds = Object.keys(groupedActiveTasks).sort((a, b) => {
-				const projectA = projects.find(p => p.id === a);
-				const projectB = projects.find(p => p.id === b);
-				const orderA = projectA?.order ?? Number.MAX_SAFE_INTEGER;
-				const orderB = projectB?.order ?? Number.MAX_SAFE_INTEGER;
-				return orderA - orderB;
-			});
-			
-			sortedProjectIds.forEach(projectId => {
-				groups.push({
-					id: `project-${projectId}`,
-					title: getProjectName(projectId),
-					tasks: groupedActiveTasks[projectId]
-				});
-			});
-		}
-		// Perspective-grouped views (Project view)
-		else if (shouldGroupByPerspective) {
-			const nonEmptyGroups = Object.entries(perspectiveGroupedActiveTasks)
-				.filter(([_, tasks]) => tasks.length > 0);
-				
-			nonEmptyGroups.forEach(([groupKey, tasks]) => {
-				groups.push({
-					id: `perspective-${groupKey}`,
-					title: getPerspectiveGroupLabel(groupKey),
-					tasks
-				});
-			});
-		}
-		// Perspective then Project grouped views (Project All view)
-		else if (shouldGroupByPerspectiveThenProject) {
-			// Iterate through perspectives in order
-			$workspacePerspectivesOrdered.forEach(perspective => {
-				const tasks = perspectiveThenProjectGroups[perspective.id];
-				if (tasks && tasks.length > 0) {
-					groups.push({
-						id: `perspective-${perspective.id}`,
-						title: perspective.name,
-						tasks
-					});
-				}
-			});
-		}
-
-		return groups;
-	});
-
-	const showProjectBadge = $derived(!shouldGroupByProject && !shouldGroupByPerspective);
-	const showPerspectiveBadge = $derived(currentView === 'all');
-	
-	function getPerspectiveName(perspectiveId?: string): string {
-		if (!perspectiveId) return '';
-		const perspective = $workspacePerspectives.find(p => p.id === perspectiveId);
-		return perspective?.name || '';
-	}
-
-
 </script>
 
 <div class="flex-1 flex flex-col h-full">
 	<!-- Header -->
-    <div class="topbar">
-        <div class="flex items-center justify-between w-full">
+	<div class="topbar">
+		<div class="flex items-center justify-between w-full">
 			<div>
-				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{getViewTitle()}</h1>
+				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{vm.viewTitle}</h1>
 			</div>
 			
 			<div class="flex items-center gap-2">
-                {#if onNewTask}
-                    <button
-                        onclick={onNewTask}
-                        class="btn btn-base btn-outline"
-                        title="Create new task (N or Ctrl+N)"
-                    >
+				{#if vm.showNewTaskButton}
+					<button
+						onclick={vm.handleNewTask}
+						class="btn btn-base btn-outline"
+						title="Create new task (N or Ctrl+N)"
+					>
 						<Plus class="w-4 h-4" />
 						<span>New Item</span>
 					</button>
 				{/if}
 				
-                {#if onCleanup}
-                    <button
-                        onclick={onCleanup}
-                        class="btn btn-base btn-outline"
-                    >
+				{#if vm.showCleanupButton}
+					<button
+						onclick={vm.handleCleanup}
+						class="btn btn-base btn-outline"
+					>
 						<Zap class="w-4 h-4" />
 						<span>Cleanup</span>
 					</button>
 				{/if}
 				
-                {#if onRefresh}
-                    <button
-                        onclick={onRefresh}
-                        class="btn btn-base btn-outline"
-                    >
+				{#if vm.showRefreshButton}
+					<button
+						onclick={vm.handleRefresh}
+						class="btn btn-base btn-outline"
+					>
 						<RefreshCw class="w-4 h-4" />
 						<span>Refresh</span>
 					</button>
@@ -347,7 +102,7 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 
 	<!-- Task List Content -->
 	<div class="flex-1 overflow-auto">
-		{#if activeTasks.length === 0 && completedTasks.length === 0}
+		{#if vm.isEmpty}
 			<div class="flex items-center justify-center h-full">
 				<div class="text-center text-gray-500 dark:text-gray-400">
 					<Calendar class="w-8 h-8 mx-auto mb-2 opacity-50" />
@@ -356,31 +111,31 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 			</div>
 		{:else}
 			<div class="p-6 space-y-1">
-				<!-- Unified task group rendering -->
-				{#each taskGroups() as group}
+				<!-- Active task groups -->
+				{#each vm.taskGroups as group}
 					<div class="mb-6">
 						<div class="mb-3">
-							<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
+							<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {vm.getGroupClass(group.id)}">
 								<span>{group.title}</span>
 							</h3>
 						</div>
 						{#each group.tasks as task (task.id)}
-							{#if inlineEditingTaskId === task.id}
+							{#if vm.isEditingTask(task.id)}
 								<TaskInlineEditor
 									{task}
-									projects={projects}
-									perspectives={$workspacePerspectives}
-									on:close={closeInlineEditor}
+									{workspace}
+									onUpdateTask={vm.handleUpdateTask}
+									on:close={vm.closeInlineEditor}
 								/>
 							{:else}
 								<TaskItem
 									{task}
-									onToggle={onTaskToggle}
-									onClick={(t) => toggleInlineEditor(t.id)}
-									{showProjectBadge}
-									{showPerspectiveBadge}
-									perspectiveName={getPerspectiveName(task.perspective)}
-									projectName={getProjectName(task.projectId)}
+									onToggle={vm.handleTaskToggle}
+									onClick={() => vm.handleTaskClick(task)}
+									showProjectBadge={vm.showProjectBadge}
+									showPerspectiveBadge={vm.showPerspectiveBadge}
+									perspectiveName={vm.getTaskPerspectiveName(task)}
+									projectName={vm.getTaskProjectName(task)}
 								/>
 							{/if}
 						{/each}
@@ -388,19 +143,19 @@ import { workspacePerspectives, workspacePerspectivesOrdered } from '$lib/stores
 				{/each}
 
 				<!-- Completed Tasks -->
-				{#if (showCompleted || completedTasks.length > 0) && completedTasks.length > 0}
+				{#if vm.shouldShowCompletedSection}
 					<div class="mb-3">
 						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400">Done</h3>
 					</div>
-					{#each completedTasks as task (task.id)}
+					{#each vm.completedTasks as task (task.id)}
 						<TaskItem
 							{task}
-							onToggle={onTaskToggle}
-							onClick={onTaskClick}
-							{showProjectBadge}
-							{showPerspectiveBadge}
-							perspectiveName={getPerspectiveName(task.perspective)}
-							projectName={getProjectName(task.projectId)}
+							onToggle={vm.handleTaskToggle}
+							onClick={() => vm.handleTaskClick(task)}
+							showProjectBadge={vm.showProjectBadge}
+							showPerspectiveBadge={vm.showPerspectiveBadge}
+							perspectiveName={vm.getTaskPerspectiveName(task)}
+							projectName={vm.getTaskProjectName(task)}
 						/>
 					{/each}
 				{/if}

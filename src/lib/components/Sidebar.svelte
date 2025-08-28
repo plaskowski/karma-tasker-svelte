@@ -4,29 +4,24 @@
 -->
 <script lang="ts">
 	import { Zap, Inbox, Calendar, Clock, Users, Archive, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
-	import type { ViewType, Project, Workspace, PerspectiveConfig } from '$lib/types';
+	import type { ViewType, NavigationState, Workspace } from '$lib/types';
+	import type { WorkspaceContext } from '$lib/stores/workspaceContext';
 
 	interface Props {
-		currentView: ViewType;
-		currentPerspectiveId?: string;
-		currentProjectId?: string;
+		navigation: NavigationState;
+		workspace: WorkspaceContext;
 		currentWorkspace: string;
 		workspaces: Workspace[];
-		perspectives: PerspectiveConfig[];
-		projects: Project[];
 		onViewChange: (view: ViewType, perspectiveId?: string) => void;
 		onProjectSelect: (projectId: string | undefined) => void;
 		onWorkspaceChange: (workspaceId: string) => void;
 	}
 
 	let { 
-		currentView, 
-		currentPerspectiveId,
-		currentProjectId,
+		navigation,
+		workspace,
 		currentWorkspace,
 		workspaces,
-		perspectives,
-		projects, 
 		onViewChange, 
 		onProjectSelect,
 		onWorkspaceChange
@@ -56,9 +51,7 @@
 
     // Dynamic sidebar items: configured perspectives + All (last)
     const sidebarItems = $derived([
-        ...perspectives
-            .slice()
-            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        ...workspace.getPerspectives()
             .map(p => ({
                 id: p.id,
                 label: p.name,
@@ -67,10 +60,9 @@
         { id: 'all', label: 'All', icon: Clock }
     ]);
 
-    import { workspacePerspectivesOrdered } from '$lib/stores/taskStore';
-
-	function getProjectIcon(project: Project) {
-		return getIconComponent(project.icon);
+	function getProjectIcon(projectId: string) {
+		const project = workspace.getProject(projectId);
+		return getIconComponent(project?.icon);
 	}
 
 	function getWorkspaceIcon(workspaceId: string) {
@@ -168,7 +160,7 @@
 				{@const Icon = item.icon}
 				<button
 					onclick={() => onViewChange(item.id === 'all' ? 'all' : 'perspective', item.id === 'all' ? undefined : item.id)}
-					class="w-full btn btn-base text-left {(currentView === 'perspective' && currentPerspectiveId === item.id) || (currentView === 'all' && item.id === 'all')
+					class="w-full btn btn-base text-left {(navigation.currentView === 'perspective' && navigation.currentPerspectiveId === item.id) || (navigation.currentView === 'all' && item.id === 'all')
 					? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 						: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 				>
@@ -183,14 +175,14 @@
 	<div class="flex-1 p-4">
 		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Projects</h3>
 		<div class="space-y-1">
-			{#each projects as project}
-				{@const ProjectIcon = getProjectIcon(project)}
+			{#each workspace.getProjects() as project}
+				{@const ProjectIcon = getProjectIcon(project.id)}
 				<button
 					onclick={() => {
 						onViewChange('project');
 						onProjectSelect(project.id);
 					}}
-					class="w-full btn btn-base text-left {currentView === 'project' && currentProjectId === project.id
+					class="w-full btn btn-base text-left {navigation.currentView === 'project' && navigation.currentProjectId === project.id
 						? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 						: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 				>
@@ -205,7 +197,7 @@
 					onViewChange('project-all');
 					onProjectSelect(undefined);
 				}}
-				class="w-full btn btn-base text-left {currentView === 'project-all'
+				class="w-full btn btn-base text-left {navigation.currentView === 'project-all'
 					? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 					: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 			>
