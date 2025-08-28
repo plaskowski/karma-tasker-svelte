@@ -28,6 +28,19 @@
 - [x] "All" view respects project order - Proper sorting when displaying project groups
 
 ### UI/UX Improvements
+- [x] Task editing and detailed view
+- [x] "All" view
+- [x] Task notes/descriptions support
+- [x] "All" view in Projects (groups by perspective, then orders by project)
+- [x] show perspective badge in View > All
+- [x] no special view for "First" perspective
+- [x] why project badge says "personal-default"? (fixed - now shows "Personal Actions")
+- [x] add task should default to current perspective or project respectively
+- [x] define tasks order within the project and apply it in all views
+- [x] why we have both mockData and sampleData? move sampleData out of store file
+- [x] make the project badge have same look as perspective badge
+- [x] why Inbox does not show completed items (fixed - removed completed filter from perspective view)
+- [x] the "All" view should obey the project order when showing groups
 - [x] Make all buttons little bigger
 - [x] Add new item should inherit project or perspective from current view
 - [x] The top bar buttons stand out too much, change them to outline only style

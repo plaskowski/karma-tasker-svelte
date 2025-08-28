@@ -4,10 +4,31 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] ...
+- [ ] Add semantic labels and test IDs for Playwright automation
+  - Add data-testid attributes to all interactive elements (buttons, inputs, checkboxes)
+  - Add proper labels and unique IDs to form inputs
+  - Add ARIA labels for accessibility and automated testing
+  - Add semantic HTML roles where appropriate
+  - Ensure task completion buttons are easily selectable
+  - Make dropdowns and selects properly identifiable
 
+### Refactor
+- [ ] remove unused service methods
+- [ ] remove unused repository methods
+- [ ] drop workspaceIconMap
+- [ ] pack "currentView: ViewType; currentPerspectiveId?: string; currentProjectId?: string;" into object
+- [ ] view props should extend its view state - or maybe should be unified?
+- [ ] get rid of switching over view type
+- [ ] what is the point of model logic that is called only by one view model in a delegation manner?
+- [ ] is it right that we pass all projects and perspective down to ViewModel and we resolve the current one? maybe the current should be derived in store?
+- [ ] does it make sense to pass over all projects and perspectives to view model? why not pass single workspace object it can ask to list things. This object would hold most of the model logic
+- [ ] maybe we should separate entities loaded from repository and build fully funcitonal models (e.g. workspace containg projects and perpsectives etc.)
+- [ ] switchWorkspace should not be in workspaceService as it is UI logic
 
 ### Advanced Organization
+- [ ] fix Clear Completed button
+- [ ] project/perspective badges zamienione
+- [ ] we should not rely on taskService.loadTasks(), they should be loaded on demand with queries
 - [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
 - [ ] name default project better
 - [ ] Drag & drop task reordering
