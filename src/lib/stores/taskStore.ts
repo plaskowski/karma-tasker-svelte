@@ -9,6 +9,7 @@ import { persisted } from 'svelte-persisted-store';
 import type { Task, Project, Workspace } from '$lib/types';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 import { navigation } from './navigationStore';
+import { currentWorkspaceId } from './currentWorkspace';
 
 // Storage key for persistence
 const STORAGE_KEY = 'karma-tasks';
@@ -30,11 +31,6 @@ export { navigation };
 const firstWorkspace = mockWorkspaces[0];
 const defaultPerspective = firstWorkspace?.perspectives?.[0]?.id || '';
 navigation.setPerspectiveView(defaultPerspective);
-// Use first workspace as default
-if (!mockWorkspaces[0]?.id) {
-  throw new Error('No workspaces defined. At least one workspace is required.');
-}
-export const currentWorkspace = persisted(STORAGE_KEY + '-currentWorkspace', mockWorkspaces[0].id);
 
 export const showCompleted = writable(false);
 
@@ -104,9 +100,9 @@ export async function toggleTaskComplete(id: string): Promise<void> {
 // MIGRATION: Derived stores stay here but filtering logic could move to lib/domain/task/logic.ts
 // Derived store for filtered tasks
 export const workspacePerspectivesOrdered = derived(
-  [workspaces, currentWorkspace],
-  ([$workspaces, $currentWorkspace]) => {
-    const ws = $workspaces.find(w => w.id === $currentWorkspace);
+  [workspaces, currentWorkspaceId],
+  ([$workspaces, $currentWorkspaceId]) => {
+    const ws = $workspaces.find(w => w.id === $currentWorkspaceId);
     return (ws?.perspectives || []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   }
 );
@@ -114,11 +110,11 @@ export const workspacePerspectivesOrdered = derived(
 // MIGRATION: Complex filtering logic could be extracted to lib/domain/task/logic.ts
 // as pure functions like filterTasksByView(tasks, view, perspectiveId, projectId, workspaceId)
 export const filteredTasks = derived(
-  [tasks, navigation, currentWorkspace, workspacePerspectivesOrdered],
-  ([$tasks, $navigation, $currentWorkspace, $workspacePerspectivesOrdered]) => {
+  [tasks, navigation, currentWorkspaceId, workspacePerspectivesOrdered],
+  ([$tasks, $navigation, $currentWorkspaceId, $workspacePerspectivesOrdered]) => {
     // Filter by current workspace first
     let filtered = $tasks.filter(task => {
-      return task.workspaceId === $currentWorkspace;
+      return task.workspaceId === $currentWorkspaceId;
     });
 
     // Filter by view
@@ -146,18 +142,18 @@ export const filteredTasks = derived(
 );
 
 // First perspective id (default) for the current workspace
-export const firstPerspectiveId = derived([workspaces, currentWorkspace], ([$workspaces, $currentWorkspace]) => {
-  const ws = $workspaces.find(w => w.id === $currentWorkspace);
+export const firstPerspectiveId = derived([workspaces, currentWorkspaceId], ([$workspaces, $currentWorkspaceId]) => {
+  const ws = $workspaces.find(w => w.id === $currentWorkspaceId);
   return ws?.perspectives?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))[0]?.id;
 });
 
 
 // Derived store for workspace-filtered projects (sorted by order)
 export const workspaceProjects = derived(
-  [projects, currentWorkspace],
-  ([$projects, $currentWorkspace]) => {
+  [projects, currentWorkspaceId],
+  ([$projects, $currentWorkspaceId]) => {
     return $projects
-      .filter(project => project.workspaceId === $currentWorkspace)
+      .filter(project => project.workspaceId === $currentWorkspaceId)
       .sort((a, b) => a.order - b.order);
   }
 );
@@ -167,9 +163,9 @@ export const workspaceProjects = derived(
 
 // Derived store for current workspace perspectives (unordered)
 export const workspacePerspectives = derived(
-  [workspaces, currentWorkspace],
-  ([$workspaces, $currentWorkspace]) => {
-    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspace);
+  [workspaces, currentWorkspaceId],
+  ([$workspaces, $currentWorkspaceId]) => {
+    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspaceId);
     return currentWorkspaceData?.perspectives || [];
   }
 );
@@ -189,7 +185,7 @@ export function resetToInitialState() {
   if (!mockWorkspaces[0]?.id) {
     throw new Error('No workspaces defined. At least one workspace is required.');
   }
-  currentWorkspace.set(mockWorkspaces[0].id);
+  currentWorkspaceId.set(mockWorkspaces[0].id);
   const ws = mockWorkspaces[0];
   const firstPerspective = ws.perspectives?.[0];
   if (firstPerspective) {

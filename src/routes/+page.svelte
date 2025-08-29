@@ -9,7 +9,6 @@
 		tasks,
 		projects,
 		workspaces,
-		currentWorkspace,
 		filteredTasks,
 		toggleTaskComplete,
 		addTask,
@@ -17,7 +16,7 @@
 		resetToInitialState
 	} from '$lib/stores/taskStore';
 	import { navigation } from '$lib/stores/navigationStore';
-	import { workspaceContext } from '$lib/stores/workspaceContext';
+	import { workspaceContext, setCurrentWorkspace } from '$lib/stores/workspaceContext';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -38,7 +37,7 @@
     // Update URL based on current state
     function updateURL(view: import('$lib/types').ViewType, perspectiveId?: string, projectId?: string, workspaceId?: string) {
         const params = new URLSearchParams();
-        params.set('workspace', workspaceId || $currentWorkspace);
+        params.set('workspace', workspaceId || $workspaceContext.getId());
         params.set('view', view);
         if (perspectiveId && view === 'perspective') {
             params.set('perspective', perspectiveId);
@@ -52,7 +51,7 @@
     // Only update URL if it would change (avoid remount on initial load)
     function updateURLIfChanged(view: import('$lib/types').ViewType, perspectiveId?: string, projectId?: string, workspaceId?: string) {
         const params = new URLSearchParams();
-        params.set('workspace', workspaceId || $currentWorkspace);
+        params.set('workspace', workspaceId || $workspaceContext.getId());
         params.set('view', view);
         if (perspectiveId && view === 'perspective') {
             params.set('perspective', perspectiveId);
@@ -99,7 +98,7 @@
 
 	// Handle workspace change
 	function handleWorkspaceChange(workspaceId: string) {
-		currentWorkspace.set(workspaceId);
+		setCurrentWorkspace(workspaceId);
 		
 		// If we're in project view, switch to first perspective since projects are workspace-specific
 		if ($navigation.currentView === 'project' || $navigation.currentView === 'project-all') {
@@ -136,7 +135,7 @@
 
 		// Set workspace from URL if valid, otherwise keep current
 		if (workspaceParam && $workspaces.some(w => w.id === workspaceParam)) {
-			currentWorkspace.set(workspaceParam);
+			setCurrentWorkspace(workspaceParam);
 		}
 
 		if (view && ['perspective', 'project', 'project-all', 'all'].includes(view)) {
@@ -242,7 +241,7 @@
 			completed: false,
 			projectId: $workspaceContext.getEffectiveProjectId($navigation),
 			perspective: $workspaceContext.getEffectivePerspectiveId($navigation),
-			workspaceId: $currentWorkspace,
+			workspaceId: $workspaceContext.getId(),
 			order: 0, // Will be calculated when task is actually saved
 			createdAt: new Date(),
 			updatedAt: new Date()
@@ -321,7 +320,6 @@
         <Sidebar
 		navigation={$navigation}
 		workspace={$workspaceContext}
-		currentWorkspace={$currentWorkspace}
 		workspaces={$workspaces}
 		onViewChange={handleViewChange}
 		onProjectSelect={handleProjectSelect}
@@ -364,7 +362,7 @@
                                 title,
                                 description,
                                 projectId,
-                                workspaceId: $currentWorkspace,
+                                workspaceId: $workspaceContext.getId(),
                                 completed: false,
                                 perspective: perspective || ($workspaceContext.getDefaultPerspective()?.id ?? '')
                             });

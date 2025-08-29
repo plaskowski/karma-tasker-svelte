@@ -10,7 +10,6 @@
 	interface Props {
 		navigation: NavigationState;
 		workspace: WorkspaceContext;
-		currentWorkspace: string;
 		workspaces: Workspace[];
 		onViewChange: (view: ViewType, perspectiveId?: string) => void;
 		onProjectSelect: (projectId: string | undefined) => void;
@@ -20,7 +19,6 @@
 	let { 
 		navigation,
 		workspace,
-		currentWorkspace,
 		workspaces,
 		onViewChange, 
 		onProjectSelect,
@@ -82,7 +80,7 @@
 	
 	// Get current workspace name
 	function getCurrentWorkspaceName() {
-		return workspaces.find(w => w.id === currentWorkspace)?.name;
+		return workspace.getName();
 	}
 
 	// Get dynamic header title based on current context
@@ -135,17 +133,17 @@
 	{#if isWorkspaceDropdownOpen}
 		<div class="py-0 border-b border-gray-200 dark:border-gray-700" bind:this={workspaceDropdownContainerRef}>
 			<div class="rounded-none overflow-hidden">
-				{#each workspaces as workspace}
-					{@const Icon = getWorkspaceIcon(workspace.id)}
+				{#each workspaces as ws}
+					{@const Icon = getWorkspaceIcon(ws.id)}
 					<button
 						onclick={() => {
-							onWorkspaceChange(workspace.id);
+							onWorkspaceChange(ws.id);
 							isWorkspaceDropdownOpen = false;
 						}}
-						class="w-full btn btn-base text-base text-left rounded-none {workspace.id === currentWorkspace ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
+						class="w-full btn btn-base text-base text-left rounded-none {ws.id === workspace.getId() ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 					>
 						<Icon class="w-5 h-5" />
-						<span>{workspace.name}</span>
+						<span>{ws.name}</span>
 					</button>
 				{/each}
 			</div>

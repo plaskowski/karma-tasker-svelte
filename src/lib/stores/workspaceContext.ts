@@ -1,11 +1,14 @@
 import { derived, type Readable } from 'svelte/store';
 import type { Project, PerspectiveConfig, Workspace, Task } from '$lib/types';
+import { currentWorkspaceId } from './currentWorkspace';
 import { 
-  currentWorkspace, 
   workspaces,
   workspaceProjects, 
   workspacePerspectivesOrdered 
 } from './taskStore';
+
+// Re-export workspace management functions
+export { setCurrentWorkspace, getCurrentWorkspaceId } from './currentWorkspace';
 
 /**
  * WorkspaceContext - A rich workspace object that encapsulates all workspace-related
@@ -215,9 +218,9 @@ class WorkspaceContextImpl implements WorkspaceContext {
  * with methods to access workspace data. No raw fields are exposed.
  */
 export const workspaceContext: Readable<WorkspaceContext> = derived(
-  [currentWorkspace, workspaces, workspaceProjects, workspacePerspectivesOrdered],
-  ([$currentWorkspace, $workspaces, $projects, $perspectives]) => {
-    const workspace = $workspaces.find(w => w.id === $currentWorkspace);
+  [currentWorkspaceId, workspaces, workspaceProjects, workspacePerspectivesOrdered],
+  ([$currentWorkspaceId, $workspaces, $projects, $perspectives]) => {
+    const workspace = $workspaces.find(w => w.id === $currentWorkspaceId);
     
     if (!workspace) {
       // Return a null object pattern implementation
