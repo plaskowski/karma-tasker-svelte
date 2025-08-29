@@ -15,6 +15,7 @@ import type {
   UpdatePerspectiveRequest,
   TaskFilter
 } from './index';
+import { getFieldValue, shouldUpdateField } from './requests';
 import { toWorkspaceDto, toProjectDto, toTaskDto } from './mappers';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 
@@ -312,7 +313,9 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     const updated: TaskDto = {
       ...tasks[index],
       ...(request.title !== undefined && { title: request.title }),
-      ...(request.description !== undefined && { description: request.description }),
+      ...(shouldUpdateField(request.description) && { 
+        description: getFieldValue(request.description) 
+      }),
       ...(request.project_id !== undefined && { project_id: request.project_id }),
       ...(request.perspective !== undefined && { perspective: request.perspective }),
       ...(request.completed !== undefined && { 

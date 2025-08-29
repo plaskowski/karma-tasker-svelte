@@ -160,7 +160,7 @@ export function toUpdateTaskRequest(
 ): UpdateTaskRequest {
   return {
     title: updates.title,
-    description: updates.description,
+    description: updates.description, // For now, keep simple - can be enhanced later with clearField()
     project_id: updates.projectId,
     perspective: updates.perspective,
     completed: updates.completed,

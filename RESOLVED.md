@@ -177,6 +177,7 @@
 
 ### Canon Migration Follow-ups (Completed)
 - [x] clean up MIGRATION comments
+- [x] how to clear optional field in update request (implemented wrapper pattern)
 - [x] prepareTaskForCreation#projectId and perspective are now required - no defaults needed
 - [x] filterTasksByNavigation removed - unused function, filtering happens in derived store
 - [x] task.projectId is now a required field in Task type
