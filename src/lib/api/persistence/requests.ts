@@ -3,7 +3,7 @@
  * These define the shape of data for create/update operations.
  */
 
-import type { OptionalFieldUpdate } from './fieldUpdates';
+import type { FieldUpdate } from './fieldUpdates';
 
 // Workspace requests
 export interface CreateWorkspaceRequest {
@@ -50,7 +50,7 @@ export interface CreateTaskRequest {
 
 export interface UpdateTaskRequest {
   title?: string;
-  description?: OptionalFieldUpdate<string>;
+  description?: FieldUpdate<string>;
   project_id?: string;
   perspective?: string;
   completed?: boolean;
