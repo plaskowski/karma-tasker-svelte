@@ -22,23 +22,15 @@
   - Workspace type vs WorkspaceContext
 
 ### Further Refactor
+- [ ] review remaining stores
 - [ ] review files sizes and split the big ones
 - [ ] setup linter and formatter
-- [ ] convert to local DB (e.g. IndexedDB with Dexie) so it is closer to real backend
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
-- [x] what happened to passing Navigation to task list view model? (it's passed as navigation prop and spread into viewState)
-- [x] view props should extend its view state - or maybe should be unified? (unified - Props now extends TaskListViewState and TaskListActions)
 - [ ] get rid of switching over view type
-- [ ] what is the point of model logic that is called only by one view model in a delegation manner?
-- [ ] is it right that we pass all projects and perspective down to ViewModel and we resolve the current one? maybe the current should be derived in store?
-- [x] does it make sense to pass over all projects and perspectives to view model? why not pass single workspace object it can ask to list things. This object would hold most of the model logic
-- [ ] maybe we should separate entities loaded from repository and build fully funcitonal models (e.g. workspace containg projects and perpsectives etc.)
 - [ ] switchWorkspace should not be in workspaceService as it is UI logic
 - [ ] emit events instead of onXXXX props?
-- [x] review remaining direct store accesses (created navigation store as single source of truth)
-- [ ] move out filteredTasks logic
 - [ ] merge $currentWorkspace into $workspaceContext
 - [ ] Add semantic labels and test IDs for Playwright automation
   - Add data-testid attributes to all interactive elements (buttons, inputs, checkboxes)
