@@ -29,3 +29,17 @@ export function getFieldValue<T>(field: FieldUpdate<T> | undefined): T | undefin
 export function shouldUpdateField<T>(field: FieldUpdate<T> | undefined): boolean {
   return field !== undefined; // Update if FieldUpdate is provided
 }
+
+export function wrapFieldUpdate<T>(
+  value: T | undefined,
+  clearFields?: string[],
+  fieldName?: string
+): FieldUpdate<T> | undefined {
+  if (clearFields?.includes(fieldName!)) {
+    return clearField<T>();
+  }
+  if (value !== undefined) {
+    return updateField(value);
+  }
+  return undefined;
+}
