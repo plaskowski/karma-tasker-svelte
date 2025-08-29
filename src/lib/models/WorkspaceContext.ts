@@ -1,14 +1,4 @@
-import { derived, type Readable } from 'svelte/store';
 import type { Project, PerspectiveConfig, Workspace, Task } from '$lib/types';
-import { currentWorkspaceId } from './currentWorkspace';
-import { 
-  workspaces,
-  workspaceProjects, 
-  workspacePerspectivesOrdered 
-} from './taskStore';
-
-// Re-export workspace management functions
-export { setCurrentWorkspace, getCurrentWorkspaceId } from './currentWorkspace';
 
 /**
  * WorkspaceContext - A rich workspace object that encapsulates all workspace-related
@@ -52,7 +42,7 @@ export interface WorkspaceContext {
   groupTasksByPerspective(tasks: Task[]): Map<string, Task[]>;
 }
 
-class WorkspaceContextImpl implements WorkspaceContext {
+export class WorkspaceContextImpl implements WorkspaceContext {
   constructor(
     private readonly workspace: Workspace,
     private readonly projects: readonly Project[],
@@ -86,7 +76,6 @@ class WorkspaceContextImpl implements WorkspaceContext {
   }
   
   getDefaultProject(): Project | undefined {
-    // First project by order, or first in array
     const sorted = this.getProjectsSortedByOrder();
     return sorted[0];
   }
@@ -113,7 +102,7 @@ class WorkspaceContextImpl implements WorkspaceContext {
   }
   
   getDefaultPerspective(): PerspectiveConfig | undefined {
-    return this.perspectives[0]; // Already ordered
+    return this.perspectives[0];
   }
   
   hasPerspective(id: string): boolean {
@@ -140,11 +129,9 @@ class WorkspaceContextImpl implements WorkspaceContext {
   
   // Context-aware defaults
   getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string {
-    // If in project view and have a current project, use it
     if (navigation.currentView === 'project' && navigation.currentProjectId) {
       return navigation.currentProjectId;
     }
-    // Otherwise use the default project (which must exist)
     const defaultProject = this.getDefaultProject();
     if (!defaultProject) {
       throw new Error(`No default project found for workspace ${this.workspace.id}`);
@@ -153,11 +140,9 @@ class WorkspaceContextImpl implements WorkspaceContext {
   }
   
   getEffectivePerspectiveId(navigation: { currentView: string; currentPerspectiveId?: string }): string {
-    // If in perspective view and have a current perspective, use it
     if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
       return navigation.currentPerspectiveId;
     }
-    // Otherwise use the default perspective (inbox)
     return this.getDefaultPerspective()?.id || 'inbox';
   }
   
@@ -216,29 +201,3 @@ class WorkspaceContextImpl implements WorkspaceContext {
     return groups;
   }
 }
-
-/**
- * Derived store that provides a rich WorkspaceContext object
- * with methods to access workspace data. No raw fields are exposed.
- */
-export const workspaceContext: Readable<WorkspaceContext> = derived(
-  [currentWorkspaceId, workspaces, workspaceProjects, workspacePerspectivesOrdered],
-  ([$currentWorkspaceId, $workspaces, $projects, $perspectives]) => {
-    const workspace = $workspaces.find(w => w.id === $currentWorkspaceId);
-    
-    if (!workspace) {
-      // Return a null object pattern implementation
-      return new WorkspaceContextImpl(
-        { id: '', name: 'Unknown', perspectives: [], createdAt: new Date() },
-        [],
-        []
-      );
-    }
-    
-    return new WorkspaceContextImpl(
-      workspace,
-      $projects,
-      $perspectives
-    );
-  }
-);

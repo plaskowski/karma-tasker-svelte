@@ -8,7 +8,6 @@ import { writable, derived, get } from 'svelte/store';
 import { persisted } from 'svelte-persisted-store';
 import type { Task, Project, Workspace } from '$lib/types';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
-import { currentWorkspaceId } from './currentWorkspace';
 
 // Storage key for persistence
 const STORAGE_KEY = 'karma-tasks';
@@ -88,47 +87,8 @@ export async function toggleTaskComplete(id: string): Promise<void> {
   }
 }
 
-// MIGRATION: Derived stores stay here but filtering logic could move to lib/domain/task/logic.ts
-// Derived store for filtered tasks
-export const workspacePerspectivesOrdered = derived(
-  [workspaces, currentWorkspaceId],
-  ([$workspaces, $currentWorkspaceId]) => {
-    const ws = $workspaces.find(w => w.id === $currentWorkspaceId);
-    return (ws?.perspectives || []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  }
-);
-
-// MIGRATION: Filtering logic moved to +page.ts load function
-// Tasks are now filtered server-side based on URL parameters
-
-// First perspective id (default) for the current workspace
-export const firstPerspectiveId = derived([workspaces, currentWorkspaceId], ([$workspaces, $currentWorkspaceId]) => {
-  const ws = $workspaces.find(w => w.id === $currentWorkspaceId);
-  return ws?.perspectives?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))[0]?.id;
-});
-
-
-// Derived store for workspace-filtered projects (sorted by order)
-export const workspaceProjects = derived(
-  [projects, currentWorkspaceId],
-  ([$projects, $currentWorkspaceId]) => {
-    return $projects
-      .filter(project => project.workspaceId === $currentWorkspaceId)
-      .sort((a, b) => a.order - b.order);
-  }
-);
-
-// Default project id for the current workspace
-// NOTE: Use the first project from workspace where needed.
-
-// Derived store for current workspace perspectives (unordered)
-export const workspacePerspectives = derived(
-  [workspaces, currentWorkspaceId],
-  ([$workspaces, $currentWorkspaceId]) => {
-    const currentWorkspaceData = $workspaces.find(w => w.id === $currentWorkspaceId);
-    return currentWorkspaceData?.perspectives || [];
-  }
-);
+// MIGRATION: Workspace-specific filtering and derived stores moved to +page.ts load function
+// Data is now loaded and filtered based on URL parameters
 
 
 
@@ -145,7 +105,7 @@ export function resetToInitialState() {
   if (!mockWorkspaces[0]?.id) {
     throw new Error('No workspaces defined. At least one workspace is required.');
   }
-  currentWorkspaceId.set(mockWorkspaces[0].id);
+  // Note: Workspace is now managed through URL params, not a store
   showCompleted.set(false);
 }
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Task } from '$lib/types';
-	import type { WorkspaceContext } from '$lib/stores/workspaceContext';
+	import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
 	import { createEventDispatcher } from 'svelte';
 	import TaskEditorForm from './TaskEditorForm.svelte';
 

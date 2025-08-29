@@ -5,7 +5,6 @@
 		updateTask,
 		resetToInitialState
 	} from '$lib/stores/taskStore';
-	import { setCurrentWorkspace } from '$lib/stores/workspaceContext';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
@@ -47,10 +46,8 @@
 
 	// Handle workspace change
 	function handleWorkspaceChange(workspaceId: string) {
-		setCurrentWorkspace(workspaceId);
+		// Just update the URL, which will trigger a reload with new workspace
 		handleWorkspaceChangeService(workspaceId, workspaceContext, currentNavigation);
-		// Reload data after workspace change
-		invalidateAll();
 	}
 
 	// Initialize keyboard navigation on mount

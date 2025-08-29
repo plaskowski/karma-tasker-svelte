@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { Zap, Inbox, Calendar, Clock, Users, Archive, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
 	import type { ViewType, NavigationState, Workspace } from '$lib/types';
-	import type { WorkspaceContext } from '$lib/stores/workspaceContext';
+	import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
 
 	interface Props {
 		navigation: NavigationState;

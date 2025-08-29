@@ -1,5 +1,5 @@
 import type { Task, ViewType, NavigationState } from '$lib/types';
-import type { WorkspaceContext } from '$lib/stores/workspaceContext';
+import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
 import { get, type Writable } from 'svelte/store';
 
 // View state - raw data from props and stores

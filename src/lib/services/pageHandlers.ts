@@ -1,5 +1,5 @@
 import type { ViewType } from '$lib/types';
-import type { WorkspaceContext } from '$lib/stores/workspaceContext';
+import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
 import type { Workspace } from '$lib/types';
 import { NavigationService } from './navigation';
 

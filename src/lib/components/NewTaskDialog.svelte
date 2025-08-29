@@ -1,17 +1,16 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import type { WorkspaceContext } from '$lib/stores/workspaceContext';
+	import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
 
 	interface Props {
 		open: boolean;
 		workspace: WorkspaceContext;
-		currentWorkspaceId: string;
 		defaultProjectId?: string;
 		defaultPerspectiveId?: string;
 		onAddTask: (task: any) => Promise<void>;
 	}
 
-	let { open, workspace, currentWorkspaceId, defaultProjectId, defaultPerspectiveId, onAddTask }: Props = $props();
+	let { open, workspace, defaultProjectId, defaultPerspectiveId, onAddTask }: Props = $props();
 	
 	const dispatch = createEventDispatcher();
 
@@ -50,7 +49,7 @@
 				title: title.trim(),
 				description: description.trim() || undefined,
 				projectId: finalProjectId,
-				workspaceId: currentWorkspaceId,
+				workspaceId: workspace.getId(),
 				completed: false,
 				perspective: perspective || undefined, // undefined = inbox
 			});

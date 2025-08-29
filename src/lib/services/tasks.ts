@@ -1,5 +1,5 @@
 import type { Task, NavigationState } from '$lib/types';
-import type { WorkspaceContext } from '$lib/stores/workspaceContext';
+import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
 
 export class TaskService {
 	/**
