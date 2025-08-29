@@ -14,8 +14,8 @@ export class TaskService {
 			title: '',
 			description: '',
 			completed: false,
-			projectId: workspaceContext.getEffectiveProjectId(navigation),
-			perspective: workspaceContext.getEffectivePerspectiveId(navigation),
+			projectId: TaskService.getEffectiveProjectId(navigation, workspaceContext),
+			perspective: TaskService.getEffectivePerspectiveId(navigation, workspaceContext),
 			workspaceId: workspaceContext.getId(),
 			order: 0, // Will be calculated when task is actually saved
 			createdAt: new Date(),
@@ -83,5 +83,35 @@ export class TaskService {
 	 */
 	static sortTasksByOrder(tasks: Task[]): Task[] {
 		return [...tasks].sort((a, b) => (a.order || 0) - (b.order || 0));
+	}
+
+	/**
+	 * Determines the effective project ID based on navigation state
+	 */
+	static getEffectiveProjectId(
+		navigation: { currentView: string; currentProjectId?: string },
+		workspaceContext: WorkspaceContext
+	): string {
+		if (navigation.currentView === 'project' && navigation.currentProjectId) {
+			return navigation.currentProjectId;
+		}
+		const defaultProject = workspaceContext.getDefaultProject();
+		if (!defaultProject) {
+			throw new Error(`No default project found for workspace ${workspaceContext.getId()}`);
+		}
+		return defaultProject.id;
+	}
+
+	/**
+	 * Determines the effective perspective ID based on navigation state
+	 */
+	static getEffectivePerspectiveId(
+		navigation: { currentView: string; currentPerspectiveId?: string },
+		workspaceContext: WorkspaceContext
+	): string {
+		if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
+			return navigation.currentPerspectiveId;
+		}
+		return workspaceContext.getDefaultPerspective()?.id || 'inbox';
 	}
 }

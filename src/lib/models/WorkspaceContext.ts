@@ -23,9 +23,6 @@ export interface WorkspaceContext {
   hasPerspective(id: string): boolean;
   getPerspectiveOrder(id: string): number;
   
-  // Context-aware defaults (based on navigation state)
-  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string;
-  getEffectivePerspectiveId(navigation: { currentView: string; currentPerspectiveId?: string }): string;
   
 }
 
@@ -94,23 +91,5 @@ export class WorkspaceContextImpl implements WorkspaceContext {
   }
   
   
-  // Context-aware defaults
-  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string {
-    if (navigation.currentView === 'project' && navigation.currentProjectId) {
-      return navigation.currentProjectId;
-    }
-    const defaultProject = this.getDefaultProject();
-    if (!defaultProject) {
-      throw new Error(`No default project found for workspace ${this.workspace.id}`);
-    }
-    return defaultProject.id;
-  }
-  
-  getEffectivePerspectiveId(navigation: { currentView: string; currentPerspectiveId?: string }): string {
-    if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
-      return navigation.currentPerspectiveId;
-    }
-    return this.getDefaultPerspective()?.id || 'inbox';
-  }
   
 }

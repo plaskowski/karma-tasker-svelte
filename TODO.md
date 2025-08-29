@@ -11,7 +11,15 @@
 - [ ] persistence refactor follow-ups:
   - [x] how to clear optional field in update request (implemented wrapper pattern)
   - [x] why update requests dont hold entity ID
-  - Workspace type vs WorkspaceContext
+- [ ] convert WorkspaceContext from model class to data type plus helper methods:
+  - [ ] create WorkspaceData interface (plain data)
+  - [ ] create workspaceHelpers.ts with pure functions
+  - [ ] replace WorkspaceContext interface with WorkspaceData type
+  - [ ] replace WorkspaceContextImpl class with helper function calls
+  - [ ] update all usages to use data + helper functions instead of methods
+  - [ ] remove WorkspaceContext.ts file
+  - [ ] benefits: simpler data structures, easier serialization, functional approach
+- [ ] Drop Workspace type?
 
 ### Further Refactor
 - [ ] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
