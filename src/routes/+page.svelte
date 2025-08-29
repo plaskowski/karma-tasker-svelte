@@ -17,6 +17,12 @@
 	import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
 	import { NavigationService } from '$lib/services/navigation';
 	import { TaskService } from '$lib/services/tasks';
+	import { 
+		handleNavigate as handleNavigateService,
+		handleWorkspaceChange as handleWorkspaceChangeService,
+		handleKeyboardShortcut,
+		handleRefresh as handleRefreshService
+	} from '$lib/services/pageHandlers';
 	import type { Task, ViewType } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -32,70 +38,13 @@
 
 	// Handle navigation changes
 	function handleNavigate(view: ViewType, options?: { perspectiveId?: string; projectId?: string }) {
-		if (view === 'perspective' && options?.perspectiveId) {
-			navigation.setPerspectiveView(options.perspectiveId);
-			NavigationService.updateURL(view, {
-				perspectiveId: options.perspectiveId,
-				workspaceId: $workspaceContext.getId()
-			});
-		} else if (view === 'all') {
-			navigation.setAllView();
-			NavigationService.updateURL(view, {
-				workspaceId: $workspaceContext.getId()
-			});
-		} else if (view === 'project-all') {
-			navigation.setProjectAllView();
-			NavigationService.updateURL(view, {
-				workspaceId: $workspaceContext.getId()
-			});
-		} else if (view === 'project' && options?.projectId) {
-			navigation.setProjectView(options.projectId);
-			NavigationService.updateURL('project', {
-				projectId: options.projectId,
-				workspaceId: $workspaceContext.getId()
-			});
-		}
+		handleNavigateService(view, $workspaceContext, options);
 	}
 
 	// Handle workspace change
 	function handleWorkspaceChange(workspaceId: string) {
 		setCurrentWorkspace(workspaceId);
-		
-		// If we're in project view, switch to first perspective since projects are workspace-specific
-		if ($navigation.currentView === 'project' || $navigation.currentView === 'project-all') {
-			const firstPerspective = $workspaceContext.getDefaultPerspective();
-			if (firstPerspective) {
-				navigation.setPerspectiveView(firstPerspective.id);
-				NavigationService.updateURL('perspective', {
-					perspectiveId: firstPerspective.id,
-					workspaceId: workspaceId
-				});
-			}
-		} else if ($navigation.currentView === 'perspective') {
-			// Keep current perspective if it exists in new workspace, otherwise use first
-			const perspectiveExists = $navigation.currentPerspectiveId ? 
-				$workspaceContext.hasPerspective($navigation.currentPerspectiveId) : false;
-			if (!perspectiveExists) {
-				const firstPerspective = $workspaceContext.getDefaultPerspective();
-				if (firstPerspective) {
-					navigation.setPerspectiveView(firstPerspective.id);
-					NavigationService.updateURL('perspective', {
-						perspectiveId: firstPerspective.id,
-						workspaceId: workspaceId
-					});
-				}
-			} else {
-				NavigationService.updateURL('perspective', {
-					perspectiveId: $navigation.currentPerspectiveId,
-					workspaceId: workspaceId
-				});
-			}
-		} else {
-			// Keep current view for 'all' view
-			NavigationService.updateURL($navigation.currentView, {
-				workspaceId: workspaceId
-			});
-		}
+		handleWorkspaceChangeService(workspaceId, $workspaceContext, $navigation);
 	}
 
 	// Initialize keyboard navigation on mount
@@ -165,21 +114,7 @@
 
 	// Handle refresh action
 	function handleRefresh() {
-		// Reset app to initial state (temporary dev feature)
-		resetToInitialState();
-		// Update URL to reflect reset state - use first workspace
-		if (!$workspaces[0]?.id) {
-			throw new Error('No workspaces defined. At least one workspace is required.');
-		}
-		const firstWorkspaceId = $workspaces[0].id;
-		const firstPerspective = $workspaceContext.getDefaultPerspective();
-		if (firstPerspective) {
-			navigation.setPerspectiveView(firstPerspective.id);
-			NavigationService.updateURL('perspective', {
-				perspectiveId: firstPerspective.id,
-				workspaceId: firstWorkspaceId
-			});
-		}
+		handleRefreshService($workspaces, $workspaceContext, resetToInitialState);
 	}
 
     // Auto-scroll the create editor into view whenever it opens
@@ -199,36 +134,11 @@
 
     // Keyboard navigation
     function handleKeydown(event: KeyboardEvent) {
-        // Allow Escape to close the create editor even when focused in inputs
-        if (event.key === 'Escape') {
-            if (showCreateEditor) {
-                showCreateEditor = false;
-                event.preventDefault();
-            }
-            return;
-        }
-
-        // Don't interfere with typing in inputs for other shortcuts
-        if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) {
-            return;
-        }
-
-		// New task (Ctrl+N)
-		if (event.ctrlKey || event.metaKey) {
-            if (event.key === 'n' || event.key === 'N') {
-                showCreateEditor = true;
-				event.preventDefault();
-				return;
-			}
-		}
-
-        // New task (N key)
-        if (event.key === 'n' || event.key === 'N') {
-            showCreateEditor = true;
-			event.preventDefault();
-			return;
-		}
-	}
+        handleKeyboardShortcut(event, {
+            onNewTask: () => { showCreateEditor = true; },
+            onEscape: showCreateEditor ? () => { showCreateEditor = false; } : undefined
+        });
+    }
 
 
 </script>
