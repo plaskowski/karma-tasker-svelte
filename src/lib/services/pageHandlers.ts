@@ -1,4 +1,4 @@
-import type { ViewType, WorkspaceData } from '$lib/types';
+import type { ViewType, WorkspaceData, NavigationState } from '$lib/types';
 import { getDefaultPerspective, hasPerspective } from '$lib/helpers/workspaceHelpers';
 import type { WorkspaceInfo } from '$lib/types';
 import { NavigationService } from './navigation';
@@ -43,7 +43,7 @@ export function handleNavigate(
 export function handleWorkspaceChange(
     workspaceId: string,
     workspaceContext: WorkspaceData,
-	currentNavigation: { currentView: ViewType; currentPerspectiveId?: string }
+    currentNavigation: NavigationState
 ) {
 	// Directly update URL based on current view
 	// If we're in project view, switch to first perspective since projects are workspace-specific

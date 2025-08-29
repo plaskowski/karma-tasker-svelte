@@ -89,9 +89,9 @@ export class TaskService {
 	 * Determines the effective project ID based on navigation state
 	 */
     static getEffectiveProjectId(
-        navigation: { currentView: string; currentProjectId?: string },
+        navigation: NavigationState,
         workspaceContext: WorkspaceData
-	): string {
+    ): string {
 		if (navigation.currentView === 'project' && navigation.currentProjectId) {
 			return navigation.currentProjectId;
 		}
@@ -106,9 +106,9 @@ export class TaskService {
 	 * Determines the effective perspective ID based on navigation state
 	 */
     static getEffectivePerspectiveId(
-        navigation: { currentView: string; currentPerspectiveId?: string },
+        navigation: NavigationState,
         workspaceContext: WorkspaceData
-	): string {
+    ): string {
 		if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
 			return navigation.currentPerspectiveId;
 		}
