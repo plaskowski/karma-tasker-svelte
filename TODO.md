@@ -5,13 +5,12 @@
 
 ### Next steps
 - [x] review files sizes and split the big ones
-- [ ] rename perspective to perspectiveId everywhere
+- [x] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
 - [ ] get rid of switching over view type
-- [ ] switchWorkspace should not be in workspaceService as it is UI logic
 - [ ] emit events instead of onXXXX props?
-- [ ] merge $currentWorkspace into $workspaceContext
+- [x] merge $currentWorkspace into $workspaceContext
 - [ ] Add semantic labels and test IDs for Playwright automation
   - Add data-testid attributes to all interactive elements (buttons, inputs, checkboxes)
   - Add proper labels and unique IDs to form inputs
@@ -22,7 +21,6 @@
 - [ ] use parallel routes for sidebar/main pane
    - plus extract main pane page/layout from TaskList.svelte
    - plus move showCreateEditor to main pane
-- [ ] why Workspace type has perspectives, what they are used for?
 
 ### Clean-ups
 - [ ] fix Clear Completed button
