@@ -87,28 +87,10 @@ export interface UpdateTaskRequest {
   order?: number;
 }
 
-// Filter types for queries (workspace_id is now a required parameter, not in filter)
+// Filter types for queries
 export interface TaskFilter {
   project_id?: string;
   perspective?: string;
   completed?: boolean;
   search?: string; // For text search in title/description
-}
-
-export interface ProjectFilter {
-  // Currently no project-specific filters needed
-}
-
-// Sort options
-export type SortDirection = 'asc' | 'desc';
-
-export interface SortOptions {
-  field: string;
-  direction: SortDirection;
-}
-
-// Query options combining filters and sorting
-export interface QueryOptions<TFilter = any> {
-  filter?: TFilter;
-  sort?: SortOptions[];
 }

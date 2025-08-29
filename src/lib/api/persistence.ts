@@ -11,9 +11,7 @@ import type {
   UpdateTaskRequest,
   CreatePerspectiveRequest,
   UpdatePerspectiveRequest,
-  TaskFilter,
-  ProjectFilter,
-  QueryOptions
+  TaskFilter
 } from './types';
 
 /**
@@ -50,14 +48,14 @@ export interface WorkspaceScopedAPI {
   deletePerspective(perspectiveId: string): Promise<void>;
   
   // Project operations within this workspace
-  getProjects(options?: QueryOptions<ProjectFilter>): Promise<ProjectDto[]>;
+  getProjects(): Promise<ProjectDto[]>;
   getProject(projectId: string): Promise<ProjectDto | null>;
   createProject(request: CreateProjectRequest): Promise<ProjectDto>;
   updateProject(projectId: string, request: UpdateProjectRequest): Promise<ProjectDto>;
   deleteProject(projectId: string): Promise<void>;
 
   // Task operations within this workspace
-  getTasks(options?: QueryOptions<TaskFilter>): Promise<TaskDto[]>;
+  getTasks(filter?: TaskFilter): Promise<TaskDto[]>;
   getTask(taskId: string): Promise<TaskDto | null>;
   createTask(request: CreateTaskRequest): Promise<TaskDto>;
   updateTask(taskId: string, request: UpdateTaskRequest): Promise<TaskDto>;
