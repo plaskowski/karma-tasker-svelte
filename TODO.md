@@ -11,7 +11,7 @@
   - [x] replace WorkspaceContextImpl class with helper function calls
   - [x] update all usages to use data + helper functions instead of methods
   - [x] remove WorkspaceContext.ts file
-- [ ] Convert Workspace[] into WorkspaceInfo[]
+- [x] Convert Workspace[] into WorkspaceInfo[]
 
 ### Further Refactor
 - [ ] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
