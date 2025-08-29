@@ -4,17 +4,6 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] Clean up workspaceContext implementation
-  - WorkspaceContext is mostly migrated (no $workspaceContext subscriptions)
-  - But WorkspaceContextImpl is duplicated in +page.ts
-  - WorkspaceContext type still lives in stores directory
-  - setCurrentWorkspace still modifies store (should use URL param instead)
-  - Should move WorkspaceContext interface and implementation to lib/types or lib/models
-  - Workspace changes should update URL ?workspace= param, not store
-  - Action items:
-    - Move WorkspaceContext type/implementation out of stores directory to lib/models
-    - Remove setCurrentWorkspace function (modifies store state)
-    - Use URL params for workspace changes instead of store updates
 - [ ] Clean up taskStore from unrelated code, maybe it is not needed anymore?
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?

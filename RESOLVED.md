@@ -180,6 +180,11 @@
   - Navigation is now fully URL-driven through goto()
   - Single source of truth: URL parameters processed by load function
   - All navigation changes update URL, triggering data reload
+- [x] Clean up workspaceContext implementation
+  - Moved WorkspaceContext interface and implementation to lib/models
+  - Removed currentWorkspace store and setCurrentWorkspace function
+  - Workspace changes now use URL params with localStorage fallback
+  - Removed all workspace-specific derived stores from taskStore
 
 ---
 
