@@ -1,12 +1,12 @@
-import type { Task, NavigationState } from '$lib/types';
-import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
+import type { Task, NavigationState, WorkspaceData } from '$lib/types';
+import { getDefaultPerspective, getDefaultProject, getWorkspaceId } from '$lib/helpers/workspaceHelpers';
 
 export class TaskService {
 	/**
 	 * Creates a new task with defaults based on current context
 	 */
-	static createNewTaskWithDefaults(
-		workspaceContext: WorkspaceContext,
+    static createNewTaskWithDefaults(
+        workspaceContext: WorkspaceData,
 		navigation: NavigationState
 	): Task {
 		return {
@@ -14,9 +14,9 @@ export class TaskService {
 			title: '',
 			description: '',
 			completed: false,
-			projectId: TaskService.getEffectiveProjectId(navigation, workspaceContext),
-			perspective: TaskService.getEffectivePerspectiveId(navigation, workspaceContext),
-			workspaceId: workspaceContext.getId(),
+            projectId: TaskService.getEffectiveProjectId(navigation, workspaceContext),
+            perspective: TaskService.getEffectivePerspectiveId(navigation, workspaceContext),
+            workspaceId: getWorkspaceId(workspaceContext),
 			order: 0, // Will be calculated when task is actually saved
 			createdAt: new Date(),
 			updatedAt: new Date()
@@ -88,16 +88,16 @@ export class TaskService {
 	/**
 	 * Determines the effective project ID based on navigation state
 	 */
-	static getEffectiveProjectId(
-		navigation: { currentView: string; currentProjectId?: string },
-		workspaceContext: WorkspaceContext
+    static getEffectiveProjectId(
+        navigation: { currentView: string; currentProjectId?: string },
+        workspaceContext: WorkspaceData
 	): string {
 		if (navigation.currentView === 'project' && navigation.currentProjectId) {
 			return navigation.currentProjectId;
 		}
-		const defaultProject = workspaceContext.getDefaultProject();
+        const defaultProject = getDefaultProject(workspaceContext);
 		if (!defaultProject) {
-			throw new Error(`No default project found for workspace ${workspaceContext.getId()}`);
+            throw new Error(`No default project found for workspace ${getWorkspaceId(workspaceContext)}`);
 		}
 		return defaultProject.id;
 	}
@@ -105,13 +105,13 @@ export class TaskService {
 	/**
 	 * Determines the effective perspective ID based on navigation state
 	 */
-	static getEffectivePerspectiveId(
-		navigation: { currentView: string; currentPerspectiveId?: string },
-		workspaceContext: WorkspaceContext
+    static getEffectivePerspectiveId(
+        navigation: { currentView: string; currentPerspectiveId?: string },
+        workspaceContext: WorkspaceData
 	): string {
 		if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
 			return navigation.currentPerspectiveId;
 		}
-		return workspaceContext.getDefaultPerspective()?.id || 'inbox';
+        return getDefaultPerspective(workspaceContext)?.id || 'inbox';
 	}
 }
