@@ -58,7 +58,8 @@
 
 	function getProjectIcon(projectId: string) {
 		const project = workspace.getProject(projectId);
-		return getIconComponent(project?.icon);
+		if (!project) return Briefcase; // Fallback if project not found
+		return getIconComponent(project.icon); // icon is now required
 	}
 
 	function getWorkspaceIcon(workspaceId: string) {

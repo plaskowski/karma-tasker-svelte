@@ -78,7 +78,7 @@ export function toProjectDto(project: Project): ProjectDto {
     id: project.id,
     name: project.name,
     order: project.order,
-    icon: project.icon || 'folder',
+    icon: project.icon,
     created_at: project.createdAt.toISOString()
   };
 }
@@ -130,7 +130,7 @@ export function toCreateProjectRequest(
   return {
     name: project.name,
     order: project.order,
-    icon: project.icon || 'folder'
+    icon: project.icon
   };
 }
 

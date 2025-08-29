@@ -22,7 +22,7 @@ export interface Task {
 export interface Project {
   id: string;
   name: string;
-  icon?: string;
+  icon: string;
   workspaceId: string;
   order: number;
   createdAt: Date;
