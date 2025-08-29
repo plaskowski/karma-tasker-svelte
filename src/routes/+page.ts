@@ -20,52 +20,26 @@ export const load: PageLoad = async ({ url }) => {
 	// Get workspace context AFTER setting the workspace
 	const currentWorkspaceContext = get(workspaceContext);
 	
-	// Initialize navigation state from URL
-	if (NavigationService.isValidView(urlParams.view)) {
-		switch (urlParams.view) {
-			case 'perspective':
-				if (urlParams.perspective && currentWorkspaceContext.hasPerspective(urlParams.perspective)) {
-					navigation.setPerspectiveView(urlParams.perspective);
-				} else {
-					// Use default perspective as fallback
-					const defaultPerspective = currentWorkspaceContext.getDefaultPerspective();
-					if (defaultPerspective) {
-						navigation.setPerspectiveView(defaultPerspective.id);
-					}
-				}
-				break;
-				
-			case 'project':
-				if (urlParams.project && currentWorkspaceContext.hasProject(urlParams.project)) {
-					navigation.setProjectView(urlParams.project);
-				} else {
-					// Fallback to default perspective
-					const defaultPerspective = currentWorkspaceContext.getDefaultPerspective();
-					if (defaultPerspective) {
-						navigation.setPerspectiveView(defaultPerspective.id);
-					}
-				}
-				break;
-				
-			case 'project-all':
-				navigation.setProjectAllView();
-				break;
-				
-			case 'all':
-				navigation.setAllView();
-				break;
-		}
-	} else {
-		// No valid view in URL, use default perspective
-		const defaultPerspective = currentWorkspaceContext.getDefaultPerspective();
-		if (defaultPerspective) {
-			navigation.setPerspectiveView(defaultPerspective.id);
-		}
+	// Initialize navigation state from URL using the service
+	const navigationState = NavigationService.initializeNavigationFromURL(
+		urlParams,
+		currentWorkspaceContext
+	);
+	
+	// Set the navigation store based on the initialized state
+	if (navigationState.currentView === 'perspective' && navigationState.currentPerspectiveId) {
+		navigation.setPerspectiveView(navigationState.currentPerspectiveId);
+	} else if (navigationState.currentView === 'project' && navigationState.currentProjectId) {
+		navigation.setProjectView(navigationState.currentProjectId);
+	} else if (navigationState.currentView === 'project-all') {
+		navigation.setProjectAllView();
+	} else if (navigationState.currentView === 'all') {
+		navigation.setAllView();
 	}
 	
 	// Return initial data for the page
 	return {
 		initialWorkspaceId: currentWorkspaceContext.getId(),
-		initialNavigation: get(navigation)
+		initialNavigation: navigationState
 	};
 };
