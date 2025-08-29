@@ -28,6 +28,15 @@
 - [x] "All" view respects project order - Proper sorting when displaying project groups
 
 ### UI/UX Improvements
+- [x] Clean up taskStore from unrelated code, maybe it is not needed anymore?
+- [x] questions:
+  - [x] what is in src/lib/styles/tokens.css?
+  - [x] showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
+- [x] persistence refactor follow-ups:
+  - [x] how to clear optional field in update request (implemented wrapper pattern)
+  - [x] why update requests dont hold entity ID
+
+### Earlier UI/UX Improvements
 - [x] why it pass projects but takes $workspacePerspectivesOrdered itself
 - [x] pack "currentView: ViewType; currentPerspectiveId?: string; currentProjectId?: string;" into object
 - [x] Task editing and detailed view

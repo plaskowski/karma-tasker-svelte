@@ -4,13 +4,7 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [X] Clean up taskStore from unrelated code, maybe it is not needed anymore?
-- [X] questions:
-  - X what is in src/lib/styles/tokens.css?
-  - X showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
 - [ ] persistence refactor follow-ups:
-  - [x] how to clear optional field in update request (implemented wrapper pattern)
-  - [x] why update requests dont hold entity ID
 - [ ] convert WorkspaceContext from model class to data type plus helper methods:
   - [ ] create WorkspaceData interface (plain data)
   - [ ] create workspaceHelpers.ts with pure functions
