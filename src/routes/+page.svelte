@@ -5,7 +5,6 @@
 		updateTask,
 		resetToInitialState
 	} from '$lib/stores/taskStore';
-	import { navigation } from '$lib/stores/navigationStore';
 	import { setCurrentWorkspace } from '$lib/stores/workspaceContext';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';

@@ -1,9 +1,7 @@
 import type { ViewType } from '$lib/types';
 import type { WorkspaceContext } from '$lib/stores/workspaceContext';
 import type { Workspace } from '$lib/types';
-import { navigation } from '$lib/stores/navigationStore';
 import { NavigationService } from './navigation';
-import { get } from 'svelte/store';
 
 /**
  * Handles navigation between different views (perspective, project, all, project-all)
@@ -15,20 +13,17 @@ export function handleNavigate(
 ) {
 	const workspaceId = workspaceContext.getId();
 	
+	// Directly update URL, which will trigger load function
 	if (view === 'perspective' && options?.perspectiveId) {
-		navigation.setPerspectiveView(options.perspectiveId);
 		NavigationService.updateURL(view, {
 			perspectiveId: options.perspectiveId,
 			workspaceId
 		});
 	} else if (view === 'all') {
-		navigation.setAllView();
 		NavigationService.updateURL(view, { workspaceId });
 	} else if (view === 'project-all') {
-		navigation.setProjectAllView();
 		NavigationService.updateURL(view, { workspaceId });
 	} else if (view === 'project' && options?.projectId) {
-		navigation.setProjectView(options.projectId);
 		NavigationService.updateURL('project', {
 			projectId: options.projectId,
 			workspaceId
@@ -44,11 +39,11 @@ export function handleWorkspaceChange(
 	workspaceContext: WorkspaceContext,
 	currentNavigation: { currentView: ViewType; currentPerspectiveId?: string }
 ) {
+	// Directly update URL based on current view
 	// If we're in project view, switch to first perspective since projects are workspace-specific
 	if (currentNavigation.currentView === 'project' || currentNavigation.currentView === 'project-all') {
 		const firstPerspective = workspaceContext.getDefaultPerspective();
 		if (firstPerspective) {
-			navigation.setPerspectiveView(firstPerspective.id);
 			NavigationService.updateURL('perspective', {
 				perspectiveId: firstPerspective.id,
 				workspaceId
@@ -61,7 +56,6 @@ export function handleWorkspaceChange(
 		if (!perspectiveExists) {
 			const firstPerspective = workspaceContext.getDefaultPerspective();
 			if (firstPerspective) {
-				navigation.setPerspectiveView(firstPerspective.id);
 				NavigationService.updateURL('perspective', {
 					perspectiveId: firstPerspective.id,
 					workspaceId
@@ -146,7 +140,6 @@ export function handleRefresh(
 	const firstWorkspaceId = workspaces[0].id;
 	const firstPerspective = workspaceContext.getDefaultPerspective();
 	if (firstPerspective) {
-		navigation.setPerspectiveView(firstPerspective.id);
 		NavigationService.updateURL('perspective', {
 			perspectiveId: firstPerspective.id,
 			workspaceId: firstWorkspaceId

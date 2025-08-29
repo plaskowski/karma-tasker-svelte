@@ -8,7 +8,6 @@ import { writable, derived, get } from 'svelte/store';
 import { persisted } from 'svelte-persisted-store';
 import type { Task, Project, Workspace } from '$lib/types';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
-import { navigation } from './navigationStore';
 import { currentWorkspaceId } from './currentWorkspace';
 
 // Storage key for persistence
@@ -24,14 +23,6 @@ export const projects = persisted(STORAGE_KEY + '-projects', mockProjects);
 export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces);
 
 // MIGRATION: UI state stores - these can stay here or move to lib/stores/uiStore.ts
-// Re-export navigation store
-export { navigation };
-
-// Initialize navigation with defaults
-const firstWorkspace = mockWorkspaces[0];
-const defaultPerspective = firstWorkspace?.perspectives?.[0]?.id || 'inbox';
-navigation.setPerspectiveView(defaultPerspective);
-
 export const showCompleted = writable(false);
 
 // MIGRATION: These functions should move to lib/services/taskService.ts
@@ -107,39 +98,8 @@ export const workspacePerspectivesOrdered = derived(
   }
 );
 
-// MIGRATION: Complex filtering logic could be extracted to lib/domain/task/logic.ts
-// as pure functions like filterTasksByView(tasks, view, perspectiveId, projectId, workspaceId)
-export const filteredTasks = derived(
-  [tasks, navigation, currentWorkspaceId, workspacePerspectivesOrdered],
-  ([$tasks, $navigation, $currentWorkspaceId, $workspacePerspectivesOrdered]) => {
-    // Filter by current workspace first
-    let filtered = $tasks.filter(task => {
-      return task.workspaceId === $currentWorkspaceId;
-    });
-
-    // Filter by view
-    if ($navigation.currentView === 'perspective') {
-      // Perspective view: filter by perspective id
-      const perspectiveId = $navigation.currentPerspectiveId;
-      const isKnownPerspective = $workspacePerspectivesOrdered.some(p => p.id === perspectiveId);
-      const effectivePerspective = isKnownPerspective ? perspectiveId : $workspacePerspectivesOrdered[0]?.id;
-      filtered = filtered.filter(task => task.perspective === effectivePerspective);
-    } else if ($navigation.currentView === 'project') {
-      // Project view: specific project tasks
-      if ($navigation.currentProjectId) {
-        filtered = filtered.filter(task => task.projectId === $navigation.currentProjectId);
-      }
-    } else if ($navigation.currentView === 'project-all') {
-      // Project All view: all tasks in workspace (excluding those without projects)
-      filtered = filtered.filter(task => task.projectId);
-    } else if ($navigation.currentView === 'all') {
-      // All view: keep all tasks for current workspace (both active and completed)
-      // No additional filtering
-    }
-
-    return filtered;
-  }
-);
+// MIGRATION: Filtering logic moved to +page.ts load function
+// Tasks are now filtered server-side based on URL parameters
 
 // First perspective id (default) for the current workspace
 export const firstPerspectiveId = derived([workspaces, currentWorkspaceId], ([$workspaces, $currentWorkspaceId]) => {
@@ -186,13 +146,6 @@ export function resetToInitialState() {
     throw new Error('No workspaces defined. At least one workspace is required.');
   }
   currentWorkspaceId.set(mockWorkspaces[0].id);
-  const ws = mockWorkspaces[0];
-  const firstPerspective = ws.perspectives?.[0];
-  if (firstPerspective) {
-    navigation.setPerspectiveView(firstPerspective.id);
-  } else {
-    navigation.reset();
-  }
   showCompleted.set(false);
 }
 

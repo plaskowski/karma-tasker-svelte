@@ -4,12 +4,9 @@ import { get } from 'svelte/store';
 import { 
 	workspaces, 
 	tasks, 
-	projects,
-	workspaceProjects,
-	workspacePerspectivesOrdered,
-	filteredTasks
+	projects
 } from '$lib/stores/taskStore';
-import { navigation } from '$lib/stores/navigationStore';
+// Navigation is now managed through URL and load function
 import { currentWorkspaceId, getCurrentWorkspaceId, setCurrentWorkspace } from '$lib/stores/currentWorkspace';
 import type { WorkspaceContext } from '$lib/stores/workspaceContext';
 import type { Task, Project, PerspectiveConfig, Workspace } from '$lib/types';
@@ -213,22 +210,11 @@ export const load: PageLoad = async ({ url }) => {
 		workspacePerspectivesData
 	);
 	
-	// Initialize navigation state from URL
+	// Initialize navigation state from URL (no store updates needed)
 	const navigationState = NavigationService.initializeNavigationFromURL(
 		urlParams,
 		workspaceContextData
 	);
-	
-	// Update navigation store
-	if (navigationState.currentView === 'perspective' && navigationState.currentPerspectiveId) {
-		navigation.setPerspectiveView(navigationState.currentPerspectiveId);
-	} else if (navigationState.currentView === 'project' && navigationState.currentProjectId) {
-		navigation.setProjectView(navigationState.currentProjectId);
-	} else if (navigationState.currentView === 'project-all') {
-		navigation.setProjectAllView();
-	} else if (navigationState.currentView === 'all') {
-		navigation.setAllView();
-	}
 	
 	// Filter tasks based on navigation
 	let workspaceTasks = allTasks.filter(task => task.workspaceId === workspaceId);
