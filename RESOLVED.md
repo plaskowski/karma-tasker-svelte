@@ -13,6 +13,9 @@
   - [x] Cover completed items with visual test - Added visual regression tests for all views showing completed tasks in Done section
 
 ### Core Features (Recent Session)
+- [x] use parallel routes for sidebar/main pane - Implemented component-based separation
+  - [x] extract main pane page/layout from TaskList.svelte - Created MainView.svelte
+  - [x] move showCreateEditor to main pane - Now managed in MainView component
 - [x] Task editing and detailed view - Full task editor with title, description, project, and perspective selection
 - [x] "All" view - Comprehensive view showing all tasks grouped by perspective/project
 - [x] Task notes/descriptions support - Textarea in editor, display in TaskItem component

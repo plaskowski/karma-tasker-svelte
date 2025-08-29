@@ -6,6 +6,7 @@
 ### Next steps
 - [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
+- [ ] rewrite handleTaskToggle into handleUpdateTask
 - [ ] get rid of switching over view type
 - [ ] emit events instead of onXXXX props?
 - [ ] Add semantic labels and test IDs for Playwright automation
@@ -15,9 +16,6 @@
   - Add semantic HTML roles where appropriate
   - Ensure task completion buttons are easily selectable
   - Make dropdowns and selects properly identifiable
-- [ ] use parallel routes for sidebar/main pane
-   - plus extract main pane page/layout from TaskList.svelte
-   - plus move showCreateEditor to main pane
 
 ### Clean-ups
 - [ ] fix Clear Completed button

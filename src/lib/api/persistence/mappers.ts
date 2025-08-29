@@ -40,12 +40,11 @@ export function toDomainProject(dto: ProjectDto, workspaceId: string): Project {
   };
 }
 
-export function toDomainTask(dto: TaskDto, workspaceId: string): Task {
+export function toDomainTask(dto: TaskDto): Task {
   return {
     id: dto.id,
     title: dto.title,
     description: dto.description,
-    workspaceId,
     projectId: dto.project_id,
     perspectiveId: dto.perspective,
     completed: dto.completed,
@@ -146,7 +145,7 @@ export function toUpdateProjectRequest(
 }
 
 export function toCreateTaskRequest(
-  task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order' | 'workspaceId'>
+  task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>
 ): CreateTaskRequest {
   return {
     title: task.title,
@@ -180,8 +179,8 @@ export function toDomainProjects(dtos: ProjectDto[], workspaceId: string): Proje
   return dtos.map(dto => toDomainProject(dto, workspaceId));
 }
 
-export function toDomainTasks(dtos: TaskDto[], workspaceId: string): Task[] {
-  return dtos.map(dto => toDomainTask(dto, workspaceId));
+export function toDomainTasks(dtos: TaskDto[]): Task[] {
+  return dtos.map(dto => toDomainTask(dto));
 }
 
 export function toWorkspaceDtos(workspaces: Workspace[]): WorkspaceDto[] {

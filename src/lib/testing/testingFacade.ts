@@ -37,7 +37,7 @@ export function createTestingFacade(): TestingFacade {
 			// Get tasks from the workspace
 			const wsApi = db.forWorkspace(targetWorkspace);
 			const taskDtos = await wsApi.getTasks();
-			const allTasks = toDomainTasks(taskDtos, targetWorkspace);
+			const allTasks = toDomainTasks(taskDtos);
 			
 			// Filter tasks based on criteria
 			let eligibleTasks = allTasks.filter((task: Task) => {
