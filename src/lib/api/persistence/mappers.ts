@@ -11,6 +11,7 @@ import type {
   CreateWorkspaceRequest,
   UpdateWorkspaceRequest
 } from './index';
+import { clearField } from './requests';
 
 /**
  * Mappers to convert between API DTOs and domain models.
@@ -156,11 +157,14 @@ export function toCreateTaskRequest(
 }
 
 export function toUpdateTaskRequest(
-  updates: Partial<Task>
+  updates: Partial<Task>,
+  clearFields?: (keyof Task)[]
 ): UpdateTaskRequest {
   return {
     title: updates.title,
-    description: updates.description, // For now, keep simple - can be enhanced later with clearField()
+    description: clearFields?.includes('description')
+      ? clearField<string>()
+      : updates.description,
     project_id: updates.projectId,
     perspective: updates.perspective,
     completed: updates.completed,
