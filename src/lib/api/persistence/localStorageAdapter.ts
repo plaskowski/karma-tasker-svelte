@@ -102,8 +102,16 @@ export class LocalStorageAdapter implements WorkspaceAPI {
           }));
         this.saveCollection('projects', workspaceProjects, workspace.id);
         
+        // Get project IDs for this workspace
+        const workspaceProjectIds = new Set(
+          mockProjects
+            .filter(p => p.workspaceId === workspace.id)
+            .map(p => p.id)
+        );
+        
+        // Filter tasks by their project's workspace
         const workspaceTasks = mockTasks
-          .filter(t => t.workspaceId === workspace.id)
+          .filter(t => workspaceProjectIds.has(t.projectId))
           .map(t => ({
             id: t.id,
             title: t.title,
