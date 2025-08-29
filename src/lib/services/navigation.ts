@@ -1,5 +1,5 @@
 import { goto } from '$app/navigation';
-import type { ViewType, NavigationState } from '$lib/types';
+import type { ViewType, NavigationState, WorkspaceData } from '$lib/types';
 
 export class NavigationService {
 	/**
@@ -98,20 +98,17 @@ export class NavigationService {
 	 * Returns a NavigationState object that can be used to set stores or pass as data
 	 */
     static initializeNavigationFromURL(
-		urlParams: {
-			view: ViewType | null;
-			perspective: string | null;
-			project: string | null;
-		},
-        workspaceContext: {
-            perspectives: { id: string }[];
-            projects: { id: string }[];
-        }
-	): { currentView: ViewType; currentPerspectiveId?: string; currentProjectId?: string } {
-		// Default navigation state
-		let navigationState: { currentView: ViewType; currentPerspectiveId?: string; currentProjectId?: string } = {
-			currentView: 'perspective'
-		};
+        urlParams: {
+            view: ViewType | null;
+            perspective: string | null;
+            project: string | null;
+        },
+        workspaceContext: Pick<WorkspaceData, 'perspectives' | 'projects'>
+    ): NavigationState {
+        // Default navigation state
+        let navigationState: NavigationState = {
+            currentView: 'perspective'
+        };
 
 		if (NavigationService.isValidView(urlParams.view)) {
 			switch (urlParams.view) {
