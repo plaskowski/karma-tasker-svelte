@@ -18,11 +18,11 @@
   - [ ] replace WorkspaceContextImpl class with helper function calls
   - [ ] update all usages to use data + helper functions instead of methods
   - [ ] remove WorkspaceContext.ts file
-  - [ ] benefits: simpler data structures, easier serialization, functional approach
 - [ ] Drop Workspace type?
 
 ### Further Refactor
 - [ ] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
+- [ ] rename PerspectiveConfig to Perspective
 - [ ] review files sizes and split the big ones
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
