@@ -127,7 +127,7 @@ export function handleKeyboardShortcut(
  */
 export function handleRefresh(
 	workspaces: Workspace[],
-	workspaceContext: WorkspaceContext,
+    workspaceContext: WorkspaceData,
 	resetToInitialState: () => void
 ) {
 	// Reset app to initial state (temporary dev feature)
@@ -138,7 +138,7 @@ export function handleRefresh(
 		throw new Error('No workspaces defined. At least one workspace is required.');
 	}
 	const firstWorkspaceId = workspaces[0].id;
-	const firstPerspective = workspaceContext.getDefaultPerspective();
+    const firstPerspective = getDefaultPerspective(workspaceContext);
 	if (firstPerspective) {
 		NavigationService.updateURL('perspective', {
 			perspectiveId: firstPerspective.id,
