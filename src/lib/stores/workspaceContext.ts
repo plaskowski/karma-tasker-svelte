@@ -42,7 +42,7 @@ export interface WorkspaceContext {
   isValidPerspective(id: string | undefined): boolean;
   
   // Context-aware defaults (based on navigation state)
-  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string | undefined;
+  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string;
   getEffectivePerspectiveId(navigation: { currentView: string; currentPerspectiveId?: string }): string;
   
   // Task operations
@@ -139,13 +139,17 @@ class WorkspaceContextImpl implements WorkspaceContext {
   }
   
   // Context-aware defaults
-  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string | undefined {
+  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string {
     // If in project view and have a current project, use it
     if (navigation.currentView === 'project' && navigation.currentProjectId) {
       return navigation.currentProjectId;
     }
-    // Otherwise use the default project
-    return this.getDefaultProject()?.id;
+    // Otherwise use the default project (which must exist)
+    const defaultProject = this.getDefaultProject();
+    if (!defaultProject) {
+      throw new Error(`No default project found for workspace ${this.workspace.id}`);
+    }
+    return defaultProject.id;
   }
   
   getEffectivePerspectiveId(navigation: { currentView: string; currentPerspectiveId?: string }): string {
