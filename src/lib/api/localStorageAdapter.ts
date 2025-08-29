@@ -1,7 +1,6 @@
 import type { 
   WorkspaceAPI, 
-  WorkspaceScopedAPI, 
-  PersistenceConfig,
+  WorkspaceScopedAPI,
   WorkspaceDto, 
   ProjectDto, 
   TaskDto,
@@ -17,13 +16,21 @@ import { toWorkspaceDto, toProjectDto, toTaskDto } from './mappers';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 
 /**
+ * Configuration for the LocalStorage adapter
+ */
+export interface LocalStorageConfig {
+  /** Storage key prefix to avoid conflicts (default: 'karma-tasks') */
+  storagePrefix?: string;
+}
+
+/**
  * LocalStorage implementation of the WorkspaceAPI.
  * This adapter stores all data in browser localStorage with automatic serialization.
  */
 export class LocalStorageAdapter implements WorkspaceAPI {
   private readonly prefix: string;
 
-  constructor(config: PersistenceConfig = {}) {
+  constructor(config: LocalStorageConfig = {}) {
     this.prefix = config.storagePrefix || 'karma-tasks';
     
     // Initialize with mock data if empty

@@ -64,11 +64,3 @@ export interface WorkspaceScopedAPI {
   updateTask(taskId: string, request: UpdateTaskRequest): Promise<TaskDto>;
   deleteTask(taskId: string): Promise<void>;
 }
-
-/**
- * Configuration for persistence adapters
- */
-export interface PersistenceConfig {
-  /** Storage key prefix for localStorage adapter */
-  storagePrefix?: string;
-}
