@@ -1,44 +1,9 @@
 /**
- * API-specific types for the persistence layer.
- * These types represent the data as stored/transmitted, which may differ
- * from the domain types used in the application.
+ * Request types for persistence API mutations.
+ * These define the shape of data for create/update operations.
  */
 
-// Entity types as stored in the database/API
-export interface WorkspaceDto {
-  id: string;
-  name: string;
-  created_at: string; // ISO date string from API
-}
-
-export interface ProjectDto {
-  id: string;
-  name: string;
-  order: number;
-  icon: string;
-  created_at: string;
-}
-
-export interface TaskDto {
-  id: string;
-  title: string;
-  description?: string;
-  project_id: string;
-  perspective: string;
-  completed: boolean;
-  order: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface PerspectiveDto {
-  id: string;
-  name: string;
-  icon: string;
-  order: number;
-}
-
-// Request types for mutations
+// Workspace requests
 export interface CreateWorkspaceRequest {
   name: string;
 }
@@ -47,6 +12,7 @@ export interface UpdateWorkspaceRequest {
   name?: string;
 }
 
+// Perspective requests
 export interface CreatePerspectiveRequest {
   name: string;
   icon: string;
@@ -59,6 +25,7 @@ export interface UpdatePerspectiveRequest {
   order?: number;
 }
 
+// Project requests
 export interface CreateProjectRequest {
   name: string;
   order: number;
@@ -71,6 +38,7 @@ export interface UpdateProjectRequest {
   icon?: string;
 }
 
+// Task requests
 export interface CreateTaskRequest {
   title: string;
   description?: string;
@@ -87,7 +55,7 @@ export interface UpdateTaskRequest {
   order?: number;
 }
 
-// Filter types for queries
+// Filter types
 export interface TaskFilter {
   project_id?: string;
   perspective?: string;

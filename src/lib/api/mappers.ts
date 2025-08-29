@@ -3,14 +3,14 @@ import type {
   TaskDto, 
   ProjectDto, 
   WorkspaceDto, 
-  PerspectiveConfigDto,
+  PerspectiveDto,
   CreateTaskRequest,
   UpdateTaskRequest,
   CreateProjectRequest,
   UpdateProjectRequest,
   CreateWorkspaceRequest,
   UpdateWorkspaceRequest
-} from './types';
+} from './persistence';
 
 /**
  * Mappers to convert between API DTOs and domain models.
@@ -54,7 +54,7 @@ export function toDomainTask(dto: TaskDto): Task {
   };
 }
 
-export function toDomainPerspective(dto: PerspectiveConfigDto): PerspectiveConfig {
+export function toDomainPerspective(dto: PerspectiveDto): PerspectiveConfig {
   return {
     id: dto.id,
     name: dto.name,
@@ -100,7 +100,7 @@ export function toTaskDto(task: Task): TaskDto {
   };
 }
 
-export function toPerspectiveDto(perspective: PerspectiveConfig): PerspectiveConfigDto {
+export function toPerspectiveDto(perspective: PerspectiveConfig): PerspectiveDto {
   return {
     id: perspective.id,
     name: perspective.name,

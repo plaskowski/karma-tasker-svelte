@@ -2,7 +2,10 @@ import type {
   WorkspaceDto, 
   ProjectDto, 
   TaskDto,
-  PerspectiveDto,
+  PerspectiveDto
+} from './dto';
+
+import type {
   CreateWorkspaceRequest,
   UpdateWorkspaceRequest,
   CreateProjectRequest,
@@ -12,7 +15,7 @@ import type {
   CreatePerspectiveRequest,
   UpdatePerspectiveRequest,
   TaskFilter
-} from './types';
+} from './requests';
 
 /**
  * Top-level persistence API for workspace management.

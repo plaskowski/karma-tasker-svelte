@@ -1,5 +1,7 @@
-import type { WorkspaceAPI, WorkspaceScopedAPI, PersistenceConfig } from './persistence';
 import type { 
+  WorkspaceAPI, 
+  WorkspaceScopedAPI, 
+  PersistenceConfig,
   WorkspaceDto, 
   ProjectDto, 
   TaskDto,
@@ -9,10 +11,8 @@ import type {
   UpdateProjectRequest,
   CreateTaskRequest,
   UpdateTaskRequest,
-  TaskFilter,
-  ProjectFilter,
-  QueryOptions
-} from './types';
+  TaskFilter
+} from './persistence';
 import { toWorkspaceDto, toProjectDto, toTaskDto } from './mappers';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 
