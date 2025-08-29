@@ -16,6 +16,12 @@
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
+- [ ] persistence refactor follow-ups:
+  - hide PersistenceConfig
+  - clean up MIGRATION comments
+  - how to clear optional field in update request
+  - why update requests dont hold entity ID
+  - Workspace type vs WorkspaceContext
 
 ### Further Refactor
 - [ ] review files sizes and split the big ones
@@ -43,7 +49,7 @@
   - Add semantic HTML roles where appropriate
   - Ensure task completion buttons are easily selectable
   - Make dropdowns and selects properly identifiable
-``
+
 ### Advanced Organization
 - [ ] fix Clear Completed button
 - [ ] project/perspective badges zamienione
