@@ -46,6 +46,7 @@
 - [ ] project/perspective badges zamienione
 - [ ] remove fallback to 'inbox' (we can't hardcode it)
 - [ ] get rid of all fallbaks on projectId and perspectiveId
+- [ ] make NavigationService.updateURL() take NavigationState
 - [ ] (?) why filterTasksByNavigation was not used
 - [ ] we should not rely on taskService.loadTasks(), they should be loaded on demand with queries
 - [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
