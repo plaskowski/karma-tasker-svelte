@@ -44,6 +44,7 @@
 ### Advanced Organization
 - [ ] fix Clear Completed button
 - [ ] project/perspective badges zamienione
+- [ ] get rid of all fallbaks on projectId and perspectiveId
 - [ ] we should not rely on taskService.loadTasks(), they should be loaded on demand with queries
 - [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
 - [ ] name default project better
