@@ -12,24 +12,17 @@ export interface WorkspaceContext {
   // Projects
   getProjects(): readonly Project[];
   getProject(id: string): Project | undefined;
-  getProjectByName(name: string): Project | undefined;
   getProjectsSortedByOrder(): readonly Project[];
   getDefaultProject(): Project | undefined;
   hasProject(id: string): boolean;
-  getProjectCount(): number;
   
   // Perspectives  
   getPerspectives(): readonly PerspectiveConfig[];
   getPerspective(id: string): PerspectiveConfig | undefined;
-  getPerspectiveByName(name: string): PerspectiveConfig | undefined;
   getDefaultPerspective(): PerspectiveConfig | undefined;
   hasPerspective(id: string): boolean;
-  getPerspectiveCount(): number;
   getPerspectiveOrder(id: string): number;
   
-  // Validation
-  isValidProject(id: string | undefined): boolean;
-  isValidPerspective(id: string | undefined): boolean;
   
   // Context-aware defaults (based on navigation state)
   getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string;
@@ -67,9 +60,6 @@ export class WorkspaceContextImpl implements WorkspaceContext {
     return this.projects.find(p => p.id === id);
   }
   
-  getProjectByName(name: string): Project | undefined {
-    return this.projects.find(p => p.name === name);
-  }
   
   getProjectsSortedByOrder(): readonly Project[] {
     return [...this.projects].sort((a, b) => a.order - b.order);
@@ -84,9 +74,6 @@ export class WorkspaceContextImpl implements WorkspaceContext {
     return this.projects.some(p => p.id === id);
   }
   
-  getProjectCount(): number {
-    return this.projects.length;
-  }
   
   // Perspectives
   getPerspectives(): readonly PerspectiveConfig[] {
@@ -97,9 +84,6 @@ export class WorkspaceContextImpl implements WorkspaceContext {
     return this.perspectives.find(p => p.id === id);
   }
   
-  getPerspectiveByName(name: string): PerspectiveConfig | undefined {
-    return this.perspectives.find(p => p.name === name);
-  }
   
   getDefaultPerspective(): PerspectiveConfig | undefined {
     return this.perspectives[0];
@@ -109,23 +93,12 @@ export class WorkspaceContextImpl implements WorkspaceContext {
     return this.perspectives.some(p => p.id === id);
   }
   
-  getPerspectiveCount(): number {
-    return this.perspectives.length;
-  }
   
   getPerspectiveOrder(id: string): number {
     const index = this.perspectives.findIndex(p => p.id === id);
     return index >= 0 ? index : Number.MAX_SAFE_INTEGER;
   }
   
-  // Validation
-  isValidProject(id: string | undefined): boolean {
-    return id ? this.hasProject(id) : false;
-  }
-  
-  isValidPerspective(id: string | undefined): boolean {
-    return id ? this.hasPerspective(id) : false;
-  }
   
   // Context-aware defaults
   getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string {
