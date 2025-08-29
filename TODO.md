@@ -39,19 +39,21 @@
   - Add semantic HTML roles where appropriate
   - Ensure task completion buttons are easily selectable
   - Make dropdowns and selects properly identifiable
+- [ ] use parallel routes for sidebar/main pane
+   - plus extract main pane page/layout from TaskList.svelte
 
-### Advanced Organization
+### Clean-ups
 - [ ] fix Clear Completed button
-- [ ] project/perspective badges zamienione
+- [ ] rename NewTaskDialog.svelte
+- [ ] remove TaskDetailsDialog?
 - [ ] remove fallback to 'inbox' (we can't hardcode it)
 - [ ] get rid of all fallbaks on projectId and perspectiveId
 - [ ] make NavigationService.updateURL() take NavigationState
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?
-- [ ] set NavigationState as whole to store instead of the dedicated methods
-- [ ] (?) why filterTasksByNavigation was not used
-- [ ] we should not rely on taskService.loadTasks(), they should be loaded on demand with queries
-- [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
 - [ ] name default project better
+- [ ] ...
+
+### Advanced Organization
 - [ ] Drag & drop task reordering
 - [ ] consolidate all class attribute spagetti into semantic classes
 - [ ] special markup support in description
