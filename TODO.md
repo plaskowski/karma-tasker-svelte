@@ -4,14 +4,6 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] Add semantic labels and test IDs for Playwright automation
-  - Add data-testid attributes to all interactive elements (buttons, inputs, checkboxes)
-  - Add proper labels and unique IDs to form inputs
-  - Add ARIA labels for accessibility and automated testing
-  - Add semantic HTML roles where appropriate
-  - Ensure task completion buttons are easily selectable
-  - Make dropdowns and selects properly identifiable
-
 - [ ] ARCHITECTURAL: src/routes/+page.ts should load all data for WorkspaceContext
   - Currently the app uses stores for data management (client-side state)
   - Converting to load-based data would require refactoring ALL components
@@ -39,6 +31,13 @@
 - [x] review remaining direct store accesses (created navigation store as single source of truth)
 - [ ] move out filteredTasks logic
 - [ ] merge $currentWorkspace into $workspaceContext
+- [ ] Add semantic labels and test IDs for Playwright automation
+  - Add data-testid attributes to all interactive elements (buttons, inputs, checkboxes)
+  - Add proper labels and unique IDs to form inputs
+  - Add ARIA labels for accessibility and automated testing
+  - Add semantic HTML roles where appropriate
+  - Ensure task completion buttons are easily selectable
+  - Make dropdowns and selects properly identifiable
 
 ### Advanced Organization
 - [ ] fix Clear Completed button
