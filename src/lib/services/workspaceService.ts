@@ -1,8 +1,6 @@
 import { db } from '$lib/api/persistence/localStorageAdapter';
 import { toDomainWorkspace, toDomainTasks, toDomainProjects, toDomainPerspective } from '$lib/api/persistence/mappers';
-import { WorkspaceContextImpl } from '$lib/models/WorkspaceContext';
-import type { Workspace, Task } from '$lib/types';
-import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
+import type { Workspace, Task, WorkspaceData } from '$lib/types';
 
 export class WorkspaceService {
 	/**
@@ -25,7 +23,7 @@ export class WorkspaceService {
 	/**
 	 * Build WorkspaceContext for a specific workspace ID
 	 */
-	async getWorkspaceById(workspaceId: string, allWorkspaces: Workspace[]): Promise<{ workspaceContext: WorkspaceContext; tasks: Task[] }> {
+    async getWorkspaceById(workspaceId: string, allWorkspaces: Workspace[]): Promise<{ workspaceContext: WorkspaceData; tasks: Task[] }> {
 		// Get current workspace
 		const currentWorkspace = allWorkspaces.find(w => w.id === workspaceId);
 		if (!currentWorkspace) {
@@ -49,12 +47,13 @@ export class WorkspaceService {
 			.map(toDomainPerspective)
 			.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 		
-		// Create workspace context
-		const workspaceContext = new WorkspaceContextImpl(
-			currentWorkspace,
-			workspaceProjectsData,
-			workspacePerspectivesData
-		);
+        // Create workspace data
+        const workspaceContext: WorkspaceData = {
+            id: currentWorkspace.id,
+            name: currentWorkspace.name,
+            projects: workspaceProjectsData,
+            perspectives: workspacePerspectivesData
+        };
 		
 		return {
 			workspaceContext,
