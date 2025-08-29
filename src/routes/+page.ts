@@ -11,12 +11,14 @@ export const load: PageLoad = async ({ url }) => {
 	
 	// Get current stores state
 	const currentWorkspaces = get(workspaces);
-	const currentWorkspaceContext = get(workspaceContext);
 	
 	// Initialize workspace from URL or use current
 	if (urlParams.workspace && currentWorkspaces.some(w => w.id === urlParams.workspace)) {
 		setCurrentWorkspace(urlParams.workspace);
 	}
+	
+	// Get workspace context AFTER setting the workspace
+	const currentWorkspaceContext = get(workspaceContext);
 	
 	// Initialize navigation state from URL
 	if (NavigationService.isValidView(urlParams.view)) {
