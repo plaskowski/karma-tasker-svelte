@@ -21,7 +21,7 @@
 	import type { PageData } from './$types';
 
 	// Component receives data from +page.ts
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
 	// UI state
 	let showTaskDetailsDialog = $state(false);

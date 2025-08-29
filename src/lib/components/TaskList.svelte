@@ -2,7 +2,7 @@
 	import type { Task } from '$lib/types';
 	import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
-	import TaskItem from './TaskItem.svelte';
+	import UiTaskItem from './UiTaskItem.svelte';
 	import TaskInlineEditor from './TaskInlineEditor.svelte';
 	import { createTaskListViewModel } from './taskListViewModel';
 	import type { TaskListViewState, TaskListActions } from './taskListViewModel';
@@ -128,7 +128,7 @@
 									on:close={vm.closeInlineEditor}
 								/>
 							{:else}
-								<TaskItem
+								<UiTaskItem
 									{task}
 									onToggle={vm.handleTaskToggle}
 									onClick={() => vm.handleTaskClick(task)}
@@ -148,7 +148,7 @@
 						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400">Done</h3>
 					</div>
 					{#each vm.completedTasks as task (task.id)}
-						<TaskItem
+						<UiTaskItem
 							{task}
 							onToggle={vm.handleTaskToggle}
 							onClick={() => vm.handleTaskClick(task)}
