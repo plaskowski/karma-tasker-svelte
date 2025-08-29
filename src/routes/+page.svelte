@@ -278,7 +278,7 @@
                             const taskData = TaskService.prepareTaskForCreation(
                                 { title, description, projectId, perspective },
                                 $workspaceContext.getId(),
-                                $workspaceContext.getDefaultPerspective()?.id ?? ''
+                                $workspaceContext.getDefaultPerspective()?.id ?? 'inbox'
                             );
                             await addTask(taskData);
                             // Close after successful create

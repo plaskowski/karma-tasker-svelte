@@ -11,9 +11,9 @@ export interface Task {
   description?: string;
   completed: boolean;
   perspective?: string; // undefined = inbox
-  projectId: string;
+  projectId?: string; // undefined = no project
   workspaceId: string;
-  order: number; // Tasks are ordered within their project
+  order: number; // Tasks are ordered within their view
 
   createdAt: Date;
   updatedAt: Date;

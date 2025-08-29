@@ -14,7 +14,7 @@ export class TaskService {
 			title: '',
 			description: '',
 			completed: false,
-			projectId: workspaceContext.getEffectiveProjectId(navigation) || '',
+			projectId: workspaceContext.getEffectiveProjectId(navigation),
 			perspective: workspaceContext.getEffectivePerspectiveId(navigation),
 			workspaceId: workspaceContext.getId(),
 			order: 0, // Will be calculated when task is actually saved
@@ -62,8 +62,8 @@ export class TaskService {
 	): Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'> {
 		return {
 			title: taskData.title,
-			description: taskData.description || '',
-			projectId: taskData.projectId || '',
+			description: taskData.description,
+			projectId: taskData.projectId || undefined,
 			workspaceId: workspaceId,
 			completed: false,
 			perspective: taskData.perspective || defaultPerspectiveId
@@ -106,7 +106,7 @@ export class TaskService {
 				
 			case 'project-all':
 				// Show all tasks with any project
-				filtered = filtered.filter(task => task.projectId && task.projectId !== '');
+				filtered = filtered.filter(task => task.projectId);
 				break;
 				
 			case 'all':

@@ -42,7 +42,7 @@ export interface WorkspaceContext {
   isValidPerspective(id: string | undefined): boolean;
   
   // Context-aware defaults (based on navigation state)
-  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string;
+  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string | undefined;
   getEffectivePerspectiveId(navigation: { currentView: string; currentPerspectiveId?: string }): string;
   
   // Task operations
@@ -139,13 +139,13 @@ class WorkspaceContextImpl implements WorkspaceContext {
   }
   
   // Context-aware defaults
-  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string {
+  getEffectiveProjectId(navigation: { currentView: string; currentProjectId?: string }): string | undefined {
     // If in project view and have a current project, use it
     if (navigation.currentView === 'project' && navigation.currentProjectId) {
       return navigation.currentProjectId;
     }
     // Otherwise use the default project
-    return this.getDefaultProject()?.id || '';
+    return this.getDefaultProject()?.id;
   }
   
   getEffectivePerspectiveId(navigation: { currentView: string; currentPerspectiveId?: string }): string {
@@ -153,8 +153,8 @@ class WorkspaceContextImpl implements WorkspaceContext {
     if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
       return navigation.currentPerspectiveId;
     }
-    // Otherwise use the default perspective
-    return this.getDefaultPerspective()?.id || '';
+    // Otherwise use the default perspective (inbox)
+    return this.getDefaultPerspective()?.id || 'inbox';
   }
   
   // Task operations
@@ -169,8 +169,8 @@ class WorkspaceContextImpl implements WorkspaceContext {
   
   sortTasksByProjectThenOrder(tasks: Task[]): Task[] {
     return [...tasks].sort((a, b) => {
-      const projectA = this.getProject(a.projectId);
-      const projectB = this.getProject(b.projectId);
+      const projectA = a.projectId ? this.getProject(a.projectId) : undefined;
+      const projectB = b.projectId ? this.getProject(b.projectId) : undefined;
       const orderA = projectA?.order ?? Number.MAX_SAFE_INTEGER;
       const orderB = projectB?.order ?? Number.MAX_SAFE_INTEGER;
       if (orderA !== orderB) return orderA - orderB;

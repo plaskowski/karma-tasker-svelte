@@ -29,7 +29,7 @@ export { navigation };
 
 // Initialize navigation with defaults
 const firstWorkspace = mockWorkspaces[0];
-const defaultPerspective = firstWorkspace?.perspectives?.[0]?.id || '';
+const defaultPerspective = firstWorkspace?.perspectives?.[0]?.id || 'inbox';
 navigation.setPerspectiveView(defaultPerspective);
 
 export const showCompleted = writable(false);

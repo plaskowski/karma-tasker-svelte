@@ -8,7 +8,7 @@
     type SaveFields = {
         title: string;
         description?: string;
-        projectId: string;
+        projectId?: string;
         perspective?: string;
     };
 
@@ -27,8 +27,8 @@
 
 	let title = $state(task.title);
 	let description = $state(task.description ?? '');
-	let projectId = $state(task.projectId);
-    let perspective = $state(task.perspective ?? (workspace.getDefaultPerspective()?.id ?? ''));
+	let projectId = $state<string | undefined>(task.projectId);
+    let perspective = $state(task.perspective ?? (workspace.getDefaultPerspective()?.id ?? 'inbox'));
 	let submitting = $state(false);
 
     const titleId = `title-${task.id}`;

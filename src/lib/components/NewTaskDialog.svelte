@@ -18,7 +18,7 @@
 	// Form state
 	let title = $state('');
 	let description = $state('');
-    let projectId = $state('');
+    let projectId = $state<string | undefined>(undefined);
 	let perspective = $state('');
 	let submitting = $state(false);
 
@@ -28,7 +28,7 @@
             // Use provided default or first project
             if (!projectId) {
                 const defaultProject = workspace.getDefaultProject();
-                projectId = defaultProjectId || defaultProject?.id || '';
+                projectId = defaultProjectId || defaultProject?.id;
             }
             // Use provided default perspective
             if (!perspective && defaultPerspectiveId) {
@@ -44,7 +44,7 @@
 		try {
         // Pick first project of the current workspace if none selected
         const defaultProject = workspace.getDefaultProject();
-        const finalProjectId = projectId || defaultProject?.id || '';
+        const finalProjectId = projectId || defaultProject?.id;
 
 			await onAddTask({
 				title: title.trim(),

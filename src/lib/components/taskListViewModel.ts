@@ -220,6 +220,7 @@ export function createTaskListViewModel(
 
     // Helper methods that take whole task
     getTaskProjectName(task: Task): string {
+      if (!task.projectId) return '';
       const project = state.workspace.getProject(task.projectId);
       return project?.name || task.projectId;
     },
