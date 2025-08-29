@@ -28,6 +28,8 @@
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
 
 ### Further Refactor
+- [ ] review files sizes and split the big ones
+- [ ] setup linter and formatter
 - [ ] convert to local DB (e.g. IndexedDB with Dexie) so it is closer to real backend
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
