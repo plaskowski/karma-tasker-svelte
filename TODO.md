@@ -41,6 +41,7 @@
   - Make dropdowns and selects properly identifiable
 - [ ] use parallel routes for sidebar/main pane
    - plus extract main pane page/layout from TaskList.svelte
+- [ ] why Workspace type has perspectives, what they are used for?
 
 ### Clean-ups
 - [ ] fix Clear Completed button
