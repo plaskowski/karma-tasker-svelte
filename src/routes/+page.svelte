@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { db } from '$lib/api/localStorageAdapter';
-	import { toUpdateTaskRequest, toCreateTaskRequest } from '$lib/api/mappers';
+	import { db } from '$lib/api/persistence/localStorageAdapter';
+	import { toUpdateTaskRequest, toCreateTaskRequest } from '$lib/api/persistence/mappers';
 	import { invalidateAll } from '$app/navigation';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';

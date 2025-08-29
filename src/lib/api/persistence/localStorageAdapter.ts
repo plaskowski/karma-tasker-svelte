@@ -11,7 +11,7 @@ import type {
   CreateTaskRequest,
   UpdateTaskRequest,
   TaskFilter
-} from './persistence';
+} from './index';
 import { toWorkspaceDto, toProjectDto, toTaskDto } from './mappers';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 

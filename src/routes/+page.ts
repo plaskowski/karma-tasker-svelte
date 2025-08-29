@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types';
 import { NavigationService } from '$lib/services/navigation';
-import { db } from '$lib/api/localStorageAdapter';
-import { toDomainWorkspaces, toDomainTasks, toDomainProjects } from '$lib/api/mappers';
+import { db } from '$lib/api/persistence/localStorageAdapter';
+import { toDomainWorkspaces, toDomainTasks, toDomainProjects } from '$lib/api/persistence/mappers';
 import { WorkspaceContextImpl } from '$lib/models/WorkspaceContext';
 import type { Task, Project, PerspectiveConfig, Workspace } from '$lib/types';
 

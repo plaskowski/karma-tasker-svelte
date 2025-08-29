@@ -10,7 +10,7 @@ import type {
   UpdateProjectRequest,
   CreateWorkspaceRequest,
   UpdateWorkspaceRequest
-} from './persistence';
+} from './index';
 
 /**
  * Mappers to convert between API DTOs and domain models.
