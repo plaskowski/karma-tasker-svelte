@@ -162,6 +162,11 @@
 - **Component composition** with clear separation of concerns
 - **Error handling** and graceful fallbacks for data consistency
 
+### Data Loading Architecture (Partial)
+- [x] load() function reads from persistence API - The load() function now reads directly from db.getWorkspaces(), db.getTasks(), db.getProjects()
+- [x] Data flows from persistence API to load() to components - Components receive data as props from the load function
+- [x] Removed navigation and workspace store dependencies - Navigation is URL-driven, workspace context passed as props
+
 ### Canon Migration Follow-ups (Completed)
 - [x] prepareTaskForCreation#projectId and perspective are now required - no defaults needed
 - [x] filterTasksByNavigation removed - unused function, filtering happens in derived store

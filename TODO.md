@@ -4,14 +4,12 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] Complete data loading refactoring - load() should be the central point
-  - Currently load() just reads from stores using get()
-  - Stores are still the source of truth (persisted to localStorage)
-  - This is backwards - load() should load data, not stores
-  - Should move localStorage persistence to load function
-  - Remove persisted stores entirely
-  - Data should flow: localStorage -> load() -> components
-  - Not: localStorage -> stores -> load() -> components
+- [ ] Complete data loading refactoring - remove persisted stores
+  - ✅ load() now reads from persistence API (db.getWorkspaces(), etc.)
+  - ✅ Data flows: persistence API -> load() -> components
+  - ❌ Still using persisted stores in taskStore.ts (lines 20-22)
+  - ❌ Need to remove persisted() wrapper and use localStorage directly in API
+  - ❌ Task CRUD operations still update persisted stores
 - [ ] Clean up taskStore from unrelated code, maybe it is not needed anymore?
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?
