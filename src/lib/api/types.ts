@@ -15,7 +15,7 @@ export interface ProjectDto {
   id: string;
   name: string;
   order: number;
-  icon?: string;
+  icon: string;
   created_at: string;
 }
 
@@ -50,7 +50,7 @@ export interface UpdateWorkspaceRequest {
 export interface CreatePerspectiveRequest {
   name: string;
   icon: string;
-  order?: number;
+  order: number;
 }
 
 export interface UpdatePerspectiveRequest {
@@ -61,8 +61,8 @@ export interface UpdatePerspectiveRequest {
 
 export interface CreateProjectRequest {
   name: string;
-  order?: number;
-  icon?: string;
+  order: number;
+  icon: string;
 }
 
 export interface UpdateProjectRequest {
