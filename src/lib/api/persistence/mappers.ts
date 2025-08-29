@@ -1,4 +1,4 @@
-import type { Task, Project, Workspace, PerspectiveConfig } from '$lib/types';
+import type { Task, Project, Workspace, Perspective } from '$lib/types';
 import type { 
   TaskDto, 
   ProjectDto, 
@@ -20,7 +20,7 @@ import { wrapFieldUpdate } from './fieldUpdates';
 
 // ===== To Domain =====
 
-export function toDomainWorkspace(dto: WorkspaceDto, perspectives: PerspectiveConfig[]): Workspace {
+export function toDomainWorkspace(dto: WorkspaceDto, perspectives: Perspective[]): Workspace {
   return {
     id: dto.id,
     name: dto.name,
@@ -55,7 +55,7 @@ export function toDomainTask(dto: TaskDto, workspaceId: string): Task {
   };
 }
 
-export function toDomainPerspective(dto: PerspectiveDto): PerspectiveConfig {
+export function toDomainPerspective(dto: PerspectiveDto): Perspective {
   return {
     id: dto.id,
     name: dto.name,
@@ -98,7 +98,7 @@ export function toTaskDto(task: Task): TaskDto {
   };
 }
 
-export function toPerspectiveDto(perspective: PerspectiveConfig): PerspectiveDto {
+export function toPerspectiveDto(perspective: Perspective): PerspectiveDto {
   return {
     id: perspective.id,
     name: perspective.name,
@@ -172,7 +172,7 @@ export function toUpdateTaskRequest(
 
 // ===== Batch Operations =====
 
-export function toDomainWorkspaces(dtos: WorkspaceDto[], perspectivesMap: Map<string, PerspectiveConfig[]>): Workspace[] {
+export function toDomainWorkspaces(dtos: WorkspaceDto[], perspectivesMap: Map<string, Perspective[]>): Workspace[] {
   return dtos.map(dto => toDomainWorkspace(dto, perspectivesMap.get(dto.id) || []));
 }
 

@@ -21,7 +21,7 @@ export interface Project {
   createdAt: Date;
 }
 
-export interface PerspectiveConfig {
+export interface Perspective {
   id: string;
   name: string;
   icon: string;
@@ -31,7 +31,7 @@ export interface PerspectiveConfig {
 export interface Workspace {
   id: string;
   name: string;
-  perspectives: PerspectiveConfig[];
+  perspectives: Perspective[];
   createdAt: Date;
 }
 
@@ -46,7 +46,7 @@ export interface WorkspaceData {
   id: string;
   name: string;
   projects: readonly Project[];
-  perspectives: readonly PerspectiveConfig[];
+  perspectives: readonly Perspective[];
 }
 
 // UI-specific types can stay here

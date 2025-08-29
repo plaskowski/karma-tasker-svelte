@@ -1,4 +1,4 @@
-import type { Project, PerspectiveConfig, WorkspaceData } from '$lib/types';
+import type { Project, Perspective, WorkspaceData } from '$lib/types';
 
 /**
  * Pure helper functions for working with WorkspaceData.
@@ -37,15 +37,15 @@ export function hasProject(workspace: WorkspaceData, projectId: string): boolean
 }
 
 // Perspectives
-export function getPerspectives(workspace: WorkspaceData): readonly PerspectiveConfig[] {
+export function getPerspectives(workspace: WorkspaceData): readonly Perspective[] {
   return workspace.perspectives;
 }
 
-export function findPerspective(workspace: WorkspaceData, perspectiveId: string): PerspectiveConfig | undefined {
+export function findPerspective(workspace: WorkspaceData, perspectiveId: string): Perspective | undefined {
   return workspace.perspectives.find(perspective => perspective.id === perspectiveId);
 }
 
-export function getDefaultPerspective(workspace: WorkspaceData): PerspectiveConfig | undefined {
+export function getDefaultPerspective(workspace: WorkspaceData): Perspective | undefined {
   return workspace.perspectives[0];
 }
 

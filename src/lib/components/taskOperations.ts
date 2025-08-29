@@ -1,4 +1,4 @@
-import type { Task, Project, PerspectiveConfig } from '$lib/types';
+import type { Task, Project, Perspective } from '$lib/types';
 
 /**
  * Task operations utilities for sorting and grouping tasks.
@@ -7,7 +7,7 @@ import type { Task, Project, PerspectiveConfig } from '$lib/types';
 
 export function sortTasksByPerspectiveThenOrder(
   tasks: Task[], 
-  perspectives: readonly PerspectiveConfig[]
+  perspectives: readonly Perspective[]
 ): Task[] {
   return [...tasks].sort((a, b) => {
     const perspA = a.perspectiveId ? getPerspectiveOrder(a.perspectiveId, perspectives) : Number.MAX_SAFE_INTEGER;
@@ -47,7 +47,7 @@ export function groupTasksByProject(tasks: Task[]): Map<string, Task[]> {
 
 export function groupTasksByPerspective(
   tasks: Task[], 
-  perspectives: readonly PerspectiveConfig[]
+  perspectives: readonly Perspective[]
 ): Map<string, Task[]> {
   const groups = new Map<string, Task[]>();
   
@@ -69,7 +69,7 @@ export function groupTasksByPerspective(
 }
 
 // Helper functions
-function getPerspectiveOrder(id: string, perspectives: readonly PerspectiveConfig[]): number {
+function getPerspectiveOrder(id: string, perspectives: readonly Perspective[]): number {
   const index = perspectives.findIndex(p => p.id === id);
   return index >= 0 ? index : Number.MAX_SAFE_INTEGER;
 }
@@ -78,6 +78,6 @@ function getProject(id: string, projects: readonly Project[]): Project | undefin
   return projects.find(p => p.id === id);
 }
 
-function getDefaultPerspective(perspectives: readonly PerspectiveConfig[]): PerspectiveConfig | undefined {
+function getDefaultPerspective(perspectives: readonly Perspective[]): Perspective | undefined {
   return perspectives[0];
 }
