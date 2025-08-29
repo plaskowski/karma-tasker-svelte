@@ -42,7 +42,7 @@
 - [ ] remove TaskDetailsDialog?
 - [ ] remove fallback to 'inbox' (we can't hardcode it)
 - [ ] get rid of all fallbaks on projectId and perspectiveId
-- [ ] make NavigationService.updateURL() take NavigationState
+- [x] make NavigationService.updateURL() take NavigationState
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?
 - [ ] name default project better
 - [ ] no big chunks of code in svelte files inside the markup part
