@@ -164,7 +164,7 @@ export function toUpdateTaskRequest(
     title: updates.title,
     description: clearFields?.includes('description')
       ? clearField<string>()
-      : updates.description 
+      : updates.description !== undefined
       ? updateField(updates.description)
       : undefined,
     project_id: updates.projectId,
