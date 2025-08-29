@@ -1,20 +1,21 @@
 import { db } from '$lib/api/persistence/localStorageAdapter';
 import { toDomainWorkspace, toDomainTasks, toDomainProjects, toDomainPerspective } from '$lib/api/persistence/mappers';
-import type { Workspace, Task, WorkspaceData } from '$lib/types';
+import type { Workspace, Task, WorkspaceData, WorkspaceInfo } from '$lib/types';
 
 export class WorkspaceService {
 	/**
 	 * Load all workspaces with their perspectives
 	 */
-	async getAllWorkspaces(): Promise<Workspace[]> {
+    async getAllWorkspaces(): Promise<WorkspaceInfo[]> {
 		const workspaceDtos = await db.getWorkspaces();
 		
-		const allWorkspaces: Workspace[] = [];
+        const allWorkspaces: WorkspaceInfo[] = [];
 		for (const dto of workspaceDtos) {
 			const wsApi = db.forWorkspace(dto.id);
 			const perspectiveDtos = await wsApi.getPerspectives();
 			const perspectives = perspectiveDtos.map(toDomainPerspective);
-			allWorkspaces.push(toDomainWorkspace(dto, perspectives));
+            const ws = toDomainWorkspace(dto, perspectives);
+            allWorkspaces.push({ id: ws.id, name: ws.name });
 		}
 		
 		return allWorkspaces;
@@ -23,9 +24,9 @@ export class WorkspaceService {
 	/**
 	 * Build WorkspaceContext for a specific workspace ID
 	 */
-    async getWorkspaceById(workspaceId: string, allWorkspaces: Workspace[]): Promise<{ workspaceContext: WorkspaceData; tasks: Task[] }> {
+    async getWorkspaceById(workspaceId: string, allWorkspaces: WorkspaceInfo[]): Promise<{ workspaceContext: WorkspaceData; tasks: Task[] }> {
 		// Get current workspace
-		const currentWorkspace = allWorkspaces.find(w => w.id === workspaceId);
+        const currentWorkspace = allWorkspaces.find(w => w.id === workspaceId);
 		if (!currentWorkspace) {
 			throw new Error(`Workspace ${workspaceId} not found`);
 		}

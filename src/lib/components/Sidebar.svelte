@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Zap, Inbox, Calendar, Clock, Users, Archive, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
-    import type { ViewType, NavigationState, Workspace, WorkspaceData } from '$lib/types';
+    import type { ViewType, NavigationState, WorkspaceInfo, WorkspaceData } from '$lib/types';
 
 	interface Props {
         navigation: NavigationState;
         workspace: WorkspaceData;
-		workspaces: Workspace[];
+        workspaces: WorkspaceInfo[];
 		onNavigate: (view: ViewType, options?: { perspectiveId?: string; projectId?: string }) => void;
 		onWorkspaceChange: (workspaceId: string) => void;
 	}

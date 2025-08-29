@@ -7,10 +7,10 @@ export const load: PageLoad = async ({ url }) => {
 	const urlParams = NavigationService.parseURLParams(url.searchParams);
 	
 	// Load all workspaces first
-	const allWorkspaces = await workspaceService.getAllWorkspaces();
+    const allWorkspaces = await workspaceService.getAllWorkspaces();
 	
 	// Determine current workspace ID from URL, localStorage, or default to first
-	let workspaceId: string;
+    let workspaceId: string;
 	if (urlParams.workspace && allWorkspaces.some(w => w.id === urlParams.workspace)) {
 		workspaceId = urlParams.workspace;
 		// Save to localStorage for next time
@@ -26,7 +26,7 @@ export const load: PageLoad = async ({ url }) => {
 			workspaceId = savedWorkspace;
 		} else {
 			// Default to first workspace
-			workspaceId = allWorkspaces[0]?.id || 'personal';
+            workspaceId = allWorkspaces[0]?.id || 'personal';
 		}
 	}
 	

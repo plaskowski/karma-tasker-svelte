@@ -1,4 +1,4 @@
-import type { Task, Project, Workspace } from '$lib/types';
+import type { Task, Project, Workspace, WorkspaceInfo } from '$lib/types';
 
 export const mockTasks: Task[] = [
   {

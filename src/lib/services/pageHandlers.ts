@@ -1,6 +1,6 @@
 import type { ViewType, WorkspaceData } from '$lib/types';
 import { getDefaultPerspective, hasPerspective } from '$lib/helpers/workspaceHelpers';
-import type { Workspace } from '$lib/types';
+import type { WorkspaceInfo } from '$lib/types';
 import { NavigationService } from './navigation';
 
 /**
@@ -126,7 +126,7 @@ export function handleKeyboardShortcut(
  * Handles refresh/reset action for development
  */
 export function handleRefresh(
-	workspaces: Workspace[],
+    workspaces: WorkspaceInfo[],
     workspaceContext: WorkspaceData,
 	resetToInitialState: () => void
 ) {

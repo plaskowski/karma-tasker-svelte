@@ -35,6 +35,12 @@ export interface Workspace {
   createdAt: Date;
 }
 
+// Lightweight metadata for listing/selecting workspaces
+export interface WorkspaceInfo {
+  id: string;
+  name: string;
+}
+
 // Plain data shape used across the app instead of a class-based context
 export interface WorkspaceData {
   id: string;
