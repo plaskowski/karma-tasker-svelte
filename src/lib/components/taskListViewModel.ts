@@ -1,5 +1,5 @@
-import type { Task, ViewType, NavigationState } from '$lib/types';
-import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
+import type { Task, ViewType, NavigationState, WorkspaceData } from '$lib/types';
+import { findPerspective, findProject, getPerspectives, getProjects } from '$lib/helpers/workspaceHelpers';
 import { get, type Writable } from 'svelte/store';
 import { 
   sortTasksByPerspectiveThenOrder, 
@@ -11,7 +11,7 @@ import {
 // View state - raw data from props and stores
 export interface TaskListViewState {
   tasks: Task[];
-  workspace: WorkspaceContext;
+  workspace: WorkspaceData;
   navigation: NavigationState;
   showCompleted: boolean;
 }
@@ -38,11 +38,11 @@ export function createTaskListViewModel(
 ) {
   // Resolve current entities from IDs using workspace methods
   const currentProject = state.navigation.currentProjectId 
-    ? state.workspace.getProject(state.navigation.currentProjectId) 
+    ? findProject(state.workspace, state.navigation.currentProjectId) 
     : undefined;
     
   const currentPerspective = state.navigation.currentPerspectiveId
-    ? state.workspace.getPerspective(state.navigation.currentPerspectiveId)
+    ? findPerspective(state.workspace, state.navigation.currentPerspectiveId)
     : undefined;
 
   // Use workspace methods for sorting
@@ -80,36 +80,36 @@ export function createTaskListViewModel(
         groups.push({
           id: 'actions',
           title: 'Actions',
-          tasks: sortTasksByPerspectiveThenOrder(ungroupedTasks, state.workspace.getPerspectives())
+          tasks: sortTasksByPerspectiveThenOrder(ungroupedTasks, getPerspectives(state.workspace))
         });
       }
 
       // Add project groups sorted by project order
       const sortedProjects = [...tasksByProject.entries()].sort(([idA], [idB]) => {
-        const projectA = state.workspace.getProject(idA);
-        const projectB = state.workspace.getProject(idB);
+        const projectA = findProject(state.workspace, idA);
+        const projectB = findProject(state.workspace, idB);
         return (projectA?.order ?? 0) - (projectB?.order ?? 0);
       });
 
       sortedProjects.forEach(([projectId, tasks]) => {
-        const project = state.workspace.getProject(projectId);
+        const project = findProject(state.workspace, projectId);
         groups.push({
           id: `project-${projectId}`,
           title: project?.name || projectId,
-          tasks: sortTasksByPerspectiveThenOrder(tasks, state.workspace.getPerspectives())
+          tasks: sortTasksByPerspectiveThenOrder(tasks, getPerspectives(state.workspace))
         });
       });
     } else if (groupingType === 'perspective') {
       // Group by perspective (used in project and project-all views)
-      const tasksByPerspective = groupTasksByPerspective(activeTasks, state.workspace.getPerspectives());
+      const tasksByPerspective = groupTasksByPerspective(activeTasks, getPerspectives(state.workspace));
       
       // Add perspective groups in order
-      state.workspace.getPerspectives().forEach(perspective => {
+      getPerspectives(state.workspace).forEach(perspective => {
         const tasks = tasksByPerspective.get(perspective.id) || [];
         if (tasks.length > 0) {
           // Sort differently based on specific view
           const sortedTasks = state.navigation.currentView === 'project-all' 
-            ? sortTasksByProjectThenOrder(tasks, state.workspace.getProjects())
+            ? sortTasksByProjectThenOrder(tasks, getProjects(state.workspace))
             : tasks.sort((a, b) => a.order - b.order);
           
           groups.push({
@@ -140,11 +140,11 @@ export function createTaskListViewModel(
     },
 
     get projects() {
-      return state.workspace.getProjects();
+      return getProjects(state.workspace);
     },
 
     get perspectives() {
-      return state.workspace.getPerspectives();
+      return getPerspectives(state.workspace);
     },
 
     get showCompleted() {
@@ -226,13 +226,13 @@ export function createTaskListViewModel(
     // Helper methods that take whole task
     getTaskProjectName(task: Task): string {
       if (!task.projectId) return '';
-      const project = state.workspace.getProject(task.projectId);
+      const project = findProject(state.workspace, task.projectId);
       return project?.name || task.projectId;
     },
 
     getTaskPerspectiveName(task: Task): string {
       if (!task.perspective) return '';
-      const perspective = state.workspace.getPerspective(task.perspective);
+      const perspective = findPerspective(state.workspace, task.perspective);
       return perspective?.name || '';
     },
 

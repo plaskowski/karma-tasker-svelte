@@ -31,23 +31,23 @@ export const load: PageLoad = async ({ url }) => {
 	}
 	
 	// Load workspace-specific data
-	const { workspaceContext, tasks } = await workspaceService.getWorkspaceById(workspaceId, allWorkspaces);
+    const { workspaceContext, tasks } = await workspaceService.getWorkspaceById(workspaceId, allWorkspaces);
 	
 	// Initialize navigation state from URL (no store updates needed)
-	const navigationState = NavigationService.initializeNavigationFromURL(
-		urlParams,
-		workspaceContext
-	);
+    const navigationState = NavigationService.initializeNavigationFromURL(
+        urlParams,
+        { perspectives: workspaceContext.perspectives, projects: workspaceContext.projects }
+    );
 	
 	// Filter tasks based on navigation
 	let workspaceTasks = tasks; // Already filtered by workspace
 	
 	// Apply view-specific filtering
-	if (navigationState.currentView === 'perspective') {
+    if (navigationState.currentView === 'perspective') {
 		const perspectiveId = navigationState.currentPerspectiveId;
-		const perspectives = workspaceContext.getPerspectives();
-		const isKnownPerspective = perspectives.some(p => p.id === perspectiveId);
-		const effectivePerspective = isKnownPerspective ? perspectiveId : perspectives[0]?.id;
+        const perspectives = workspaceContext.perspectives;
+        const isKnownPerspective = perspectives.some(p => p.id === perspectiveId);
+        const effectivePerspective = isKnownPerspective ? perspectiveId : perspectives[0]?.id;
 		workspaceTasks = workspaceTasks.filter(task => task.perspective === effectivePerspective);
 	} else if (navigationState.currentView === 'project') {
 		if (navigationState.currentProjectId) {

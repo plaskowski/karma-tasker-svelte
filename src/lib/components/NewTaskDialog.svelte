@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
+    import { createEventDispatcher } from 'svelte';
+    import type { WorkspaceData } from '$lib/types';
 
 	interface Props {
 		open: boolean;
-		workspace: WorkspaceContext;
+        workspace: WorkspaceData;
 		defaultProjectId?: string;
 		defaultPerspectiveId?: string;
 		onAddTask: (task: any) => Promise<void>;
@@ -26,7 +26,7 @@
         if (open) {
             // Use provided default or first project
             if (!projectId) {
-                const defaultProject = workspace.getDefaultProject();
+                const defaultProject = workspace.projects[0];
                 projectId = defaultProjectId || defaultProject?.id;
             }
             // Use provided default perspective
@@ -42,14 +42,14 @@
 		submitting = true;
 		try {
         // Pick first project of the current workspace if none selected
-        const defaultProject = workspace.getDefaultProject();
+        const defaultProject = workspace.projects[0];
         const finalProjectId = projectId || defaultProject?.id;
 
 			await onAddTask({
 				title: title.trim(),
 				description: description.trim() || undefined,
 				projectId: finalProjectId,
-				workspaceId: workspace.getId(),
+                workspaceId: workspace.id,
 				completed: false,
 				perspective: perspective || undefined, // undefined = inbox
 			});
@@ -143,7 +143,7 @@
 						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
 					>
 						<option value="">Inbox (Unprocessed)</option>
-						{#each workspace.getPerspectives() as p}
+                        {#each workspace.perspectives as p}
 							{#if p.id !== 'inbox'}
 								<option value={p.id}>{p.name}</option>
 							{/if}

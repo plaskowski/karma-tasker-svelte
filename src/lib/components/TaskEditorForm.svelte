@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { Task } from '$lib/types';
-	import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
+import type { Task, WorkspaceData } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
     import { ChevronDown } from 'lucide-svelte';
     import { onMount } from 'svelte';
@@ -14,7 +13,7 @@
 
     interface Props {
         task: Task;
-        workspace: WorkspaceContext;
+        workspace: WorkspaceData;
         // Optional custom save handler; when provided, creation/update is delegated to parent
         save?: (fields: SaveFields) => Promise<void>;
         // Optional update handler for when save is not provided
@@ -33,9 +32,9 @@
 	let submitting = $state(false);
 
     const titleId = `title-${task.id}`;
-	const descId = `desc-${task.id}`;
-	const projectIdId = `project-${task.id}`;
-	const perspectiveId = `perspective-${task.id}`;
+    const descId = `desc-${task.id}`;
+    const projectIdId = `project-${task.id}`;
+    const perspectiveId = `perspective-${task.id}`;
 
     // Autofocus the title input when the editor mounts (create or edit)
     let titleInput = $state<HTMLInputElement | null>(null);
@@ -125,7 +124,7 @@
 					{#if !projectId}
 						<option value="" disabled selected>Project</option>
 					{/if}
-					{#each workspace.getProjects() as p}
+                    {#each workspace.projects as p}
 						<option value={p.id}>{p.name}</option>
 					{/each}
 				</select>
@@ -138,7 +137,7 @@
 					class="w-full appearance-none px-3 pr-12 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
 				>
-                    {#each workspace.getPerspectives() as p}
+                    {#each workspace.perspectives as p}
                         <option value={p.id}>{p.name}</option>
                     {/each}
 				</select>

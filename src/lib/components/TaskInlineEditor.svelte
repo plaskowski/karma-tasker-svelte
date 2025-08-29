@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { Task } from '$lib/types';
-	import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
+import type { Task, WorkspaceData } from '$lib/types';
 	import TaskEditorForm from './TaskEditorForm.svelte';
 	import { createEventDispatcher } from 'svelte';
 	
@@ -15,9 +14,9 @@
 		return () => window.removeEventListener('keydown', handleKey);
 	});
 
-	interface Props {
+    interface Props {
 		task: Task;
-		workspace: WorkspaceContext;
+        workspace: WorkspaceData;
 		onUpdateTask: (id: string, updates: Partial<Task>) => Promise<void>;
 	}
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Task } from '$lib/types';
+import type { Task, WorkspaceData } from '$lib/types';
 	import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import UiTaskItem from './UiTaskItem.svelte';
@@ -7,7 +7,7 @@
 	import { createTaskListViewModel } from './taskListViewModel';
 	import type { TaskListViewState, TaskListActions } from './taskListViewModel';
 
-	interface Props extends TaskListViewState, TaskListActions {}
+interface Props extends TaskListViewState, TaskListActions {}
 
 	let {
 		tasks,
@@ -25,9 +25,9 @@
 	const inlineEditingTaskId = writable<string | null>(null);
 	
 	// Build view state - no complex expressions
-	const viewState = $derived<TaskListViewState>({
+    const viewState = $derived<TaskListViewState>({
 		tasks,
-		workspace,
+        workspace: workspace as WorkspaceData,
 		navigation,
 		showCompleted
 	});

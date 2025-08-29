@@ -14,7 +14,7 @@
 		handleWorkspaceChange as handleWorkspaceChangeService,
 		handleKeyboardShortcut
 	} from '$lib/services/pageHandlers';
-	import type { Task, ViewType } from '$lib/types';
+    import type { Task, ViewType } from '$lib/types';
 	import type { PageData } from './$types';
 
 	// Component receives data from +page.ts
@@ -32,7 +32,7 @@
 
 
 	// Handle navigation changes
-	function handleNavigate(view: ViewType, options?: { perspectiveId?: string; projectId?: string }) {
+    function handleNavigate(view: ViewType, options?: { perspectiveId?: string; projectId?: string }) {
 		handleNavigateService(view, workspaceContext, options);
 	}
 
@@ -45,13 +45,13 @@
 	// Initialize keyboard navigation on mount
 	onMount(() => {
 		// Ensure URL stays in sync with navigation state
-		NavigationService.updateURLIfChanged(
+        NavigationService.updateURLIfChanged(
 			$page.url.searchParams,
 			currentNavigation.currentView,
 			{
 				perspectiveId: currentNavigation.currentPerspectiveId,
 				projectId: currentNavigation.currentProjectId,
-				workspaceId: workspaceContext.getId()
+                workspaceId: workspaceContext.id
 			}
 		);
 
@@ -68,7 +68,7 @@
 		try {
 			const task = currentTasks.find(t => t.id === id);
 			if (task) {
-				const wsApi = db.forWorkspace(workspaceContext.getId());
+            const wsApi = db.forWorkspace(workspaceContext.id);
 				await wsApi.updateTask(id, { completed: !task.completed });
 				// Reload data after task update
 				await invalidateAll();
@@ -155,7 +155,7 @@
             onTaskToggle={handleTaskToggle}
 
             onUpdateTask={async (id, updates) => {
-                const wsApi = db.forWorkspace(workspaceContext.getId());
+                const wsApi = db.forWorkspace(workspaceContext.id);
                 await wsApi.updateTask(id, toUpdateTaskRequest(updates));
                 await invalidateAll();
             }}
@@ -184,9 +184,9 @@
                             }
                             const taskData = TaskService.prepareTaskForCreation(
                                 { title, description, projectId, perspective },
-                                workspaceContext.getId()
+                                workspaceContext.id
                             );
-                            const wsApi = db.forWorkspace(workspaceContext.getId());
+                            const wsApi = db.forWorkspace(workspaceContext.id);
                             await wsApi.createTask(toCreateTaskRequest(taskData));
                             // Reload data after task creation
                             await invalidateAll();

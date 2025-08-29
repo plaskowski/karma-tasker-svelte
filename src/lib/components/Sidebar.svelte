@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { Zap, Inbox, Calendar, Clock, Users, Archive, User, Gamepad2, Heart, Briefcase, Home, Activity, Building, ChevronDown } from 'lucide-svelte';
-	import type { ViewType, NavigationState, Workspace } from '$lib/types';
-	import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
+    import type { ViewType, NavigationState, Workspace, WorkspaceData } from '$lib/types';
 
 	interface Props {
-		navigation: NavigationState;
-		workspace: WorkspaceContext;
+        navigation: NavigationState;
+        workspace: WorkspaceData;
 		workspaces: Workspace[];
 		onNavigate: (view: ViewType, options?: { perspectiveId?: string; projectId?: string }) => void;
 		onWorkspaceChange: (workspaceId: string) => void;
@@ -43,7 +42,7 @@
 
     // Dynamic sidebar items: configured perspectives + All (last)
     const sidebarItems = $derived([
-        ...workspace.getPerspectives()
+        ...workspace.perspectives
             .map(p => ({
                 id: p.id,
                 label: p.name,
@@ -52,8 +51,8 @@
         { id: 'all', label: 'All', icon: Clock }
     ]);
 
-	function getProjectIcon(projectId: string) {
-		const project = workspace.getProject(projectId);
+    function getProjectIcon(projectId: string) {
+        const project = workspace.projects.find(p => p.id === projectId);
 		if (!project) return Briefcase; // Fallback if project not found
 		return getIconComponent(project.icon); // icon is now required
 	}
@@ -74,8 +73,8 @@
 	let workspaceDropdownContainerRef = $state<HTMLDivElement | null>(null);
 	
 	// Get current workspace name
-	function getCurrentWorkspaceName() {
-		return workspace.getName();
+    function getCurrentWorkspaceName() {
+        return workspace.name;
 	}
 
 	// Get dynamic header title based on current context
@@ -135,7 +134,7 @@
 							onWorkspaceChange(ws.id);
 							isWorkspaceDropdownOpen = false;
 						}}
-						class="w-full btn btn-base text-base text-left rounded-none {ws.id === workspace.getId() ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
+                        class="w-full btn btn-base text-base text-left rounded-none {ws.id === workspace.id ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : 'bg-transparent text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
 					>
 						<Icon class="w-5 h-5" />
 						<span>{ws.name}</span>
@@ -168,7 +167,7 @@
 	<div class="flex-1 p-4">
 		<h3 class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">Projects</h3>
 		<div class="space-y-1">
-			{#each workspace.getProjects() as project}
+            {#each workspace.projects as project}
 				{@const ProjectIcon = getProjectIcon(project.id)}
 				<button
 					onclick={() => onNavigate('project', { projectId: project.id })}
