@@ -176,6 +176,7 @@
 - [x] Make Project.icon required field - Removed all fallbacks, enforced type safety
 
 ### Canon Migration Follow-ups (Completed)
+- [x] clean up MIGRATION comments
 - [x] prepareTaskForCreation#projectId and perspective are now required - no defaults needed
 - [x] filterTasksByNavigation removed - unused function, filtering happens in derived store
 - [x] task.projectId is now a required field in Task type

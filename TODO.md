@@ -9,8 +9,7 @@
   - X what is in src/lib/styles/tokens.css?
   - X showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
 - [ ] persistence refactor follow-ups:
-  - clean up MIGRATION comments
-  - how to clear optional field in update request
+  - how to clear optional@ field in update request
   - why update requests dont hold entity ID
   - Workspace type vs WorkspaceContext
 
