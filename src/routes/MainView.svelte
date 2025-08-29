@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import { db } from '$lib/api/persistence/localStorageAdapter';
-	import { toUpdateTaskRequest, toCreateTaskRequest } from '$lib/api/persistence/mappers';
-	import { invalidateAll } from '$app/navigation';
 	import TaskList from '$lib/components/TaskList.svelte';
 	import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
 	import { NavigationService } from '$lib/services/navigation';
@@ -12,7 +9,15 @@
 	import type { Task } from '$lib/types';
 	import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	interface MainViewProps {
+		data: PageData;
+		onTaskToggle: (id: string) => Promise<void>;
+		onUpdateTask: (id: string, updates: any) => Promise<void>;
+		onCreateTask: (taskData: { title: string; description?: string; projectId: string; perspective: string }) => Promise<void>;
+		onRefresh: () => Promise<void>;
+	}
+
+	let { data, onTaskToggle, onUpdateTask, onCreateTask, onRefresh }: MainViewProps = $props();
 	
 	let workspaceContext = $derived(data.workspaceContext);
 	let currentTasks = $derived(data.tasks);
@@ -37,12 +42,7 @@
 
 	async function handleTaskToggle(id: string) {
 		try {
-			const task = currentTasks.find(t => t.id === id);
-			if (task) {
-				const wsApi = db.forWorkspace(workspaceContext.id);
-				await wsApi.updateTask(id, { completed: !task.completed });
-				await invalidateAll();
-			}
+			await onTaskToggle(id);
 		} catch (error) {
 			console.error('Failed to toggle task:', error);
 		}
@@ -65,7 +65,7 @@
 	}
 
 	async function handleRefresh() {
-		await invalidateAll();
+		await onRefresh();
 	}
 
 	$effect(() => {
@@ -93,11 +93,7 @@
 		workspace={workspaceContext}
 		navigation={currentNavigation}
 		onTaskToggle={handleTaskToggle}
-		onUpdateTask={async (id, updates) => {
-			const wsApi = db.forWorkspace(workspaceContext.id);
-			await wsApi.updateTask(id, toUpdateTaskRequest(updates));
-			await invalidateAll();
-		}}
+		onUpdateTask={onUpdateTask}
 		showCompleted={true}
 		onNewTask={handleNewTask}
 		onCleanup={handleCleanup}
@@ -119,13 +115,7 @@
 						if (!projectId || !perspective) {
 							throw new Error('Project and perspective are required for task creation');
 						}
-						const taskData = TaskService.prepareTaskForCreation(
-							{ title, description, projectId, perspectiveId: perspective },
-							workspaceContext.id
-						);
-						const wsApi = db.forWorkspace(workspaceContext.id);
-						await wsApi.createTask(toCreateTaskRequest(taskData));
-						await invalidateAll();
+						await onCreateTask({ title, description, projectId, perspective });
 						handleCreateClose();
 					}}
 					on:close={handleCreateClose}
