@@ -46,6 +46,11 @@
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?
 - [ ] name default project better
 - [ ] no big chunks of code in svelte files inside the markup part
+- [ ] fold this into one property "badgeText":
+  showProjectBadge={vm.showProjectBadge}
+  showPerspectiveBadge={vm.showPerspectiveBadge}
+  perspectiveName={vm.getTaskPerspectiveName(task)}
+  projectName={vm.getTaskProjectName(task)}
 - [ ] ...
 
 ### Technical improvements
