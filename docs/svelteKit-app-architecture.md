@@ -129,3 +129,66 @@ html[data-theme="dark"] { --bg: #111; --fg: #eee; }
 * **Features live in `routes/`; reusables in `lib/`.**
 * **Use layouts for structure and data; use stores only for cross-route state.**
 * **Lean on file-based routing and automatic code-splitting.**
+
+---
+
+## Appendix A - State Levels & Stores
+
+### 1. Component-local state
+
+* Plain variables in `.svelte`.
+* Use when logic is simple and doesn’t need reuse.
+
+### 2. Feature/route-scoped instance store
+
+* A **factory function** that returns a store + methods.
+* Lives in `lib/features/<feature>/<feature>.store.ts`.
+* Created inside the component/route → scoped, not global.
+
+```ts
+// lib/features/cart/cart.store.ts
+import { writable, derived } from 'svelte/store';
+import { addItemApi, removeItemApi } from '$lib/services/cart';
+
+export function createCart(initial = []) {
+  const items = writable(initial);
+  const total = derived(items, $ => $.reduce((s, x) => s + x.price, 0));
+
+  async function add(it) { await addItemApi(it); items.update(v => [...v, it]); }
+  async function remove(id) { await removeItemApi(id); items.update(v => v.filter(i => i.id !== id)); }
+
+  return { items, total, add, remove };
+}
+```
+
+```svelte
+<script lang="ts">
+  import { createCart } from '$lib/features/cart/cart.store';
+  const cart = createCart([]);
+</script>
+
+{#each $cart.items as it}
+  <li>{it.name}</li>
+{/each}
+<button on:click={() => cart.add({id: 'x', name: 'New'})}>Add</button>
+```
+
+### 3. Global singleton store
+
+* Exported from `lib/stores/*` and imported everywhere.
+* Use sparingly for **true cross-route state** (auth, theme).
+* Avoid for per-page data.
+
+```ts
+// lib/stores/session.ts
+import { writable, derived } from 'svelte/store';
+export const user = writable<{ id: string; name: string } | null>(null);
+export const isSignedIn = derived(user, (u) => !!u);
+```
+
+**Rule:**
+
+* Singleton store → only for global, cross-route state.
+* Instance store → for complex local/feature logic.
+* `load()` → for route data fetching.
+
