@@ -1,14 +1,36 @@
 <script lang="ts">
 	import { Plus, RefreshCw, Zap } from 'lucide-svelte';
+	import type { NavigationState, WorkspaceData } from '$lib/types';
+	import { findPerspective, findProject } from '$lib/helpers/workspaceHelpers';
 	
 	interface Props {
-		title: string;
+		navigation: NavigationState;
+		workspace: WorkspaceData;
 		onNewTask?: () => void;
 		onCleanup?: () => void;
 		onRefresh?: () => void;
 	}
 	
-	let { title, onNewTask, onCleanup, onRefresh }: Props = $props();
+	let { navigation, workspace, onNewTask, onCleanup, onRefresh }: Props = $props();
+	
+	// Derive the title based on current navigation
+	const title = $derived.by(() => {
+		const currentProject = navigation.currentProjectId 
+			? findProject(workspace, navigation.currentProjectId) 
+			: undefined;
+			
+		const currentPerspective = navigation.currentPerspectiveId
+			? findPerspective(workspace, navigation.currentPerspectiveId)
+			: undefined;
+
+		switch (navigation.currentView) {
+			case 'all': return 'All';
+			case 'project-all': return 'All Projects';
+			case 'project': return currentProject?.name || 'Project';
+			case 'perspective': return currentPerspective?.name || 'Tasks';
+			default: return 'Tasks';
+		}
+	});
 </script>
 
 <div class="topbar">
