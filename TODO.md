@@ -4,13 +4,6 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] ARCHITECTURAL: src/routes/+page.ts should load all data for WorkspaceContext
-  - Currently the app uses stores for data management (client-side state)
-  - Converting to load-based data would require refactoring ALL components
-  - Components currently subscribe to stores directly ($workspaceContext, $tasks, etc.)
-  - Would need to pass props through entire component tree instead
-  - This is a major architectural change, not a simple refactor
-  - Current store-based approach is valid for SPA with client-side persistence
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
