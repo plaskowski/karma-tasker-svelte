@@ -10,7 +10,7 @@
   - X showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
 - [ ] persistence refactor follow-ups:
   - [x] how to clear optional field in update request (implemented wrapper pattern)
-  - why update requests dont hold entity ID
+  - [x] why update requests dont hold entity ID
   - Workspace type vs WorkspaceContext
 
 ### Further Refactor
