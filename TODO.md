@@ -26,6 +26,7 @@
 
 ### Further Refactor
 - [ ] rename perspective to perspectiveId everywhere
+- [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
 - [x] what happened to passing Navigation to task list view model? (it's passed as navigation prop and spread into viewState)
 - [x] view props should extend its view state - or maybe should be unified? (unified - Props now extends TaskListViewState and TaskListActions)
@@ -36,7 +37,6 @@
 - [ ] maybe we should separate entities loaded from repository and build fully funcitonal models (e.g. workspace containg projects and perpsectives etc.)
 - [ ] switchWorkspace should not be in workspaceService as it is UI logic
 - [ ] emit events instead of onXXXX props?
-- [ ] [extract main pane](docs/action-plans/component-extraction-plan.md)
 - [x] review remaining direct store accesses (created navigation store as single source of truth)
 - [ ] move out filteredTasks logic
 - [ ] merge $currentWorkspace into $workspaceContext
