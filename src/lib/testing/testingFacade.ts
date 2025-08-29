@@ -3,9 +3,9 @@
  * This avoids direct localStorage manipulation from tests
  */
 
-import { get } from 'svelte/store';
-import { tasks, updateTask } from '$lib/stores/taskStore';
+import { db } from '$lib/api/persistence/localStorageAdapter';
 import type { Task } from '$lib/types';
+import { toDomainTasks } from '$lib/api/persistence/mappers';
 
 export interface TestingFacade {
 	// Clear all data for empty state testing
@@ -20,37 +20,38 @@ export interface TestingFacade {
 export function createTestingFacade(): TestingFacade {
 	return {
 		clearAllData() {
-			localStorage.clear();
-			// Set empty tasks to ensure clean state
-			localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
+			// Clear all karma-tasks localStorage keys
+			const keysToRemove: string[] = [];
+			for (let i = 0; i < localStorage.length; i++) {
+				const key = localStorage.key(i);
+				if (key && key.startsWith('karma-tasks-')) {
+					keysToRemove.push(key);
+				}
+			}
+			keysToRemove.forEach(key => localStorage.removeItem(key));
 		},
 		async completeHalfOfTasks(workspaceId?: string, perspective?: string) {
-			// Get current tasks from store
-			const allTasks = get(tasks);
+			// Default to personal workspace if not specified
+			const targetWorkspace = workspaceId || 'personal';
+			
+			// Get tasks from the workspace
+			const wsApi = db.forWorkspace(targetWorkspace);
+			const taskDtos = await wsApi.getTasks();
+			const allTasks = toDomainTasks(taskDtos, targetWorkspace);
 			
 			// Filter tasks based on criteria
 			let eligibleTasks = allTasks.filter((task: Task) => {
 				if (task.completed) return false; // Skip already completed
-				
-				if (workspaceId && task.workspaceId !== workspaceId) return false;
 				if (perspective && task.perspective !== perspective) return false;
-				
 				return true;
 			});
-			
-			// If no specific filters, just take uncompleted tasks from personal workspace
-			if (!workspaceId && !perspective && eligibleTasks.length === 0) {
-				eligibleTasks = allTasks.filter((task: Task) => 
-					!task.completed && task.workspaceId === 'personal'
-				);
-			}
 			
 			// Complete half of the eligible tasks (at least 1, round up)
 			const tasksToComplete = Math.max(1, Math.ceil(eligibleTasks.length / 2));
 			
-			// Complete the tasks using the actual service
+			// Complete the tasks using the API
 			for (let i = 0; i < tasksToComplete && i < eligibleTasks.length; i++) {
-				await updateTask(eligibleTasks[i].id, { completed: true });
+				await wsApi.updateTask(eligibleTasks[i].id, { completed: true });
 			}
 		}
 	};

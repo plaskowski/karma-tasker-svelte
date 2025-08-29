@@ -71,7 +71,8 @@
 		try {
 			const task = currentTasks.find(t => t.id === id);
 			if (task) {
-				await db.updateTask(id, { completed: !task.completed });
+				const wsApi = db.forWorkspace(workspaceContext.getId());
+				await wsApi.updateTask(id, { completed: !task.completed });
 				// Reload data after task update
 				await invalidateAll();
 			}
@@ -168,7 +169,8 @@
 
             onTaskClick={handleTaskClick}
             onUpdateTask={async (id, updates) => {
-                await db.updateTask(id, toUpdateTaskRequest(updates));
+                const wsApi = db.forWorkspace(workspaceContext.getId());
+                await wsApi.updateTask(id, toUpdateTaskRequest(updates));
                 await invalidateAll();
             }}
 
@@ -198,7 +200,8 @@
                                 { title, description, projectId, perspective },
                                 workspaceContext.getId()
                             );
-                            await db.createTask(toCreateTaskRequest(taskData));
+                            const wsApi = db.forWorkspace(workspaceContext.getId());
+                            await wsApi.createTask(toCreateTaskRequest(taskData));
                             // Reload data after task creation
                             await invalidateAll();
                             // Close after successful create
@@ -220,7 +223,8 @@
 	task={selectedTask} 
 	workspace={workspaceContext}
 	onUpdateTask={async (id, updates) => {
-		await db.updateTask(id, toUpdateTaskRequest(updates));
+		const wsApi = db.forWorkspace(workspaceContext.getId());
+		await wsApi.updateTask(id, toUpdateTaskRequest(updates));
 		await invalidateAll();
 	}}
 	on:close={handleTaskDetailsClose} 

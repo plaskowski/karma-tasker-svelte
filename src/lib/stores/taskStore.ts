@@ -4,22 +4,14 @@
 // - Repositories (lib/server/repositories/): Data persistence layer
 // - Domain logic (lib/domain/): Business rules and validations
 
-import { writable, derived, get } from 'svelte/store';
-import { persisted } from 'svelte-persisted-store';
-import type { Task, Project, Workspace } from '$lib/types';
-import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
+import { writable } from 'svelte/store';
+import type { Task } from '$lib/types';
+import { db } from '$lib/api/persistence/localStorageAdapter';
+import { toDomainTask } from '$lib/api/persistence/mappers';
 
-// Storage key for persistence
-const STORAGE_KEY = 'karma-tasks';
-
-// MIGRATION: These persisted stores should move to repositories
-// lib/server/repositories/taskRepository.ts
-// lib/server/repositories/projectRepository.ts
-// lib/server/repositories/workspaceRepository.ts
-// Core data stores with persistence
-export const tasks = persisted(STORAGE_KEY + '-tasks', mockTasks);
-export const projects = persisted(STORAGE_KEY + '-projects', mockProjects);
-export const workspaces = persisted(STORAGE_KEY + '-workspaces', mockWorkspaces);
+// MIGRATION: These stores are deprecated - data should be loaded via +page.ts
+// Only keeping them temporarily for backward compatibility with existing code
+// TODO: Remove these once all components use data from load function
 
 // MIGRATION: UI state stores - these can stay here or move to lib/stores/uiStore.ts
 export const showCompleted = writable(false);
@@ -28,62 +20,48 @@ export const showCompleted = writable(false);
 // The service will handle business logic and call the repository for persistence
 // Mock API functions with realistic delays
 export async function addTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>): Promise<Task> {
-  // MIGRATION: Delay simulation moves to repository layer
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+  // Use workspace-scoped API
+  const wsApi = db.forWorkspace(taskData.workspaceId);
+  const taskDto = await wsApi.createTask({
+    title: taskData.title,
+    description: taskData.description || undefined,
+    project_id: taskData.projectId,
+    perspective: taskData.perspective
+  });
   
-  // Simulate occasional failures (10% chance)
-  if (Math.random() < 0.1) {
-    throw new Error('Network error');
-  }
-
-  // MIGRATION: Order calculation logic moves to lib/domain/task/logic.ts
-  // Calculate the next order value for this project
-  const currentTasks = get(tasks);
-  const projectTasks = currentTasks.filter(t => t.projectId === taskData.projectId);
-  const maxOrder = projectTasks.reduce((max, task) => Math.max(max, task.order || 0), 0);
-
-  const newTask: Task = {
-    ...taskData,
-    id: crypto.randomUUID(),
-    order: maxOrder + 1,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  tasks.update(taskList => [...taskList, newTask]);
-  return newTask;
+  return toDomainTask(taskDto, taskData.workspaceId);
 }
 
 // MIGRATION: Move to lib/services/taskService.ts
-export async function updateTask(id: string, updates: Partial<Task>): Promise<Task> {
-  await new Promise(resolve => setTimeout(resolve, 200));
+export async function updateTask(id: string, updates: Partial<Task>, workspaceId: string): Promise<Task> {
+  // Map domain updates to DTO format
+  const updateRequest: any = {};
+  if (updates.title !== undefined) updateRequest.title = updates.title;
+  if (updates.description !== undefined) updateRequest.description = updates.description;
+  if (updates.projectId !== undefined) updateRequest.project_id = updates.projectId;
+  if (updates.perspective !== undefined) updateRequest.perspective = updates.perspective;
+  if (updates.completed !== undefined) updateRequest.completed = updates.completed;
+  if (updates.order !== undefined) updateRequest.order = updates.order;
   
-  tasks.update(taskList => 
-    taskList.map(task => 
-      task.id === id 
-        ? { ...task, ...updates, updatedAt: new Date() }
-        : task
-    )
-  );
-
-  const updatedTask = get(tasks).find(t => t.id === id)!;
-  return updatedTask;
+  const wsApi = db.forWorkspace(workspaceId);
+  const taskDto = await wsApi.updateTask(id, updateRequest);
+  return toDomainTask(taskDto, workspaceId);
 }
 
 // MIGRATION: Move to lib/services/taskService.ts
-export async function deleteTask(id: string): Promise<void> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
-  tasks.update(taskList => taskList.filter(task => task.id !== id));
+export async function deleteTask(id: string, workspaceId: string): Promise<void> {
+  const wsApi = db.forWorkspace(workspaceId);
+  await wsApi.deleteTask(id);
 }
 
 
 // MIGRATION: Move to lib/services/taskService.ts
-export async function toggleTaskComplete(id: string): Promise<void> {
-  const task = get(tasks).find(t => t.id === id);
-  if (task) {
-    await updateTask(id, { completed: !task.completed });
+export async function toggleTaskComplete(id: string, workspaceId: string): Promise<void> {
+  // Get the current task state from the database
+  const wsApi = db.forWorkspace(workspaceId);
+  const taskDto = await wsApi.getTask(id);
+  if (taskDto) {
+    await wsApi.updateTask(id, { completed: !taskDto.completed });
   }
 }
 
@@ -96,16 +74,19 @@ export async function toggleTaskComplete(id: string): Promise<void> {
 // lib/services/devService.ts or lib/utils/dev.ts
 // Function to reset app to initial state (temporary for development)
 export function resetToInitialState() {
-  // Reset all stores to initial mock data
-  tasks.set(mockTasks);
-  projects.set(mockProjects);
-  workspaces.set(mockWorkspaces);
-  
-  // Reset current state to first workspace
-  if (!mockWorkspaces[0]?.id) {
-    throw new Error('No workspaces defined. At least one workspace is required.');
+  // Clear all localStorage keys with karma-tasks prefix
+  if (typeof window !== 'undefined') {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('karma-tasks-')) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    // Force reload to refresh the UI
+    window.location.reload();
   }
-  // Note: Workspace is now managed through URL params, not a store
-  showCompleted.set(false);
 }
 

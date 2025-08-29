@@ -4,12 +4,15 @@ import type {
   WorkspaceDto, 
   ProjectDto, 
   TaskDto,
+  PerspectiveDto,
   CreateWorkspaceRequest,
   UpdateWorkspaceRequest,
   CreateProjectRequest,
   UpdateProjectRequest,
   CreateTaskRequest,
   UpdateTaskRequest,
+  CreatePerspectiveRequest,
+  UpdatePerspectiveRequest,
   TaskFilter
 } from './index';
 import { toWorkspaceDto, toProjectDto, toTaskDto } from './mappers';
@@ -37,38 +40,78 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     this.initializeIfEmpty();
   }
 
-  private getStorageKey(collection: string): string {
+  private getStorageKey(collection: string, workspaceId?: string): string {
+    if (workspaceId) {
+      return `${this.prefix}-${workspaceId}-${collection}`;
+    }
     return `${this.prefix}-${collection}`;
   }
 
-  private loadCollection<T>(collection: string): T[] {
-    const key = this.getStorageKey(collection);
+  private loadCollection<T>(collection: string, workspaceId?: string): T[] {
+    const key = this.getStorageKey(collection, workspaceId);
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : [];
   }
 
-  private saveCollection<T>(collection: string, data: T[]): void {
-    const key = this.getStorageKey(collection);
+  private saveCollection<T>(collection: string, data: T[], workspaceId?: string): void {
+    const key = this.getStorageKey(collection, workspaceId);
     localStorage.setItem(key, JSON.stringify(data));
+  }
+
+  private async delay(): Promise<void> {
+    // Simulate network delay (200-500ms)
+    await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
   }
 
   private initializeIfEmpty(): void {
     const workspaces = this.loadCollection<WorkspaceDto>('workspaces');
-    const projects = this.loadCollection<ProjectDto>('projects');
-    const tasks = this.loadCollection<TaskDto>('tasks');
 
     if (workspaces.length === 0) {
-      // Convert mock data to DTOs
-      const workspaceDtos = mockWorkspaces.map(toWorkspaceDto);
+      // Initialize workspaces
+      const workspaceDtos = mockWorkspaces.map(w => ({
+        id: w.id,
+        name: w.name,
+        created_at: w.createdAt.toISOString()
+      }));
       this.saveCollection('workspaces', workspaceDtos);
-    }
-    if (projects.length === 0) {
-      const projectDtos = mockProjects.map(toProjectDto);
-      this.saveCollection('projects', projectDtos);
-    }
-    if (tasks.length === 0) {
-      const taskDtos = mockTasks.map(toTaskDto);
-      this.saveCollection('tasks', taskDtos);
+      
+      // Initialize perspectives, projects and tasks for each workspace
+      mockWorkspaces.forEach(workspace => {
+        // Store perspectives for this workspace
+        const workspacePerspectives = workspace.perspectives.map(p => ({
+          id: p.id,
+          name: p.name,
+          icon: p.icon,
+          order: p.order || 0
+        }));
+        this.saveCollection('perspectives', workspacePerspectives, workspace.id);
+        
+        const workspaceProjects = mockProjects
+          .filter(p => p.workspaceId === workspace.id)
+          .map(p => ({
+            id: p.id,
+            name: p.name,
+            order: p.order,
+            icon: p.icon,
+            created_at: p.createdAt.toISOString()
+          }));
+        this.saveCollection('projects', workspaceProjects, workspace.id);
+        
+        const workspaceTasks = mockTasks
+          .filter(t => t.workspaceId === workspace.id)
+          .map(t => ({
+            id: t.id,
+            title: t.title,
+            description: t.description,
+            project_id: t.projectId,
+            perspective: t.perspective,
+            completed: t.completed,
+            order: t.order,
+            created_at: t.createdAt.toISOString(),
+            updated_at: t.updatedAt.toISOString()
+          }));
+        this.saveCollection('tasks', workspaceTasks, workspace.id);
+      });
     }
   }
 
@@ -81,7 +124,8 @@ export class LocalStorageAdapter implements WorkspaceAPI {
   async getWorkspace(id: string): Promise<WorkspaceDto | null> {
     await this.delay();
     const workspaces = this.loadCollection<WorkspaceDto>('workspaces');
-    return workspaces.find(w => w.id === id) || null;
+    const workspace = workspaces.find(w => w.id === id);
+    return workspace || null;
   }
 
   async createWorkspace(request: CreateWorkspaceRequest): Promise<WorkspaceDto> {
@@ -90,16 +134,16 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     const newWorkspace: WorkspaceDto = {
       id: crypto.randomUUID(),
       name: request.name,
-      perspectives: (request.perspectives || []).map((p, index) => ({
-        id: crypto.randomUUID(),
-        name: p.name,
-        icon: p.icon,
-        order: p.order ?? index
-      })),
       created_at: new Date().toISOString()
     };
     workspaces.push(newWorkspace);
     this.saveCollection('workspaces', workspaces);
+    
+    // Initialize empty collections for the new workspace
+    this.saveCollection('perspectives', [], newWorkspace.id);
+    this.saveCollection('projects', [], newWorkspace.id);
+    this.saveCollection('tasks', [], newWorkspace.id);
+    
     return newWorkspace;
   }
 
@@ -113,8 +157,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     
     const updated: WorkspaceDto = {
       ...workspaces[index],
-      ...(request.name !== undefined && { name: request.name }),
-      ...(request.perspectives !== undefined && { perspectives: request.perspectives })
+      ...(request.name !== undefined && { name: request.name })
     };
     
     workspaces[index] = updated;
@@ -128,47 +171,23 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     const filtered = workspaces.filter(w => w.id !== id);
     this.saveCollection('workspaces', filtered);
     
-    // Also delete related projects and tasks
-    const projects = this.loadCollection<ProjectDto>('projects');
-    const tasks = this.loadCollection<TaskDto>('tasks');
-    
-    const filteredProjects = projects.filter(p => p.workspace_id !== id);
-    const filteredTasks = tasks.filter(t => t.workspace_id !== id);
-    
-    this.saveCollection('projects', filteredProjects);
-    this.saveCollection('tasks', filteredTasks);
+    // Delete workspace-specific storage keys
+    localStorage.removeItem(this.getStorageKey('perspectives', id));
+    localStorage.removeItem(this.getStorageKey('projects', id));
+    localStorage.removeItem(this.getStorageKey('tasks', id));
   }
 
-  // Project operations
-  async getProjects(options?: QueryOptions<ProjectFilter>): Promise<ProjectDto[]> {
+  // Project operations (these are global methods, workspace-scoped access is through forWorkspace)
+  async getProjects(): Promise<ProjectDto[]> {
     await this.delay();
-    let projects = this.loadCollection<ProjectDto>('projects');
-    
-    // Apply filters
-    if (options?.filter) {
-      const { workspace_id } = options.filter;
-      if (workspace_id) {
-        projects = projects.filter(p => p.workspace_id === workspace_id);
-      }
+    // Aggregate projects from all workspaces
+    const workspaces = this.loadCollection<WorkspaceDto>('workspaces');
+    const allProjects: ProjectDto[] = [];
+    for (const workspace of workspaces) {
+      const projects = this.loadCollection<ProjectDto>('projects', workspace.id);
+      allProjects.push(...projects);
     }
-    
-    // Apply sorting
-    if (options?.sort) {
-      for (const sort of options.sort) {
-        projects.sort((a, b) => {
-          const aVal = (a as any)[sort.field];
-          const bVal = (b as any)[sort.field];
-          const diff = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-          return sort.direction === 'asc' ? diff : -diff;
-        });
-      }
-    }
-    
-    return projects;
-  }
-
-  async getProjectsByWorkspace(workspaceId: string): Promise<ProjectDto[]> {
-    return this.getProjects({ filter: { workspace_id: workspaceId } });
+    return allProjects;
   }
 
   async getProject(id: string): Promise<ProjectDto | null> {
@@ -177,20 +196,18 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     return projects.find(p => p.id === id) || null;
   }
 
-  async createProject(request: CreateProjectRequest): Promise<ProjectDto> {
+  async createProject(workspaceId: string, request: CreateProjectRequest): Promise<ProjectDto> {
     await this.delay();
-    const projects = this.loadCollection<ProjectDto>('projects');
+    const projects = this.loadCollection<ProjectDto>('projects', workspaceId);
     
     // Calculate order if not provided
     let order = request.order;
     if (order === undefined) {
-      const workspaceProjects = projects.filter(p => p.workspace_id === request.workspace_id);
-      order = workspaceProjects.reduce((max, p) => Math.max(max, p.order), 0) + 1;
+      order = projects.reduce((max, p) => Math.max(max, p.order), 0) + 1;
     }
     
     const newProject: ProjectDto = {
       id: crypto.randomUUID(),
-      workspace_id: request.workspace_id,
       name: request.name,
       order,
       icon: request.icon,
@@ -198,13 +215,13 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     };
     
     projects.push(newProject);
-    this.saveCollection('projects', projects);
+    this.saveCollection('projects', projects, workspaceId);
     return newProject;
   }
 
-  async updateProject(id: string, request: UpdateProjectRequest): Promise<ProjectDto> {
+  async updateProject(workspaceId: string, id: string, request: UpdateProjectRequest): Promise<ProjectDto> {
     await this.delay();
-    const projects = this.loadCollection<ProjectDto>('projects');
+    const projects = this.loadCollection<ProjectDto>('projects', workspaceId);
     const index = projects.findIndex(p => p.id === id);
     if (index === -1) {
       throw new Error(`Project ${id} not found`);
@@ -218,68 +235,33 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     };
     
     projects[index] = updated;
-    this.saveCollection('projects', projects);
+    this.saveCollection('projects', projects, workspaceId);
     return updated;
   }
 
-  async deleteProject(id: string): Promise<void> {
+  async deleteProject(workspaceId: string, id: string): Promise<void> {
     await this.delay();
-    const projects = this.loadCollection<ProjectDto>('projects');
+    const projects = this.loadCollection<ProjectDto>('projects', workspaceId);
     const filtered = projects.filter(p => p.id !== id);
-    this.saveCollection('projects', filtered);
+    this.saveCollection('projects', filtered, workspaceId);
     
     // Also delete related tasks
-    const tasks = this.loadCollection<TaskDto>('tasks');
+    const tasks = this.loadCollection<TaskDto>('tasks', workspaceId);
     const filteredTasks = tasks.filter(t => t.project_id !== id);
-    this.saveCollection('tasks', filteredTasks);
+    this.saveCollection('tasks', filteredTasks, workspaceId);
   }
 
-  // Task operations
-  async getTasks(options?: QueryOptions<TaskFilter>): Promise<TaskDto[]> {
+  // Task operations (these are global methods, workspace-scoped access is through forWorkspace)
+  async getTasks(): Promise<TaskDto[]> {
     await this.delay();
-    let tasks = this.loadCollection<TaskDto>('tasks');
-    
-    // Apply filters
-    if (options?.filter) {
-      const { workspace_id, project_id, perspective, completed, search } = options.filter;
-      if (workspace_id) {
-        tasks = tasks.filter(t => t.workspace_id === workspace_id);
-      }
-      if (project_id) {
-        tasks = tasks.filter(t => t.project_id === project_id);
-      }
-      if (perspective) {
-        tasks = tasks.filter(t => t.perspective === perspective);
-      }
-      if (completed !== undefined) {
-        tasks = tasks.filter(t => t.completed === completed);
-      }
-      if (search) {
-        const searchLower = search.toLowerCase();
-        tasks = tasks.filter(t => 
-          t.title.toLowerCase().includes(searchLower) ||
-          t.description?.toLowerCase().includes(searchLower)
-        );
-      }
+    // Aggregate tasks from all workspaces
+    const workspaces = this.loadCollection<WorkspaceDto>('workspaces');
+    const allTasks: TaskDto[] = [];
+    for (const workspace of workspaces) {
+      const tasks = this.loadCollection<TaskDto>('tasks', workspace.id);
+      allTasks.push(...tasks);
     }
-    
-    // Apply sorting
-    if (options?.sort) {
-      for (const sort of options.sort) {
-        tasks.sort((a, b) => {
-          const aVal = (a as any)[sort.field];
-          const bVal = (b as any)[sort.field];
-          const diff = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-          return sort.direction === 'asc' ? diff : -diff;
-        });
-      }
-    }
-    
-    return tasks;
-  }
-
-  async getTasksByWorkspace(workspaceId: string): Promise<TaskDto[]> {
-    return this.getTasks({ filter: { workspace_id: workspaceId } });
+    return allTasks;
   }
 
   async getTask(id: string): Promise<TaskDto | null> {
@@ -288,7 +270,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     return tasks.find(t => t.id === id) || null;
   }
 
-  async createTask(request: CreateTaskRequest): Promise<TaskDto> {
+  async createTask(workspaceId: string, request: CreateTaskRequest): Promise<TaskDto> {
     await this.delay();
     
     // Simulate occasional failures (10% chance)
@@ -296,7 +278,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
       throw new Error('Network error');
     }
     
-    const tasks = this.loadCollection<TaskDto>('tasks');
+    const tasks = this.loadCollection<TaskDto>('tasks', workspaceId);
     
     // Calculate the next order value for this project
     const projectTasks = tasks.filter(t => t.project_id === request.project_id);
@@ -306,7 +288,6 @@ export class LocalStorageAdapter implements WorkspaceAPI {
       id: crypto.randomUUID(),
       title: request.title,
       description: request.description,
-      workspace_id: request.workspace_id,
       project_id: request.project_id,
       perspective: request.perspective,
       completed: false,
@@ -316,13 +297,13 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     };
     
     tasks.push(newTask);
-    this.saveCollection('tasks', tasks);
+    this.saveCollection('tasks', tasks, workspaceId);
     return newTask;
   }
 
-  async updateTask(id: string, request: UpdateTaskRequest): Promise<TaskDto> {
+  async updateTask(workspaceId: string, id: string, request: UpdateTaskRequest): Promise<TaskDto> {
     await this.delay();
-    const tasks = this.loadCollection<TaskDto>('tasks');
+    const tasks = this.loadCollection<TaskDto>('tasks', workspaceId);
     const index = tasks.findIndex(t => t.id === id);
     if (index === -1) {
       throw new Error(`Task ${id} not found`);
@@ -342,15 +323,114 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     };
     
     tasks[index] = updated;
-    this.saveCollection('tasks', tasks);
+    this.saveCollection('tasks', tasks, workspaceId);
     return updated;
   }
 
-  async deleteTask(id: string): Promise<void> {
+  async deleteTask(workspaceId: string, id: string): Promise<void> {
     await this.delay();
-    const tasks = this.loadCollection<TaskDto>('tasks');
+    const tasks = this.loadCollection<TaskDto>('tasks', workspaceId);
     const filtered = tasks.filter(t => t.id !== id);
-    this.saveCollection('tasks', filtered);
+    this.saveCollection('tasks', filtered, workspaceId);
+  }
+  // Workspace-scoped API implementation
+  forWorkspace(workspaceId: string): WorkspaceScopedAPI {
+    const adapter = this;
+    return {
+      workspaceId,
+      
+      // Perspective operations
+      async getPerspectives(): Promise<PerspectiveDto[]> {
+        await adapter.delay();
+        return adapter.loadCollection<PerspectiveDto>('perspectives', workspaceId);
+      },
+      
+      async getPerspective(perspectiveId: string): Promise<PerspectiveDto | null> {
+        const perspectives = await this.getPerspectives();
+        return perspectives.find(p => p.id === perspectiveId) || null;
+      },
+      
+      async createPerspective(request: CreatePerspectiveRequest): Promise<PerspectiveDto> {
+        throw new Error('Not implemented');
+      },
+      
+      async updatePerspective(perspectiveId: string, request: UpdatePerspectiveRequest): Promise<PerspectiveDto> {
+        throw new Error('Not implemented');
+      },
+      
+      async deletePerspective(perspectiveId: string): Promise<void> {
+        throw new Error('Not implemented');
+      },
+      
+      // Project operations
+      async getProjects(): Promise<ProjectDto[]> {
+        await adapter.delay();
+        return adapter.loadCollection<ProjectDto>('projects', workspaceId);
+      },
+      
+      async getProject(projectId: string): Promise<ProjectDto | null> {
+        const projects = await this.getProjects();
+        return projects.find(p => p.id === projectId) || null;
+      },
+      
+      async createProject(request: CreateProjectRequest): Promise<ProjectDto> {
+        return adapter.createProject(workspaceId, request);
+      },
+      
+      async updateProject(projectId: string, request: UpdateProjectRequest): Promise<ProjectDto> {
+        return adapter.updateProject(workspaceId, projectId, request);
+      },
+      
+      async deleteProject(projectId: string): Promise<void> {
+        return adapter.deleteProject(workspaceId, projectId);
+      },
+      
+      // Task operations
+      async getTasks(filter?: TaskFilter): Promise<TaskDto[]> {
+        await adapter.delay();
+        let tasks = adapter.loadCollection<TaskDto>('tasks', workspaceId);
+        
+        // Apply filters
+        if (filter) {
+          const { project_id, perspective, completed, search } = filter;
+          if (project_id) {
+            tasks = tasks.filter(t => t.project_id === project_id);
+          }
+          if (perspective) {
+            tasks = tasks.filter(t => t.perspective === perspective);
+          }
+          if (completed !== undefined) {
+            tasks = tasks.filter(t => t.completed === completed);
+          }
+          if (search) {
+            const searchLower = search.toLowerCase();
+            tasks = tasks.filter(t => 
+              t.title.toLowerCase().includes(searchLower) ||
+              t.description?.toLowerCase().includes(searchLower)
+            );
+          }
+        }
+        
+        return tasks;
+      },
+      
+      async getTask(taskId: string): Promise<TaskDto | null> {
+        const tasks = await this.getTasks();
+        return tasks.find(t => t.id === taskId) || null;
+      },
+      
+      async createTask(request: CreateTaskRequest): Promise<TaskDto> {
+        return adapter.createTask(workspaceId, request);
+      },
+      
+      async updateTask(taskId: string, request: UpdateTaskRequest): Promise<TaskDto> {
+        return adapter.updateTask(workspaceId, taskId, request);
+      },
+      
+      async deleteTask(taskId: string): Promise<void> {
+        return adapter.deleteTask(workspaceId, taskId);
+      }
+    };
   }
 }
 

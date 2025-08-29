@@ -1,25 +1,25 @@
 import type { PageLoad } from './$types';
 import { NavigationService } from '$lib/services/navigation';
 import { db } from '$lib/api/persistence/localStorageAdapter';
-import { toDomainWorkspaces, toDomainTasks, toDomainProjects } from '$lib/api/persistence/mappers';
+import { toDomainWorkspace, toDomainTasks, toDomainProjects, toDomainPerspective } from '$lib/api/persistence/mappers';
 import { WorkspaceContextImpl } from '$lib/models/WorkspaceContext';
-import type { Task, Project, PerspectiveConfig, Workspace } from '$lib/types';
+import type { Workspace } from '$lib/types';
 
 export const load: PageLoad = async ({ url }) => {
 	// Parse URL parameters
 	const urlParams = NavigationService.parseURLParams(url.searchParams);
 	
-	// Load all data from persistence API and map to domain models
-	const [workspaceDtos, taskDtos, projectDtos] = await Promise.all([
-		db.getWorkspaces(),
-		db.getTasks(),
-		db.getProjects()
-	]);
+	// Load workspaces first
+	const workspaceDtos = await db.getWorkspaces();
 	
-	// Convert DTOs to domain models
-	const allWorkspaces = toDomainWorkspaces(workspaceDtos);
-	const allTasks = toDomainTasks(taskDtos);
-	const allProjects = toDomainProjects(projectDtos);
+	// Convert workspace DTOs to domain models with perspectives
+	const allWorkspaces: Workspace[] = [];
+	for (const dto of workspaceDtos) {
+		const wsApi = db.forWorkspace(dto.id);
+		const perspectiveDtos = await wsApi.getPerspectives();
+		const perspectives = perspectiveDtos.map(toDomainPerspective);
+		allWorkspaces.push(toDomainWorkspace(dto, perspectives));
+	}
 	
 	// Determine current workspace from URL or localStorage fallback
 	let workspaceId: string;
@@ -48,10 +48,17 @@ export const load: PageLoad = async ({ url }) => {
 		throw new Error(`Workspace ${workspaceId} not found`);
 	}
 	
-	// Filter projects and perspectives for current workspace
-	const workspaceProjectsData = allProjects
-		.filter(project => project.workspaceId === workspaceId)
+	// Load workspace-specific data
+	const wsApi = db.forWorkspace(workspaceId);
+	const [projectDtos, taskDtos] = await Promise.all([
+		wsApi.getProjects(),
+		wsApi.getTasks()
+	]);
+	
+	// Convert to domain models
+	const workspaceProjectsData = toDomainProjects(projectDtos, workspaceId)
 		.sort((a, b) => a.order - b.order);
+	const allTasks = toDomainTasks(taskDtos, workspaceId);
 	
 	const workspacePerspectivesData = (currentWorkspace.perspectives || [])
 		.slice()
@@ -71,7 +78,7 @@ export const load: PageLoad = async ({ url }) => {
 	);
 	
 	// Filter tasks based on navigation
-	let workspaceTasks = allTasks.filter(task => task.workspaceId === workspaceId);
+	let workspaceTasks = allTasks; // Already filtered by workspace
 	
 	// Apply view-specific filtering
 	if (navigationState.currentView === 'perspective') {
