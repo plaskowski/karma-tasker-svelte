@@ -1,0 +1,127 @@
+import type { Task } from '$lib/types';
+import type { NavigationState } from '$lib/stores/navigationStore';
+import type { WorkspaceContext } from '$lib/stores/workspaceContext';
+
+export class TaskService {
+	/**
+	 * Creates a new task with defaults based on current context
+	 */
+	static createNewTaskWithDefaults(
+		workspaceContext: WorkspaceContext,
+		navigation: NavigationState
+	): Task {
+		return {
+			id: 'new',
+			title: '',
+			description: '',
+			completed: false,
+			projectId: workspaceContext.getEffectiveProjectId(navigation),
+			perspective: workspaceContext.getEffectivePerspectiveId(navigation),
+			workspaceId: workspaceContext.getId(),
+			order: 0, // Will be calculated when task is actually saved
+			createdAt: new Date(),
+			updatedAt: new Date()
+		};
+	}
+
+	/**
+	 * Validates task data before saving
+	 */
+	static validateTask(task: Partial<Task>): { valid: boolean; errors: string[] } {
+		const errors: string[] = [];
+
+		if (!task.title || task.title.trim().length === 0) {
+			errors.push('Task title is required');
+		}
+
+		if (!task.workspaceId) {
+			errors.push('Workspace ID is required');
+		}
+
+		if (!task.perspective) {
+			errors.push('Perspective is required');
+		}
+
+		return {
+			valid: errors.length === 0,
+			errors
+		};
+	}
+
+	/**
+	 * Prepares task data for creation
+	 */
+	static prepareTaskForCreation(
+		taskData: {
+			title: string;
+			description?: string;
+			projectId?: string | null;
+			perspective?: string;
+		},
+		workspaceId: string,
+		defaultPerspectiveId: string
+	): Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'> {
+		return {
+			title: taskData.title,
+			description: taskData.description || '',
+			projectId: taskData.projectId || null,
+			workspaceId: workspaceId,
+			completed: false,
+			perspective: taskData.perspective || defaultPerspectiveId
+		};
+	}
+
+	/**
+	 * Calculates the next order value for a new task
+	 */
+	static calculateNextOrder(tasks: Task[]): number {
+		if (tasks.length === 0) return 0;
+		const maxOrder = Math.max(...tasks.map(t => t.order || 0));
+		return maxOrder + 1;
+	}
+
+	/**
+	 * Filters tasks based on current navigation state
+	 */
+	static filterTasksByNavigation(
+		tasks: Task[],
+		navigation: NavigationState,
+		workspaceId: string
+	): Task[] {
+		// First filter by workspace
+		let filtered = tasks.filter(task => task.workspaceId === workspaceId);
+
+		// Then apply view-specific filtering
+		switch (navigation.currentView) {
+			case 'perspective':
+				if (navigation.currentPerspectiveId) {
+					filtered = filtered.filter(task => task.perspective === navigation.currentPerspectiveId);
+				}
+				break;
+				
+			case 'project':
+				if (navigation.currentProjectId) {
+					filtered = filtered.filter(task => task.projectId === navigation.currentProjectId);
+				}
+				break;
+				
+			case 'project-all':
+				// Show all tasks with any project
+				filtered = filtered.filter(task => task.projectId !== null);
+				break;
+				
+			case 'all':
+				// No additional filtering needed
+				break;
+		}
+
+		return filtered;
+	}
+
+	/**
+	 * Sorts tasks by their order property
+	 */
+	static sortTasksByOrder(tasks: Task[]): Task[] {
+		return [...tasks].sort((a, b) => (a.order || 0) - (b.order || 0));
+	}
+}

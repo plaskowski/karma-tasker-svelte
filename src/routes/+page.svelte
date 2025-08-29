@@ -1,13 +1,5 @@
-<!-- MIGRATION: This route component should be simplified:
-     - Move all business logic to services
-     - Extract URL management to a navigation service
-     - Keep only view orchestration and event handling
-     - Consider splitting into smaller sub-components
--->
 <script lang="ts">
 	import {
-		tasks,
-		projects,
 		workspaces,
 		filteredTasks,
 		toggleTaskComplete,
@@ -18,68 +10,50 @@
 	import { navigation } from '$lib/stores/navigationStore';
 	import { workspaceContext, setCurrentWorkspace } from '$lib/stores/workspaceContext';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';
-    import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
-    import TaskInlineEditor from '$lib/components/TaskInlineEditor.svelte';
-    import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
-    import type { Task } from '$lib/types';
+	import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
+	import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
+	import { NavigationService } from '$lib/services/navigation';
+	import { TaskService } from '$lib/services/tasks';
+	import type { Task, ViewType } from '$lib/types';
+	import type { PageData } from './$types';
 
-	// Modal state
-    let showTaskDetailsDialog = $state(false);
+	// Component receives data from +page.ts
+	export let data: PageData;
+
+	// UI state
+	let showTaskDetailsDialog = $state(false);
 	let selectedTask: Task | null = $state(null);
-    let showCreateEditor = $state(false);
-    let createEditorEl = $state<HTMLElement | null>(null);
+	let showCreateEditor = $state(false);
+	let createEditorEl = $state<HTMLElement | null>(null);
 
-    // MIGRATION: URL management should move to lib/services/navigationService.ts
-    // Update URL based on current state
-    function updateURL(view: import('$lib/types').ViewType, perspectiveId?: string, projectId?: string, workspaceId?: string) {
-        const params = new URLSearchParams();
-        params.set('workspace', workspaceId || $workspaceContext.getId());
-        params.set('view', view);
-        if (perspectiveId && view === 'perspective') {
-            params.set('perspective', perspectiveId);
-        }
-        if (projectId && view === 'project') {
-            params.set('project', projectId);
-        }
-        goto(`?${params.toString()}`, { replaceState: true, noScroll: true });
-    }
-
-    // Only update URL if it would change (avoid remount on initial load)
-    function updateURLIfChanged(view: import('$lib/types').ViewType, perspectiveId?: string, projectId?: string, workspaceId?: string) {
-        const params = new URLSearchParams();
-        params.set('workspace', workspaceId || $workspaceContext.getId());
-        params.set('view', view);
-        if (perspectiveId && view === 'perspective') {
-            params.set('perspective', perspectiveId);
-        }
-        if (projectId && view === 'project') {
-            params.set('project', projectId);
-        }
-        const target = params.toString();
-        const current = $page.url.searchParams.toString();
-        if (target !== current) {
-            goto(`?${target}`, { replaceState: true, noScroll: true });
-        }
-    }
 
 	// Handle navigation changes
-	function handleNavigate(view: import('$lib/types').ViewType, options?: { perspectiveId?: string; projectId?: string }) {
+	function handleNavigate(view: ViewType, options?: { perspectiveId?: string; projectId?: string }) {
 		if (view === 'perspective' && options?.perspectiveId) {
 			navigation.setPerspectiveView(options.perspectiveId);
-			updateURL(view, options.perspectiveId);
+			NavigationService.updateURL(view, {
+				perspectiveId: options.perspectiveId,
+				workspaceId: $workspaceContext.getId()
+			});
 		} else if (view === 'all') {
 			navigation.setAllView();
-			updateURL(view);
+			NavigationService.updateURL(view, {
+				workspaceId: $workspaceContext.getId()
+			});
 		} else if (view === 'project-all') {
 			navigation.setProjectAllView();
-			updateURL(view);
+			NavigationService.updateURL(view, {
+				workspaceId: $workspaceContext.getId()
+			});
 		} else if (view === 'project' && options?.projectId) {
 			navigation.setProjectView(options.projectId);
-			updateURL('project', undefined, options.projectId);
+			NavigationService.updateURL('project', {
+				projectId: options.projectId,
+				workspaceId: $workspaceContext.getId()
+			});
 		}
 	}
 
@@ -92,91 +66,56 @@
 			const firstPerspective = $workspaceContext.getDefaultPerspective();
 			if (firstPerspective) {
 				navigation.setPerspectiveView(firstPerspective.id);
-				updateURL('perspective', firstPerspective.id, undefined, workspaceId);
+				NavigationService.updateURL('perspective', {
+					perspectiveId: firstPerspective.id,
+					workspaceId: workspaceId
+				});
 			}
 		} else if ($navigation.currentView === 'perspective') {
 			// Keep current perspective if it exists in new workspace, otherwise use first
-			const perspectiveExists = $navigation.currentPerspectiveId ? $workspaceContext.hasPerspective($navigation.currentPerspectiveId) : false;
+			const perspectiveExists = $navigation.currentPerspectiveId ? 
+				$workspaceContext.hasPerspective($navigation.currentPerspectiveId) : false;
 			if (!perspectiveExists) {
 				const firstPerspective = $workspaceContext.getDefaultPerspective();
 				if (firstPerspective) {
 					navigation.setPerspectiveView(firstPerspective.id);
-					updateURL('perspective', firstPerspective.id, undefined, workspaceId);
+					NavigationService.updateURL('perspective', {
+						perspectiveId: firstPerspective.id,
+						workspaceId: workspaceId
+					});
 				}
 			} else {
-				updateURL('perspective', $navigation.currentPerspectiveId, undefined, workspaceId);
+				NavigationService.updateURL('perspective', {
+					perspectiveId: $navigation.currentPerspectiveId,
+					workspaceId: workspaceId
+				});
 			}
 		} else {
 			// Keep current view for 'all' view
-			updateURL($navigation.currentView, undefined, undefined, workspaceId);
+			NavigationService.updateURL($navigation.currentView, {
+				workspaceId: workspaceId
+			});
 		}
 	}
 
-	// Initialize view from URL parameters
+	// Initialize keyboard navigation on mount
 	onMount(() => {
-		const urlParams = $page.url.searchParams;
-		const workspaceParam = urlParams.get('workspace');
-		const view = urlParams.get('view') as import('$lib/types').ViewType;
-		const perspective = urlParams.get('perspective');
-		const project = urlParams.get('project');
-
-		// Set workspace from URL if valid, otherwise keep current
-		if (workspaceParam && $workspaces.some(w => w.id === workspaceParam)) {
-			setCurrentWorkspace(workspaceParam);
-		}
-
-		if (view && ['perspective', 'project', 'project-all', 'all'].includes(view)) {
-			// View will be set based on specific conditions below
-			
-			if (view === 'perspective') {
-				// Validate perspective exists in current workspace
-				if (perspective && $workspaceContext.hasPerspective(perspective)) {
-					navigation.setPerspectiveView(perspective);
-				} else {
-					// Use first perspective as fallback
-					const firstPerspective = $workspaceContext.getDefaultPerspective();
-					if (firstPerspective) {
-						navigation.setPerspectiveView(firstPerspective.id);
-						updateURL('perspective', firstPerspective.id);
-					}
-				}
-			} else if (view === 'project' && project) {
-				// Validate project exists in current workspace
-				if ($workspaceContext.hasProject(project)) {
-					navigation.setProjectView(project);
-				} else {
-					// Project doesn't exist, default to first perspective
-					const firstPerspective = $workspaceContext.getDefaultPerspective();
-					if (firstPerspective) {
-						navigation.setPerspectiveView(firstPerspective.id);
-						updateURL('perspective', firstPerspective.id);
-					}
-				}
-			} else if (view === 'project-all') {
-				navigation.setProjectAllView();
-			} else if (view === 'all') {
-				navigation.setAllView();
+		// Ensure URL stays in sync with navigation state
+		NavigationService.updateURLIfChanged(
+			$page.url.searchParams,
+			$navigation.currentView,
+			{
+				perspectiveId: $navigation.currentPerspectiveId,
+				projectId: $navigation.currentProjectId,
+				workspaceId: $workspaceContext.getId()
 			}
-		} else {
-			// Invalid or missing view, default to first workspace perspective
-			const firstPerspective = $workspaceContext.getDefaultPerspective();
-			if (firstPerspective) {
-				navigation.setPerspectiveView(firstPerspective.id);
-				updateURL('perspective', firstPerspective.id);
-			}
-		}
+		);
 
-		// Always update URL to ensure workspace is included
-		const finalView = $navigation.currentView;
-		const finalPerspective = $navigation.currentPerspectiveId;
-		const finalProject = $navigation.currentProjectId;
-		updateURLIfChanged(finalView, finalPerspective, finalProject);
-
-        // Add keyboard navigation
-        window.addEventListener('keydown', handleKeydown);
+		// Add keyboard navigation
+		window.addEventListener('keydown', handleKeydown);
 
 		return () => {
-            window.removeEventListener('keydown', handleKeydown);
+			window.removeEventListener('keydown', handleKeydown);
 		};
 	});
 
@@ -220,19 +159,8 @@
 	}
 	
 	// Create a new task object with defaults based on current context
-	function createNewTaskWithDefaults() {
-		return {
-			id: 'new',
-			title: '',
-			description: '',
-			completed: false,
-			projectId: $workspaceContext.getEffectiveProjectId($navigation),
-			perspective: $workspaceContext.getEffectivePerspectiveId($navigation),
-			workspaceId: $workspaceContext.getId(),
-			order: 0, // Will be calculated when task is actually saved
-			createdAt: new Date(),
-			updatedAt: new Date()
-		};
+	function createNewTaskWithDefaults(): Task {
+		return TaskService.createNewTaskWithDefaults($workspaceContext, $navigation);
 	}
 
 	// Handle refresh action
@@ -247,7 +175,10 @@
 		const firstPerspective = $workspaceContext.getDefaultPerspective();
 		if (firstPerspective) {
 			navigation.setPerspectiveView(firstPerspective.id);
-			updateURL('perspective', firstPerspective.id, undefined, firstWorkspaceId);
+			NavigationService.updateURL('perspective', {
+				perspectiveId: firstPerspective.id,
+				workspaceId: firstWorkspaceId
+			});
 		}
 	}
 
@@ -344,14 +275,12 @@
                         task={createNewTaskWithDefaults()}
                         workspace={$workspaceContext}
                         save={async ({ title, description, projectId, perspective }) => {
-                            await addTask({
-                                title,
-                                description,
-                                projectId,
-                                workspaceId: $workspaceContext.getId(),
-                                completed: false,
-                                perspective: perspective || ($workspaceContext.getDefaultPerspective()?.id ?? '')
-                            });
+                            const taskData = TaskService.prepareTaskForCreation(
+                                { title, description, projectId, perspective },
+                                $workspaceContext.getId(),
+                                $workspaceContext.getDefaultPerspective()?.id ?? ''
+                            );
+                            await addTask(taskData);
                             // Close after successful create
                             handleCreateClose();
                         }}
