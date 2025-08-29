@@ -52,6 +52,7 @@
 - [ ] make NavigationService.updateURL() take NavigationState
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?
 - [ ] name default project better
+- [ ] no big chunks of code in svelte files inside the markup part
 - [ ] ...
 
 ### Technical improvements
