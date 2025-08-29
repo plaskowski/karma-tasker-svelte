@@ -4,14 +4,11 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [x] review files sizes and split the big ones
-- [x] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
 - [ ] rewrite handleTaskToggle into handleUpdateTask
 - [ ] get rid of switching over view type
 - [ ] emit events instead of onXXXX props?
-- [x] merge $currentWorkspace into $workspaceContext
 - [ ] Add semantic labels and test IDs for Playwright automation
   - Add data-testid attributes to all interactive elements (buttons, inputs, checkboxes)
   - Add proper labels and unique IDs to form inputs
