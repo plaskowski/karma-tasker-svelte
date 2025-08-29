@@ -18,6 +18,7 @@ import type {
 import { getFieldValue, shouldUpdateField } from './fieldUpdates';
 import { toWorkspaceDto, toProjectDto, toTaskDto } from './mappers';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
+import { browser } from '$app/environment';
 
 /**
  * Configuration for the LocalStorage adapter
@@ -37,8 +38,10 @@ export class LocalStorageAdapter implements WorkspaceAPI {
   constructor(config: LocalStorageConfig = {}) {
     this.prefix = config.storagePrefix || 'karma-tasks';
     
-    // Initialize with mock data if empty
-    this.initializeIfEmpty();
+    // Initialize with mock data if empty (only in browser)
+    if (browser) {
+      this.initializeIfEmpty();
+    }
   }
 
   private getStorageKey(collection: string, workspaceId?: string): string {
@@ -49,12 +52,14 @@ export class LocalStorageAdapter implements WorkspaceAPI {
   }
 
   private loadCollection<T>(collection: string, workspaceId?: string): T[] {
+    if (!browser) return [];
     const key = this.getStorageKey(collection, workspaceId);
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : [];
   }
 
   private saveCollection<T>(collection: string, data: T[], workspaceId?: string): void {
+    if (!browser) return;
     const key = this.getStorageKey(collection, workspaceId);
     localStorage.setItem(key, JSON.stringify(data));
   }

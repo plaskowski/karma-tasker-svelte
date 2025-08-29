@@ -2,6 +2,9 @@ import type { PageLoad } from './$types';
 import { NavigationService } from '$lib/services/navigation';
 import { workspaceService } from '$lib/services/workspaceService';
 
+// This is a client-side only app - disable SSR
+export const ssr = false;
+
 export const load: PageLoad = async ({ url }) => {
 	// Parse URL parameters
 	const urlParams = NavigationService.parseURLParams(url.searchParams);

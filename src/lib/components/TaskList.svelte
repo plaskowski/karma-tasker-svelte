@@ -1,12 +1,21 @@
 <script lang="ts">
-import type { Task, WorkspaceData } from '$lib/types';
+import type { Task, WorkspaceData, NavigationState } from '$lib/types';
 import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
 	import UiTaskItem from './UiTaskItem.svelte';
 	import TaskInlineEditor from './TaskInlineEditor.svelte';
-	import { createTaskListViewModel } from './taskListViewModel';
-	import type { TaskListViewState, TaskListActions } from './taskListViewTypes';
+	import { createTaskListStore } from '$lib/features/tasklist/tasklist.store';
 
-interface Props extends TaskListViewState, TaskListActions {}
+	interface Props {
+		tasks: Task[];
+		workspace: WorkspaceData;
+		navigation: NavigationState;
+		onTaskToggle: (id: string) => void | Promise<void>;
+		onUpdateTask: (id: string, updates: Partial<Task>) => Promise<void>;
+		showCompleted?: boolean;
+		onNewTask?: () => void;
+		onCleanup?: () => void;
+		onRefresh?: () => void;
+	}
 
 	let {
 		tasks,
@@ -20,40 +29,34 @@ interface Props extends TaskListViewState, TaskListActions {}
 		onRefresh
 	}: Props = $props();
 
-    // Inline editor state using Svelte 5 runes
-    let inlineEditingTaskId: string | null = $state(null);
-	
-	// Build view state - no complex expressions
-    const viewState = $derived<TaskListViewState>({
+	// Create task list store
+	const store = createTaskListStore({
 		tasks,
-        workspace: workspace as WorkspaceData,
+		workspace,
 		navigation,
 		showCompleted
 	});
 
-	// Define actions
-	const actions: TaskListActions = {
-		onTaskToggle,
-		onUpdateTask,
-		onNewTask,
-		onCleanup,
-		onRefresh
-	};
+	// Extract derived stores
+	const { 
+		state: storeState,
+		viewTitle, 
+		activeTasks, 
+		completedTasks, 
+		taskGroups,
+		showProjectBadge,
+		showPerspectiveBadge
+	} = store;
 
-    // Create view model with inline editing state adapter
-    const vm = $derived(createTaskListViewModel(
-        viewState,
-        actions,
-        {
-            get: () => inlineEditingTaskId,
-            set: (value: string | null) => { inlineEditingTaskId = value; }
-        }
-    ));
+	// Update store when props change
+	$effect(() => {
+		store.updateData({ tasks, workspace, navigation, showCompleted });
+	});
 
 	// Close inline editor when view changes
 	$effect(() => {
 		navigation;
-		vm.closeInlineEditor();
+		store.closeInlineEditor();
 	});
 </script>
 
@@ -62,13 +65,13 @@ interface Props extends TaskListViewState, TaskListActions {}
 	<div class="topbar">
 		<div class="flex items-center justify-between w-full">
 			<div>
-				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{vm.viewTitle}</h1>
+				<h1 class="text-lg font-medium text-gray-900 dark:text-gray-100">{$viewTitle}</h1>
 			</div>
 			
 			<div class="flex items-center gap-2">
-				{#if vm.showNewTaskButton}
+				{#if onNewTask}
 					<button
-						onclick={vm.handleNewTask}
+						onclick={onNewTask}
 						class="btn btn-base btn-outline"
 						title="Create new task (N or Ctrl+N)"
 					>
@@ -77,9 +80,9 @@ interface Props extends TaskListViewState, TaskListActions {}
 					</button>
 				{/if}
 				
-				{#if vm.showCleanupButton}
+				{#if onCleanup}
 					<button
-						onclick={vm.handleCleanup}
+						onclick={onCleanup}
 						class="btn btn-base btn-outline"
 					>
 						<Zap class="w-4 h-4" />
@@ -87,9 +90,9 @@ interface Props extends TaskListViewState, TaskListActions {}
 					</button>
 				{/if}
 				
-				{#if vm.showRefreshButton}
+				{#if onRefresh}
 					<button
-						onclick={vm.handleRefresh}
+						onclick={onRefresh}
 						class="btn btn-base btn-outline"
 					>
 						<RefreshCw class="w-4 h-4" />
@@ -102,7 +105,7 @@ interface Props extends TaskListViewState, TaskListActions {}
 
 	<!-- Task List Content -->
 	<div class="flex-1 overflow-auto">
-		{#if vm.isEmpty}
+		{#if tasks.length === 0}
 			<div class="flex items-center justify-center h-full">
 				<div class="text-center text-gray-500 dark:text-gray-400">
 					<Calendar class="w-8 h-8 mx-auto mb-2 opacity-50" />
@@ -112,48 +115,56 @@ interface Props extends TaskListViewState, TaskListActions {}
 		{:else}
 			<div class="p-6 space-y-1">
 				<!-- Active task groups -->
-				{#each vm.taskGroups as group}
+				{#each $taskGroups as group}
 					<div class="mb-6">
 						<div class="mb-3">
-							<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {vm.getGroupClass(group.id)}">
+							<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {group.id.startsWith('project-') ? 'capitalize' : ''}">
 								<span>{group.title}</span>
 							</h3>
 						</div>
 						{#each group.tasks as task (task.id)}
-							{#if vm.isEditingTask(task.id)}
+							{#if store.isEditingTask(task.id)}
 								<TaskInlineEditor
 									{task}
 									{workspace}
-									onUpdateTask={vm.handleUpdateTask}
-									on:close={vm.closeInlineEditor}
+									onUpdateTask={onUpdateTask}
+									on:close={store.closeInlineEditor}
 								/>
 							{:else}
-								<UiTaskItem
-									{task}
-									onToggle={vm.handleTaskToggle}
-									showProjectBadge={vm.showProjectBadge}
-									showPerspectiveBadge={vm.showPerspectiveBadge}
-									perspectiveName={vm.getTaskPerspectiveName(task)}
-									projectName={vm.getTaskProjectName(task)}
-								/>
+								<div
+									onclick={() => store.toggleInlineEditor(task.id)}
+									onkeydown={(e) => e.key === 'Enter' && store.toggleInlineEditor(task.id)}
+									role="button"
+									tabindex="0"
+									class="cursor-pointer"
+								>
+									<UiTaskItem
+										{task}
+										onToggle={onTaskToggle}
+										showProjectBadge={$showProjectBadge}
+										showPerspectiveBadge={$showPerspectiveBadge}
+										perspectiveName={store.getTaskPerspectiveName(task)}
+										projectName={store.getTaskProjectName(task)}
+									/>
+								</div>
 							{/if}
 						{/each}
 					</div>
 				{/each}
 
 				<!-- Completed Tasks -->
-				{#if vm.shouldShowCompletedSection}
+				{#if (showCompleted || $completedTasks.length > 0) && $completedTasks.length > 0}
 					<div class="mb-3">
 						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400">Done</h3>
 					</div>
-					{#each vm.completedTasks as task (task.id)}
+					{#each $completedTasks as task (task.id)}
 						<UiTaskItem
 							{task}
-							onToggle={vm.handleTaskToggle}
-							showProjectBadge={vm.showProjectBadge}
-							showPerspectiveBadge={vm.showPerspectiveBadge}
-							perspectiveName={vm.getTaskPerspectiveName(task)}
-							projectName={vm.getTaskProjectName(task)}
+							onToggle={onTaskToggle}
+							showProjectBadge={$showProjectBadge}
+							showPerspectiveBadge={$showPerspectiveBadge}
+							perspectiveName={store.getTaskPerspectiveName(task)}
+							projectName={store.getTaskProjectName(task)}
 						/>
 					{/each}
 				{/if}
