@@ -44,15 +44,6 @@ export interface PersistenceAPI {
   createTask(request: CreateTaskRequest): Promise<TaskDto>;
   updateTask(id: string, request: UpdateTaskRequest): Promise<TaskDto>;
   deleteTask(id: string): Promise<void>;
-  
-  // Bulk operations
-  bulkUpdateTasks(updates: Array<{ id: string; data: UpdateTaskRequest }>): Promise<TaskDto[]>;
-  bulkDeleteTasks(ids: string[]): Promise<void>;
-  
-  // Utility operations
-  resetToDefaults(): Promise<void>;
-  exportData(): Promise<{ workspaces: WorkspaceDto[]; projects: ProjectDto[]; tasks: TaskDto[] }>;
-  importData(data: { workspaces: WorkspaceDto[]; projects: ProjectDto[]; tasks: TaskDto[] }): Promise<void>;
 }
 
 /**
@@ -61,14 +52,4 @@ export interface PersistenceAPI {
 export interface PersistenceConfig {
   /** Storage key prefix for localStorage adapter */
   storagePrefix?: string;
-  /** API base URL for REST adapter */
-  apiBaseUrl?: string;
-  /** Database name for IndexedDB adapter */
-  dbName?: string;
-  /** Enable optimistic updates */
-  optimisticUpdates?: boolean;
-  /** Retry failed operations */
-  retryOnFailure?: boolean;
-  /** Maximum retry attempts */
-  maxRetries?: number;
 }

@@ -70,8 +70,7 @@ export function toWorkspaceDto(workspace: Workspace): WorkspaceDto {
     id: workspace.id,
     name: workspace.name,
     perspectives: workspace.perspectives.map(toPerspectiveDto),
-    created_at: workspace.createdAt.toISOString(),
-    updated_at: new Date().toISOString()
+    created_at: workspace.createdAt.toISOString()
   };
 }
 
@@ -80,12 +79,9 @@ export function toProjectDto(project: Project): ProjectDto {
     id: project.id,
     workspace_id: project.workspaceId,
     name: project.name,
-    description: undefined,
     order: project.order,
-    is_default: false,
     icon: project.icon,
-    created_at: project.createdAt.toISOString(),
-    updated_at: new Date().toISOString()
+    created_at: project.createdAt.toISOString()
   };
 }
 
@@ -100,8 +96,7 @@ export function toTaskDto(task: Task): TaskDto {
     completed: task.completed,
     order: task.order,
     created_at: task.createdAt.toISOString(),
-    updated_at: task.updatedAt.toISOString(),
-    completed_at: task.completed ? new Date().toISOString() : undefined
+    updated_at: task.updatedAt.toISOString()
   };
 }
 
@@ -144,9 +139,7 @@ export function toCreateProjectRequest(
   return {
     workspace_id: project.workspaceId,
     name: project.name,
-    description: undefined,
     order: project.order,
-    is_default: false,
     icon: project.icon
   };
 }
@@ -156,7 +149,6 @@ export function toUpdateProjectRequest(
 ): UpdateProjectRequest {
   return {
     name: updates.name,
-    description: undefined,
     order: updates.order,
     icon: updates.icon
   };

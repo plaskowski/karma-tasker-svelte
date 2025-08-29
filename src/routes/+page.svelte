@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { DataService } from '$lib/services/dataService';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { db } from '$lib/api/localStorageAdapter';
+	import { toUpdateTaskRequest, toCreateTaskRequest } from '$lib/api/mappers';
 	import { invalidateAll } from '$app/navigation';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';
@@ -68,9 +69,12 @@
 	// Handle task interactions
 	async function handleTaskToggle(id: string) {
 		try {
-			await DataService.toggleTaskComplete(id);
-			// Reload data after task update
-			await invalidateAll();
+			const task = currentTasks.find(t => t.id === id);
+			if (task) {
+				await db.updateTask(id, { completed: !task.completed });
+				// Reload data after task update
+				await invalidateAll();
+			}
 		} catch (error) {
 			console.error('Failed to toggle task:', error);
 		}
@@ -113,8 +117,7 @@
 
 	// Handle refresh action
 	async function handleRefresh() {
-		await DataService.resetToDefaults();
-		// Reload data after refresh
+		// For now, just reload data
 		await invalidateAll();
 	}
 
@@ -165,7 +168,7 @@
 
             onTaskClick={handleTaskClick}
             onUpdateTask={async (id, updates) => {
-                await DataService.updateTask(id, updates);
+                await db.updateTask(id, toUpdateTaskRequest(updates));
                 await invalidateAll();
             }}
 
@@ -195,7 +198,7 @@
                                 { title, description, projectId, perspective },
                                 workspaceContext.getId()
                             );
-                            await DataService.createTask(taskData);
+                            await db.createTask(toCreateTaskRequest(taskData));
                             // Reload data after task creation
                             await invalidateAll();
                             // Close after successful create
@@ -217,7 +220,7 @@
 	task={selectedTask} 
 	workspace={workspaceContext}
 	onUpdateTask={async (id, updates) => {
-		await DataService.updateTask(id, updates);
+		await db.updateTask(id, toUpdateTaskRequest(updates));
 		await invalidateAll();
 	}}
 	on:close={handleTaskDetailsClose} 
