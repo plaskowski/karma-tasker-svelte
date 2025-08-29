@@ -15,6 +15,7 @@
     - Move WorkspaceContext type/implementation out of stores directory to lib/models
     - Remove setCurrentWorkspace function (modifies store state)
     - Use URL params for workspace changes instead of store updates
+- [ ] Clean up taskStore from unrelated code, maybe it is not needed anymore?
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
