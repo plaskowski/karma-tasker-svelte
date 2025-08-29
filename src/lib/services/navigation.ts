@@ -1,77 +1,73 @@
 import { goto } from '$app/navigation';
-import type { ViewType } from '$lib/types';
+import type { ViewType, NavigationState } from '$lib/types';
 
 export class NavigationService {
 	/**
 	 * Updates the URL with the given navigation parameters
 	 */
-	static updateURL(
-		view: ViewType,
-		options?: {
-			perspectiveId?: string;
-			projectId?: string;
-			workspaceId?: string;
-			replaceState?: boolean;
-			noScroll?: boolean;
-		}
-	): void {
-		const params = new URLSearchParams();
-		
-		if (options?.workspaceId) {
-			params.set('workspace', options.workspaceId);
-		}
-		
-		params.set('view', view);
-		
-		if (options?.perspectiveId && view === 'perspective') {
-			params.set('perspective', options.perspectiveId);
-		}
-		
-		if (options?.projectId && view === 'project') {
-			params.set('project', options.projectId);
-		}
-		
-		const replaceState = options?.replaceState ?? true;
-		const noScroll = options?.noScroll ?? true;
-		
-		goto(`?${params.toString()}`, { replaceState, noScroll });
-	}
+    static updateURL(
+        navigation: NavigationState,
+        options?: {
+            workspaceId?: string;
+            replaceState?: boolean;
+            noScroll?: boolean;
+        }
+    ): void {
+        const params = new URLSearchParams();
+
+        if (options?.workspaceId) {
+            params.set('workspace', options.workspaceId);
+        }
+
+        params.set('view', navigation.currentView);
+
+        if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
+            params.set('perspective', navigation.currentPerspectiveId);
+        }
+
+        if (navigation.currentView === 'project' && navigation.currentProjectId) {
+            params.set('project', navigation.currentProjectId);
+        }
+
+        const replaceState = options?.replaceState ?? true;
+        const noScroll = options?.noScroll ?? true;
+
+        goto(`?${params.toString()}`, { replaceState, noScroll });
+    }
 
 	/**
 	 * Updates the URL only if it would change from the current URL
 	 */
-	static updateURLIfChanged(
-		currentSearchParams: URLSearchParams,
-		view: ViewType,
-		options?: {
-			perspectiveId?: string;
-			projectId?: string;
-			workspaceId?: string;
-		}
-	): void {
-		const params = new URLSearchParams();
-		
-		if (options?.workspaceId) {
-			params.set('workspace', options.workspaceId);
-		}
-		
-		params.set('view', view);
-		
-		if (options?.perspectiveId && view === 'perspective') {
-			params.set('perspective', options.perspectiveId);
-		}
-		
-		if (options?.projectId && view === 'project') {
-			params.set('project', options.projectId);
-		}
-		
-		const target = params.toString();
-		const current = currentSearchParams.toString();
-		
-		if (target !== current) {
-			goto(`?${target}`, { replaceState: true, noScroll: true });
-		}
-	}
+    static updateURLIfChanged(
+        currentSearchParams: URLSearchParams,
+        navigation: NavigationState,
+        options?: {
+            workspaceId?: string;
+        }
+    ): void {
+        const params = new URLSearchParams();
+
+        if (options?.workspaceId) {
+            params.set('workspace', options.workspaceId);
+        }
+
+        params.set('view', navigation.currentView);
+
+        if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
+            params.set('perspective', navigation.currentPerspectiveId);
+        }
+
+        if (navigation.currentView === 'project' && navigation.currentProjectId) {
+            params.set('project', navigation.currentProjectId);
+        }
+
+        const target = params.toString();
+        const current = currentSearchParams.toString();
+
+        if (target !== current) {
+            goto(`?${target}`, { replaceState: true, noScroll: true });
+        }
+    }
 
 	/**
 	 * Parses URL parameters and returns navigation state

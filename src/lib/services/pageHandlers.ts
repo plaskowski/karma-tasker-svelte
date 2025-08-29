@@ -15,19 +15,25 @@ export function handleNavigate(
 	
 	// Directly update URL, which will trigger load function
 	if (view === 'perspective' && options?.perspectiveId) {
-		NavigationService.updateURL(view, {
-			perspectiveId: options.perspectiveId,
-			workspaceId
-		});
+        NavigationService.updateURL(
+            { currentView: 'perspective', currentPerspectiveId: options.perspectiveId },
+            { workspaceId }
+        );
 	} else if (view === 'all') {
-		NavigationService.updateURL(view, { workspaceId });
+        NavigationService.updateURL(
+            { currentView: 'all' },
+            { workspaceId }
+        );
 	} else if (view === 'project-all') {
-		NavigationService.updateURL(view, { workspaceId });
+        NavigationService.updateURL(
+            { currentView: 'project-all' },
+            { workspaceId }
+        );
 	} else if (view === 'project' && options?.projectId) {
-		NavigationService.updateURL('project', {
-			projectId: options.projectId,
-			workspaceId
-		});
+        NavigationService.updateURL(
+            { currentView: 'project', currentProjectId: options.projectId },
+            { workspaceId }
+        );
 	}
 }
 
@@ -44,10 +50,10 @@ export function handleWorkspaceChange(
 	if (currentNavigation.currentView === 'project' || currentNavigation.currentView === 'project-all') {
         const firstPerspective = getDefaultPerspective(workspaceContext);
 		if (firstPerspective) {
-			NavigationService.updateURL('perspective', {
-				perspectiveId: firstPerspective.id,
-				workspaceId
-			});
+            NavigationService.updateURL(
+                { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
+                { workspaceId }
+            );
 		}
 	} else if (currentNavigation.currentView === 'perspective') {
 		// Keep current perspective if it exists in new workspace, otherwise use first
@@ -56,22 +62,23 @@ export function handleWorkspaceChange(
 		if (!perspectiveExists) {
             const firstPerspective = getDefaultPerspective(workspaceContext);
 			if (firstPerspective) {
-				NavigationService.updateURL('perspective', {
-					perspectiveId: firstPerspective.id,
-					workspaceId
-				});
+                NavigationService.updateURL(
+                    { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
+                    { workspaceId }
+                );
 			}
 		} else {
-			NavigationService.updateURL('perspective', {
-				perspectiveId: currentNavigation.currentPerspectiveId,
-				workspaceId
-			});
+            NavigationService.updateURL(
+                { currentView: 'perspective', currentPerspectiveId: currentNavigation.currentPerspectiveId },
+                { workspaceId }
+            );
 		}
 	} else {
 		// Keep current view for 'all' view
-		NavigationService.updateURL(currentNavigation.currentView, {
-			workspaceId
-		});
+        NavigationService.updateURL(
+            { currentView: currentNavigation.currentView },
+            { workspaceId }
+        );
 	}
 }
 
@@ -140,9 +147,9 @@ export function handleRefresh(
 	const firstWorkspaceId = workspaces[0].id;
     const firstPerspective = getDefaultPerspective(workspaceContext);
 	if (firstPerspective) {
-		NavigationService.updateURL('perspective', {
-			perspectiveId: firstPerspective.id,
-			workspaceId: firstWorkspaceId
-		});
+        NavigationService.updateURL(
+            { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
+            { workspaceId: firstWorkspaceId }
+        );
 	}
 }

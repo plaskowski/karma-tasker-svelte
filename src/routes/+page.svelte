@@ -46,14 +46,10 @@
 	onMount(() => {
 		// Ensure URL stays in sync with navigation state
         NavigationService.updateURLIfChanged(
-			$page.url.searchParams,
-			currentNavigation.currentView,
-			{
-				perspectiveId: currentNavigation.currentPerspectiveId,
-				projectId: currentNavigation.currentProjectId,
-                workspaceId: workspaceContext.id
-			}
-		);
+            $page.url.searchParams,
+            currentNavigation,
+            { workspaceId: workspaceContext.id }
+        );
 
 		// Add keyboard navigation
 		window.addEventListener('keydown', handleKeydown);
