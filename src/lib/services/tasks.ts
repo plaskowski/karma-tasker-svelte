@@ -54,19 +54,18 @@ export class TaskService {
 		taskData: {
 			title: string;
 			description?: string;
-			projectId?: string | null;
-			perspective?: string;
+			projectId: string;
+			perspective: string;
 		},
-		workspaceId: string,
-		defaultPerspectiveId: string
+		workspaceId: string
 	): Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'> {
 		return {
 			title: taskData.title,
 			description: taskData.description,
-			projectId: taskData.projectId || undefined,
+			projectId: taskData.projectId,
 			workspaceId: workspaceId,
 			completed: false,
-			perspective: taskData.perspective || defaultPerspectiveId
+			perspective: taskData.perspective
 		};
 	}
 

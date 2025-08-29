@@ -275,10 +275,13 @@
                         task={createNewTaskWithDefaults()}
                         workspace={$workspaceContext}
                         save={async ({ title, description, projectId, perspective }) => {
+                            // Ensure projectId and perspective are always set
+                            if (!projectId || !perspective) {
+                                throw new Error('Project and perspective are required for task creation');
+                            }
                             const taskData = TaskService.prepareTaskForCreation(
                                 { title, description, projectId, perspective },
-                                $workspaceContext.getId(),
-                                $workspaceContext.getDefaultPerspective()?.id ?? 'inbox'
+                                $workspaceContext.getId()
                             );
                             await addTask(taskData);
                             // Close after successful create
