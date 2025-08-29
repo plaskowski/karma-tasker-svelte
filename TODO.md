@@ -19,9 +19,6 @@
   - Add semantic HTML roles where appropriate
   - Ensure task completion buttons are easily selectable
   - Make dropdowns and selects properly identifiable
-- [ ] use parallel routes for sidebar/main pane
-   - plus extract main pane page/layout from TaskList.svelte
-   - plus move showCreateEditor to main pane
 
 ### Clean-ups
 - [ ] fix Clear Completed button
