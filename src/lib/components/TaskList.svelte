@@ -4,7 +4,7 @@ import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
 	import UiTaskItem from './UiTaskItem.svelte';
 	import TaskInlineEditor from './TaskInlineEditor.svelte';
 	import { createTaskListViewModel } from './taskListViewModel';
-	import type { TaskListViewState, TaskListActions } from './taskListViewModel';
+	import type { TaskListViewState, TaskListActions } from './taskListViewTypes';
 
 interface Props extends TaskListViewState, TaskListActions {}
 

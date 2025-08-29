@@ -371,7 +371,7 @@ export const mockTasks: Task[] = [
     title: 'Learn Spanish basics',
     description: 'Duolingo daily practice',
     completed: false,
-    perspective: 'next',
+    perspectiveId: 'next',
     projectId: 'learning',
     workspaceId: 'personal',
     order: 3,
