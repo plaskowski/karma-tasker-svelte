@@ -15,7 +15,7 @@
 
 ### Further Refactor
 - [ ] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
-- [ ] rename PerspectiveConfig to Perspective
+- [x] rename PerspectiveConfig to Perspective
 - [ ] review files sizes and split the big ones
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
