@@ -1,11 +1,7 @@
 import type { PageLoad } from './$types';
 import { NavigationService } from '$lib/services/navigation';
-import { get } from 'svelte/store';
-import { 
-	workspaces, 
-	tasks, 
-	projects
-} from '$lib/stores/taskStore';
+import { db } from '$lib/api/localStorageAdapter';
+import { toDomainWorkspaces, toDomainTasks, toDomainProjects } from '$lib/api/mappers';
 import { WorkspaceContextImpl } from '$lib/models/WorkspaceContext';
 import type { Task, Project, PerspectiveConfig, Workspace } from '$lib/types';
 
@@ -13,10 +9,17 @@ export const load: PageLoad = async ({ url }) => {
 	// Parse URL parameters
 	const urlParams = NavigationService.parseURLParams(url.searchParams);
 	
-	// Load all data from stores
-	const allWorkspaces = get(workspaces);
-	const allTasks = get(tasks);
-	const allProjects = get(projects);
+	// Load all data from persistence API and map to domain models
+	const [workspaceDtos, taskDtos, projectDtos] = await Promise.all([
+		db.getWorkspaces(),
+		db.getTasks(),
+		db.getProjects()
+	]);
+	
+	// Convert DTOs to domain models
+	const allWorkspaces = toDomainWorkspaces(workspaceDtos);
+	const allTasks = toDomainTasks(taskDtos);
+	const allProjects = toDomainProjects(projectDtos);
 	
 	// Determine current workspace from URL or localStorage fallback
 	let workspaceId: string;

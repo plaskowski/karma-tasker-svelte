@@ -1,10 +1,5 @@
 <script lang="ts">
-	import {
-		toggleTaskComplete,
-		addTask,
-		updateTask,
-		resetToInitialState
-	} from '$lib/stores/taskStore';
+	import { DataService } from '$lib/services/dataService';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
@@ -17,8 +12,7 @@
 	import { 
 		handleNavigate as handleNavigateService,
 		handleWorkspaceChange as handleWorkspaceChangeService,
-		handleKeyboardShortcut,
-		handleRefresh as handleRefreshService
+		handleKeyboardShortcut
 	} from '$lib/services/pageHandlers';
 	import type { Task, ViewType } from '$lib/types';
 	import type { PageData } from './$types';
@@ -74,7 +68,7 @@
 	// Handle task interactions
 	async function handleTaskToggle(id: string) {
 		try {
-			await toggleTaskComplete(id);
+			await DataService.toggleTaskComplete(id);
 			// Reload data after task update
 			await invalidateAll();
 		} catch (error) {
@@ -118,10 +112,10 @@
 	}
 
 	// Handle refresh action
-	function handleRefresh() {
-		handleRefreshService(allWorkspaces, workspaceContext, resetToInitialState);
+	async function handleRefresh() {
+		await DataService.resetToDefaults();
 		// Reload data after refresh
-		invalidateAll();
+		await invalidateAll();
 	}
 
     // Auto-scroll the create editor into view whenever it opens
@@ -171,7 +165,7 @@
 
             onTaskClick={handleTaskClick}
             onUpdateTask={async (id, updates) => {
-                await updateTask(id, updates);
+                await DataService.updateTask(id, updates);
                 await invalidateAll();
             }}
 
@@ -201,7 +195,7 @@
                                 { title, description, projectId, perspective },
                                 workspaceContext.getId()
                             );
-                            await addTask(taskData);
+                            await DataService.createTask(taskData);
                             // Reload data after task creation
                             await invalidateAll();
                             // Close after successful create
@@ -223,7 +217,7 @@
 	task={selectedTask} 
 	workspace={workspaceContext}
 	onUpdateTask={async (id, updates) => {
-		await updateTask(id, updates);
+		await DataService.updateTask(id, updates);
 		await invalidateAll();
 	}}
 	on:close={handleTaskDetailsClose} 
