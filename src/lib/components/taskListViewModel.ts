@@ -1,6 +1,5 @@
 import type { Task, ViewType, NavigationState, WorkspaceData } from '$lib/types';
 import { findPerspective, findProject, getPerspectives, getProjects } from '$lib/helpers/workspaceHelpers';
-import { get, type Writable } from 'svelte/store';
 import { 
   sortTasksByPerspectiveThenOrder, 
   sortTasksByProjectThenOrder, 
@@ -34,7 +33,7 @@ export interface TaskGroup {
 export function createTaskListViewModel(
   state: TaskListViewState,
   actions: TaskListActions,
-  inlineEditingStore: Writable<string | null>
+  inlineEditing: { get(): string | null; set(value: string | null): void }
 ) {
   // Resolve current entities from IDs using workspace methods
   const currentProject = state.navigation.currentProjectId 
@@ -238,17 +237,16 @@ export function createTaskListViewModel(
 
     // Inline editing methods
     get isEditingTask() {
-      return (taskId: string) => get(inlineEditingStore) === taskId;
+      return (taskId: string) => inlineEditing.get() === taskId;
     },
 
     toggleInlineEditor(taskId: string) {
-      inlineEditingStore.update(current => 
-        current === taskId ? null : taskId
-      );
+      const current = inlineEditing.get();
+      inlineEditing.set(current === taskId ? null : taskId);
     },
 
     closeInlineEditor() {
-      inlineEditingStore.set(null);
+      inlineEditing.set(null);
     },
 
     // CSS class helpers

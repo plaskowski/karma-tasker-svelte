@@ -1,7 +1,6 @@
 <script lang="ts">
 import type { Task, WorkspaceData } from '$lib/types';
-	import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
-	import { writable } from 'svelte/store';
+import { Calendar, Plus, RefreshCw, Zap } from 'lucide-svelte';
 	import UiTaskItem from './UiTaskItem.svelte';
 	import TaskInlineEditor from './TaskInlineEditor.svelte';
 	import { createTaskListViewModel } from './taskListViewModel';
@@ -21,8 +20,8 @@ interface Props extends TaskListViewState, TaskListActions {}
 		onRefresh
 	}: Props = $props();
 
-	// Inline editor state as a store
-	const inlineEditingTaskId = writable<string | null>(null);
+    // Inline editor state using Svelte 5 runes
+    let inlineEditingTaskId: string | null = $state(null);
 	
 	// Build view state - no complex expressions
     const viewState = $derived<TaskListViewState>({
@@ -41,12 +40,15 @@ interface Props extends TaskListViewState, TaskListActions {}
 		onRefresh
 	};
 
-	// Create view model with inline editing store
-	const vm = $derived(createTaskListViewModel(
-		viewState, 
-		actions,
-		inlineEditingTaskId
-	));
+    // Create view model with inline editing state adapter
+    const vm = $derived(createTaskListViewModel(
+        viewState,
+        actions,
+        {
+            get: () => inlineEditingTaskId,
+            set: (value: string | null) => { inlineEditingTaskId = value; }
+        }
+    ));
 
 	// Close inline editor when view changes
 	$effect(() => {

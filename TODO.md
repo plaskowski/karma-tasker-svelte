@@ -14,7 +14,7 @@
 - [x] Convert Workspace[] into WorkspaceInfo[]
 
 ### Further Refactor
-- [ ] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
+- [x] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
 - [x] rename PerspectiveConfig to Perspective
 - [ ] review files sizes and split the big ones
 - [ ] rename perspective to perspectiveId everywhere
