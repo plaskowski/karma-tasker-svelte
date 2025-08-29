@@ -4,13 +4,13 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] convert WorkspaceContext from model class to data type plus helper methods:
-  - [ ] create WorkspaceData interface (plain data)
-  - [ ] create workspaceHelpers.ts with pure functions
-  - [ ] replace WorkspaceContext interface with WorkspaceData type
-  - [ ] replace WorkspaceContextImpl class with helper function calls
-  - [ ] update all usages to use data + helper functions instead of methods
-  - [ ] remove WorkspaceContext.ts file
+- [x] convert WorkspaceContext from model class to data type plus helper methods:
+  - [x] create WorkspaceData interface (plain data)
+  - [x] create workspaceHelpers.ts with pure functions
+  - [x] replace WorkspaceContext interface with WorkspaceData type
+  - [x] replace WorkspaceContextImpl class with helper function calls
+  - [x] update all usages to use data + helper functions instead of methods
+  - [x] remove WorkspaceContext.ts file
 - [ ] Convert Workspace[] into WorkspaceInfo[]
 
 ### Further Refactor
