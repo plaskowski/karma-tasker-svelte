@@ -34,9 +34,10 @@ export class WorkspaceService {
 		
 		// Load workspace-specific data
 		const wsApi = db.forWorkspace(workspaceId);
-		const [projectDtos, taskDtos] = await Promise.all([
+		const [projectDtos, taskDtos, perspectiveDtos] = await Promise.all([
 			wsApi.getProjects(),
-			wsApi.getTasks()
+			wsApi.getTasks(),
+			wsApi.getPerspectives()
 		]);
 		
 		// Convert to domain models
@@ -44,8 +45,8 @@ export class WorkspaceService {
 			.sort((a, b) => a.order - b.order);
 		const allTasks = toDomainTasks(taskDtos, workspaceId);
 		
-		const workspacePerspectivesData = (currentWorkspace.perspectives || [])
-			.slice()
+		const workspacePerspectivesData = perspectiveDtos
+			.map(toDomainPerspective)
 			.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 		
 		// Create workspace context
