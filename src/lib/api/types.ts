@@ -8,13 +8,11 @@
 export interface WorkspaceDto {
   id: string;
   name: string;
-  perspectives: PerspectiveConfigDto[];
   created_at: string; // ISO date string from API
 }
 
 export interface ProjectDto {
   id: string;
-  workspace_id: string; // snake_case from API
   name: string;
   order: number;
   icon?: string;
@@ -25,7 +23,6 @@ export interface TaskDto {
   id: string;
   title: string;
   description?: string;
-  workspace_id: string;
   project_id: string;
   perspective: string;
   completed: boolean;
@@ -34,26 +31,35 @@ export interface TaskDto {
   updated_at: string;
 }
 
-export interface PerspectiveConfigDto {
+export interface PerspectiveDto {
   id: string;
   name: string;
-  icon?: string;
-  order?: number;
+  icon: string;
+  order: number;
 }
 
 // Request types for mutations
 export interface CreateWorkspaceRequest {
   name: string;
-  perspectives?: Omit<PerspectiveConfigDto, 'id'>[];
 }
 
 export interface UpdateWorkspaceRequest {
   name?: string;
-  perspectives?: PerspectiveConfigDto[];
+}
+
+export interface CreatePerspectiveRequest {
+  name: string;
+  icon: string;
+  order?: number;
+}
+
+export interface UpdatePerspectiveRequest {
+  name?: string;
+  icon?: string;
+  order?: number;
 }
 
 export interface CreateProjectRequest {
-  workspace_id: string;
   name: string;
   order?: number;
   icon?: string;
@@ -68,7 +74,6 @@ export interface UpdateProjectRequest {
 export interface CreateTaskRequest {
   title: string;
   description?: string;
-  workspace_id: string;
   project_id: string;
   perspective: string;
 }
@@ -82,9 +87,8 @@ export interface UpdateTaskRequest {
   order?: number;
 }
 
-// Filter types for queries
+// Filter types for queries (workspace_id is now a required parameter, not in filter)
 export interface TaskFilter {
-  workspace_id?: string;
   project_id?: string;
   perspective?: string;
   completed?: boolean;
@@ -92,7 +96,7 @@ export interface TaskFilter {
 }
 
 export interface ProjectFilter {
-  workspace_id?: string;
+  // Currently no project-specific filters needed
 }
 
 // Sort options

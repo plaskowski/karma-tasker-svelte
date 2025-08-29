@@ -1,4 +1,4 @@
-import type { PersistenceAPI, PersistenceConfig } from './persistence';
+import type { WorkspaceAPI, WorkspaceScopedAPI, PersistenceConfig } from './persistence';
 import type { 
   WorkspaceDto, 
   ProjectDto, 
@@ -17,34 +17,17 @@ import { toWorkspaceDto, toProjectDto, toTaskDto } from './mappers';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 
 /**
- * LocalStorage implementation of the PersistenceAPI.
+ * LocalStorage implementation of the WorkspaceAPI.
  * This adapter stores all data in browser localStorage with automatic serialization.
- * It includes simulated network delays to mimic a real API.
  */
-export class LocalStorageAdapter implements PersistenceAPI {
+export class LocalStorageAdapter implements WorkspaceAPI {
   private readonly prefix: string;
-  private readonly simulateDelay: boolean;
-  private readonly minDelay: number;
-  private readonly maxDelay: number;
 
-  constructor(config: PersistenceConfig & { 
-    simulateDelay?: boolean; 
-    minDelay?: number; 
-    maxDelay?: number;
-  } = {}) {
+  constructor(config: PersistenceConfig = {}) {
     this.prefix = config.storagePrefix || 'karma-tasks';
-    this.simulateDelay = config.simulateDelay ?? true;
-    this.minDelay = config.minDelay ?? 100;
-    this.maxDelay = config.maxDelay ?? 500;
     
     // Initialize with mock data if empty
     this.initializeIfEmpty();
-  }
-
-  private async delay(): Promise<void> {
-    if (!this.simulateDelay) return;
-    const ms = Math.random() * (this.maxDelay - this.minDelay) + this.minDelay;
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private getStorageKey(collection: string): string {

@@ -2,48 +2,66 @@ import type {
   WorkspaceDto, 
   ProjectDto, 
   TaskDto,
+  PerspectiveDto,
   CreateWorkspaceRequest,
   UpdateWorkspaceRequest,
   CreateProjectRequest,
   UpdateProjectRequest,
   CreateTaskRequest,
   UpdateTaskRequest,
+  CreatePerspectiveRequest,
+  UpdatePerspectiveRequest,
   TaskFilter,
   ProjectFilter,
   QueryOptions
 } from './types';
 
 /**
- * Persistence API interface for all database operations.
- * This abstraction allows us to switch between different storage backends
- * (localStorage, IndexedDB, REST API, etc.) without changing the application code.
- * 
- * All methods work with DTO types, not domain types. The application layer
- * is responsible for mapping between DTOs and domain models.
+ * Top-level persistence API for workspace management.
+ * This interface handles workspace-level operations and provides
+ * access to workspace-scoped operations.
  */
-export interface PersistenceAPI {
-  // Workspace operations
+export interface WorkspaceAPI {
+  // Workspace management
   getWorkspaces(): Promise<WorkspaceDto[]>;
   getWorkspace(id: string): Promise<WorkspaceDto | null>;
   createWorkspace(request: CreateWorkspaceRequest): Promise<WorkspaceDto>;
   updateWorkspace(id: string, request: UpdateWorkspaceRequest): Promise<WorkspaceDto>;
   deleteWorkspace(id: string): Promise<void>;
+  
+  // Get workspace-scoped API for a specific workspace
+  forWorkspace(workspaceId: string): WorkspaceScopedAPI;
+}
 
-  // Project operations
+/**
+ * Workspace-scoped persistence API.
+ * All operations in this interface are scoped to a specific workspace.
+ * Projects, tasks, and perspectives can only be accessed through this interface.
+ */
+export interface WorkspaceScopedAPI {
+  // The workspace this API is scoped to
+  readonly workspaceId: string;
+  
+  // Perspective operations within this workspace
+  getPerspectives(): Promise<PerspectiveDto[]>;
+  getPerspective(perspectiveId: string): Promise<PerspectiveDto | null>;
+  createPerspective(request: CreatePerspectiveRequest): Promise<PerspectiveDto>;
+  updatePerspective(perspectiveId: string, request: UpdatePerspectiveRequest): Promise<PerspectiveDto>;
+  deletePerspective(perspectiveId: string): Promise<void>;
+  
+  // Project operations within this workspace
   getProjects(options?: QueryOptions<ProjectFilter>): Promise<ProjectDto[]>;
-  getProjectsByWorkspace(workspaceId: string): Promise<ProjectDto[]>;
-  getProject(id: string): Promise<ProjectDto | null>;
+  getProject(projectId: string): Promise<ProjectDto | null>;
   createProject(request: CreateProjectRequest): Promise<ProjectDto>;
-  updateProject(id: string, request: UpdateProjectRequest): Promise<ProjectDto>;
-  deleteProject(id: string): Promise<void>;
+  updateProject(projectId: string, request: UpdateProjectRequest): Promise<ProjectDto>;
+  deleteProject(projectId: string): Promise<void>;
 
-  // Task operations
+  // Task operations within this workspace
   getTasks(options?: QueryOptions<TaskFilter>): Promise<TaskDto[]>;
-  getTasksByWorkspace(workspaceId: string): Promise<TaskDto[]>;
-  getTask(id: string): Promise<TaskDto | null>;
+  getTask(taskId: string): Promise<TaskDto | null>;
   createTask(request: CreateTaskRequest): Promise<TaskDto>;
-  updateTask(id: string, request: UpdateTaskRequest): Promise<TaskDto>;
-  deleteTask(id: string): Promise<void>;
+  updateTask(taskId: string, request: UpdateTaskRequest): Promise<TaskDto>;
+  deleteTask(taskId: string): Promise<void>;
 }
 
 /**
