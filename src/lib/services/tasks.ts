@@ -79,44 +79,6 @@ export class TaskService {
 	}
 
 	/**
-	 * Filters tasks based on current navigation state
-	 */
-	static filterTasksByNavigation(
-		tasks: Task[],
-		navigation: NavigationState,
-		workspaceId: string
-	): Task[] {
-		// First filter by workspace
-		let filtered = tasks.filter(task => task.workspaceId === workspaceId);
-
-		// Then apply view-specific filtering
-		switch (navigation.currentView) {
-			case 'perspective':
-				if (navigation.currentPerspectiveId) {
-					filtered = filtered.filter(task => task.perspective === navigation.currentPerspectiveId);
-				}
-				break;
-				
-			case 'project':
-				if (navigation.currentProjectId) {
-					filtered = filtered.filter(task => task.projectId === navigation.currentProjectId);
-				}
-				break;
-				
-			case 'project-all':
-				// Show all tasks with any project
-				filtered = filtered.filter(task => task.projectId);
-				break;
-				
-			case 'all':
-				// No additional filtering needed
-				break;
-		}
-
-		return filtered;
-	}
-
-	/**
 	 * Sorts tasks by their order property
 	 */
 	static sortTasksByOrder(tasks: Task[]): Task[] {
