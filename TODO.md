@@ -25,6 +25,7 @@
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
 
 ### Further Refactor
+- [ ] rename perspective to perspectiveId everywhere
 - [x] what happened to passing Navigation to task list view model? (it's passed as navigation prop and spread into viewState)
 - [x] view props should extend its view state - or maybe should be unified? (unified - Props now extends TaskListViewState and TaskListActions)
 - [ ] get rid of switching over view type
