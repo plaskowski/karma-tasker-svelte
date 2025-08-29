@@ -4,18 +4,8 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [x] convert WorkspaceContext from model class to data type plus helper methods:
-  - [x] create WorkspaceData interface (plain data)
-  - [x] create workspaceHelpers.ts with pure functions
-  - [x] replace WorkspaceContext interface with WorkspaceData type
-  - [x] replace WorkspaceContextImpl class with helper function calls
-  - [x] update all usages to use data + helper functions instead of methods
-  - [x] remove WorkspaceContext.ts file
-- [x] Convert Workspace[] into WorkspaceInfo[]
 
 ### Further Refactor
-- [x] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
-- [x] rename PerspectiveConfig to Perspective
 - [ ] review files sizes and split the big ones
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
@@ -42,7 +32,6 @@
 - [ ] remove TaskDetailsDialog?
 - [ ] remove fallback to 'inbox' (we can't hardcode it)
 - [ ] get rid of all fallbaks on projectId and perspectiveId
-- [x] make NavigationService.updateURL() take NavigationState
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?
 - [ ] name default project better
 - [ ] no big chunks of code in svelte files inside the markup part

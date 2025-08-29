@@ -28,6 +28,17 @@
 - [x] "All" view respects project order - Proper sorting when displaying project groups
 
 ### UI/UX Improvements
+- [x] convert WorkspaceContext from model class to data type plus helper methods:
+  - [x] create WorkspaceData interface (plain data)
+  - [x] create workspaceHelpers.ts with pure functions
+  - [x] replace WorkspaceContext interface with WorkspaceData type
+  - [x] replace WorkspaceContextImpl class with helper function calls
+  - [x] update all usages to use data + helper functions instead of methods
+  - [x] remove WorkspaceContext.ts file
+- [x] Convert Workspace[] into WorkspaceInfo[]
+- [x] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
+- [x] rename PerspectiveConfig to Perspective
+- [x] make NavigationService.updateURL() take NavigationState
 - [x] Clean up taskStore from unrelated code, maybe it is not needed anymore?
 - [x] questions:
   - [x] what is in src/lib/styles/tokens.css?
