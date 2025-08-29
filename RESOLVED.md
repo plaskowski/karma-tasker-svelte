@@ -162,6 +162,16 @@
 - **Component composition** with clear separation of concerns
 - **Error handling** and graceful fallbacks for data consistency
 
+### Canon Migration Follow-ups (Completed)
+- [x] prepareTaskForCreation#projectId and perspective are now required - no defaults needed
+- [x] filterTasksByNavigation removed - unused function, filtering happens in derived store
+- [x] task.projectId is now a required field in Task type
+- [x] task.perspective is now a required field in Task type  
+- [x] Refactored src/routes/+page.svelte - moved big functions to pageHandlers service
+- [x] src/routes/+page.ts returns navigation data following SvelteKit patterns
+- [x] URL navigation initialization moved to NavigationService.initializeNavigationFromURL
+- [x] NavigationState fields use undefined (not empty strings) for missing values
+
 ---
 
 *Development completed during current session*

@@ -12,14 +12,6 @@
   - Ensure task completion buttons are easily selectable
   - Make dropdowns and selects properly identifiable
 
-### Canon migration follow-ups
-- [ ] prepareTaskForCreation#projectId and perspective should be required and defaults not needed
-- [ ] filterTasksByNavigation - it makes no sense we filter by workspace, we should ever load only current workspace tasks to start with, the type may not even have this field
-- [ ] task.projectId !== null - this field should be required, same with task.perspective
-- [ ] refactor src/routes/+page.svelte - move big functions to separate files, check if all things have to be at this layout level
-- [ ] src/routes/+page.ts should load all data for WorkspaceContext - projects, perspectives, tasks - and pass them down
-- [ ] move the src/routes/+page.ts "Initialize navigation state from URL" to service (it should return new NavigationState), keep only store setting here
-- [ ] NavigationState fields should be never set to empty string, use null instead
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
