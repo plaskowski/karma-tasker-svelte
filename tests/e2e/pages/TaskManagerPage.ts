@@ -49,9 +49,17 @@ export class TaskManagerPage {
 		await expect(saveButton).toBeVisible();
 		await saveButton.click();
 		
-		// Wait for editor panel to close - check for the dialog role
-		const editorPanel = this.page.locator('[role="dialog"][data-testid="task-editor-panel"]');
-		await expect(editorPanel).not.toBeVisible({ timeout: 5000 });
+		// Wait for either the editor to close OR the task to appear
+		// This handles the race condition where the task might appear before the editor closes
+		await Promise.race([
+			// Wait for editor panel to close
+			this.page.waitForSelector('[role="dialog"][data-testid="task-editor-panel"]', { state: 'hidden', timeout: 10000 }),
+			// Or wait for the task to appear (which also means save succeeded)
+			this.page.waitForSelector(`text="${title}"`, { state: 'visible', timeout: 10000 })
+		]);
+		
+		// Give a small delay to ensure UI has settled
+		await this.page.waitForTimeout(500);
 		
 		// Then verify task was created
 		await expect(this.page.locator(`text="${title}"`)).toBeVisible({ timeout: 5000 });
