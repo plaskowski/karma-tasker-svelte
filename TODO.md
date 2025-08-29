@@ -4,18 +4,9 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] rewrite viewModel to canonic SvelteKit approach
-- [ ] load only current workspace tasks (drop its workspaceId field)
 - [ ] rewrite handleTaskToggle into handleUpdateTask
 - [ ] get rid of switching over view type
 - [ ] emit events instead of onXXXX props?
-- [ ] Add semantic labels and test IDs for Playwright automation
-  - Add data-testid attributes to all interactive elements (buttons, inputs, checkboxes)
-  - Add proper labels and unique IDs to form inputs
-  - Add ARIA labels for accessibility and automated testing
-  - Add semantic HTML roles where appropriate
-  - Ensure task completion buttons are easily selectable
-  - Make dropdowns and selects properly identifiable
 
 ### Clean-ups
 - [ ] fix Clear Completed button
@@ -39,6 +30,7 @@
 - [ ] Real backend API integration
 - [ ] Offline support with sync
 - [ ] Backup and restore features
+- [ ] Add semantic labels and test IDs for Playwright automation
 
 ### Advanced features
 - [ ] Drag & drop task reordering
