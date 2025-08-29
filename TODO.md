@@ -4,6 +4,14 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
+- [ ] Complete navigation refactoring to remove store dependency
+  - Currently hybrid: data.navigation from +page.ts AND navigation store
+  - +page.ts loads initial state but still updates the navigation store
+  - Components update navigation store directly instead of using URL navigation
+  - data.navigation in +page.svelte is only initial state, doesn't reflect updates
+  - Should remove navigation store entirely and use URL as single source of truth
+  - Navigation changes should use goto() to update URL, triggering load function
+  - This would make navigation fully data-driven through SvelteKit load pattern
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
