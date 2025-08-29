@@ -42,7 +42,7 @@ export function createTestingFacade(): TestingFacade {
 			// Filter tasks based on criteria
 			let eligibleTasks = allTasks.filter((task: Task) => {
 				if (task.completed) return false; // Skip already completed
-				if (perspective && task.perspective !== perspective) return false;
+				if (perspective && task.perspectiveId !== perspective) return false;
 				return true;
 			});
 			

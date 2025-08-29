@@ -28,7 +28,7 @@ import type { Task, WorkspaceData } from '$lib/types';
 	let description = $state(task.description ?? '');
 	// projectId and perspective should always be set from task
 	let projectId = $state<string>(task.projectId!);
-    let perspective = $state(task.perspective!);
+    let perspective = $state(task.perspectiveId!);
 	let submitting = $state(false);
 
     const titleId = `title-${task.id}`;

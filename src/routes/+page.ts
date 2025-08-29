@@ -48,7 +48,7 @@ export const load: PageLoad = async ({ url }) => {
         const perspectives = workspaceContext.perspectives;
         const isKnownPerspective = perspectives.some(p => p.id === perspectiveId);
         const effectivePerspective = isKnownPerspective ? perspectiveId : perspectives[0]?.id;
-		workspaceTasks = workspaceTasks.filter(task => task.perspective === effectivePerspective);
+		workspaceTasks = workspaceTasks.filter(task => task.perspectiveId === effectivePerspective);
 	} else if (navigationState.currentView === 'project') {
 		if (navigationState.currentProjectId) {
 			workspaceTasks = workspaceTasks.filter(task => task.projectId === navigationState.currentProjectId);

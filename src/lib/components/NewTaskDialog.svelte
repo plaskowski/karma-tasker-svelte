@@ -18,7 +18,7 @@
 	let title = $state('');
 	let description = $state('');
     let projectId = $state<string | undefined>(undefined);
-	let perspective = $state('');
+    let perspective = $state('');
 	let submitting = $state(false);
 
     // Preselect defaults when dialog opens
@@ -50,8 +50,8 @@
 				description: description.trim() || undefined,
 				projectId: finalProjectId,
                 workspaceId: workspace.id,
-				completed: false,
-				perspective: perspective || undefined, // undefined = inbox
+                completed: false,
+                perspectiveId: perspective || undefined, // undefined = inbox
 			});
 
 			// Reset form

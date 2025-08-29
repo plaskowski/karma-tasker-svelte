@@ -47,7 +47,7 @@ export function toDomainTask(dto: TaskDto, workspaceId: string): Task {
     description: dto.description,
     workspaceId,
     projectId: dto.project_id,
-    perspective: dto.perspective,
+    perspectiveId: dto.perspective,
     completed: dto.completed,
     order: dto.order,
     createdAt: new Date(dto.created_at),
@@ -90,7 +90,7 @@ export function toTaskDto(task: Task): TaskDto {
     title: task.title,
     description: task.description,
     project_id: task.projectId,
-    perspective: task.perspective,
+    perspective: task.perspectiveId,
     completed: task.completed,
     order: task.order,
     created_at: task.createdAt.toISOString(),
@@ -152,7 +152,7 @@ export function toCreateTaskRequest(
     title: task.title,
     description: task.description,
     project_id: task.projectId,
-    perspective: task.perspective
+    perspective: task.perspectiveId
   };
 }
 
@@ -164,7 +164,7 @@ export function toUpdateTaskRequest(
     title: updates.title,
     description: wrapFieldUpdate(updates.description, clearFields, 'description'),
     project_id: updates.projectId,
-    perspective: updates.perspective,
+    perspective: updates.perspectiveId,
     completed: updates.completed,
     order: updates.order
   };

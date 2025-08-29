@@ -105,7 +105,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
             title: t.title,
             description: t.description,
             project_id: t.projectId,
-            perspective: t.perspective,
+            perspective: t.perspectiveId,
             completed: t.completed,
             order: t.order,
             created_at: t.createdAt.toISOString(),

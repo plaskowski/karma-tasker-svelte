@@ -14,8 +14,8 @@ export class TaskService {
 			title: '',
 			description: '',
 			completed: false,
-            projectId: TaskService.getEffectiveProjectId(navigation, workspaceContext),
-            perspective: TaskService.getEffectivePerspectiveId(navigation, workspaceContext),
+			projectId: TaskService.getEffectiveProjectId(navigation, workspaceContext),
+			perspectiveId: TaskService.getEffectivePerspectiveId(navigation, workspaceContext),
             workspaceId: getWorkspaceId(workspaceContext),
 			order: 0, // Will be calculated when task is actually saved
 			createdAt: new Date(),
@@ -37,7 +37,7 @@ export class TaskService {
 			errors.push('Workspace ID is required');
 		}
 
-		if (!task.perspective) {
+        if (!task.perspectiveId) {
 			errors.push('Perspective is required');
 		}
 
@@ -65,7 +65,7 @@ export class TaskService {
 			projectId: taskData.projectId,
 			workspaceId: workspaceId,
 			completed: false,
-			perspective: taskData.perspective
+			perspectiveId: taskData.perspective
 		};
 	}
 

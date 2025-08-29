@@ -231,8 +231,8 @@ export function createTaskListViewModel(
     },
 
     getTaskPerspectiveName(task: Task): string {
-      if (!task.perspective) return '';
-      const perspective = findPerspective(state.workspace, task.perspective);
+      if (!task.perspectiveId) return '';
+      const perspective = findPerspective(state.workspace, task.perspectiveId);
       return perspective?.name || '';
     },
 

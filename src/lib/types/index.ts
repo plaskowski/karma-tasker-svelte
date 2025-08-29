@@ -3,7 +3,7 @@ export interface Task {
   title: string;
   description?: string;
   completed: boolean;
-  perspective: string; // Always required - every task must have a perspective
+  perspectiveId: string; // Always required - every task must have a perspective
   projectId: string; // Always required - every task must belong to a project
   workspaceId: string;
   order: number; // Tasks are ordered within their view

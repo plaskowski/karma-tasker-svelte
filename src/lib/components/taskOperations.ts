@@ -10,8 +10,8 @@ export function sortTasksByPerspectiveThenOrder(
   perspectives: readonly PerspectiveConfig[]
 ): Task[] {
   return [...tasks].sort((a, b) => {
-    const perspA = a.perspective ? getPerspectiveOrder(a.perspective, perspectives) : Number.MAX_SAFE_INTEGER;
-    const perspB = b.perspective ? getPerspectiveOrder(b.perspective, perspectives) : Number.MAX_SAFE_INTEGER;
+    const perspA = a.perspectiveId ? getPerspectiveOrder(a.perspectiveId, perspectives) : Number.MAX_SAFE_INTEGER;
+    const perspB = b.perspectiveId ? getPerspectiveOrder(b.perspectiveId, perspectives) : Number.MAX_SAFE_INTEGER;
     if (perspA !== perspB) return perspA - perspB;
     return a.order - b.order;
   });
@@ -57,7 +57,7 @@ export function groupTasksByPerspective(
   });
   
   tasks.forEach(task => {
-    const perspectiveId = task.perspective || getDefaultPerspective(perspectives)?.id;
+    const perspectiveId = task.perspectiveId || getDefaultPerspective(perspectives)?.id;
     if (perspectiveId) {
       const existing = groups.get(perspectiveId) || [];
       existing.push(task);

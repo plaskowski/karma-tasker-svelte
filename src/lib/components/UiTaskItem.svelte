@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Task } from '$lib/types';
 
-	interface Props {
+    interface Props {
 		task: Task;
 		onToggle: (id: string) => void;
 
@@ -53,7 +53,7 @@
 			<span 
 				class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded"
 				data-testid="perspective-badge"
-				data-perspective={task.perspective}
+                data-perspective={task.perspectiveId}
 				role="status"
 				aria-label="Perspective: {perspectiveName}"
 			>
