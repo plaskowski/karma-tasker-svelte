@@ -4,7 +4,6 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] persistence refactor follow-ups:
 - [ ] convert WorkspaceContext from model class to data type plus helper methods:
   - [ ] create WorkspaceData interface (plain data)
   - [ ] create workspaceHelpers.ts with pure functions

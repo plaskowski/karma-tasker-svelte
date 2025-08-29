@@ -1,4 +1,4 @@
-import type { Project, PerspectiveConfig, Workspace, Task } from '$lib/types';
+import type { Project, PerspectiveConfig, Workspace } from '$lib/types';
 
 /**
  * WorkspaceContext - A rich workspace object that encapsulates all workspace-related
