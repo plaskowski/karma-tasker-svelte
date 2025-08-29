@@ -100,22 +100,6 @@ export async function prepareForScreenshot(page: Page) {
 }
 
 
-/**
- * Set up for empty state tests by clearing localStorage
- */
-export async function setupEmptyState(page: Page) {
-	await page.addInitScript(() => {
-		// Use testing facade if available
-		const facade = (window as any).__testingFacade;
-		if (facade) {
-			facade.clearAllData();
-		} else {
-			// Fallback for immediate execution
-			localStorage.clear();
-			localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
-		}
-	});
-}
 
 /**
  * Build URL with query parameters for direct navigation

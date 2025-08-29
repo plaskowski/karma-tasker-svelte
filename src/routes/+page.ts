@@ -12,6 +12,24 @@ export const load: PageLoad = async ({ url }) => {
 	// Load all workspaces first
     const allWorkspaces = await workspaceService.getAllWorkspaces();
 	
+	// Handle empty state - no workspaces
+	if (allWorkspaces.length === 0) {
+		return {
+			workspaces: [],
+			workspaceContext: {
+				workspace: { id: '', name: '', createdAt: new Date() },
+				perspectives: [],
+				projects: []
+			},
+			tasks: [],
+			navigation: {
+				currentView: 'all' as const,
+				currentPerspectiveId: null,
+				currentProjectId: null
+			}
+		};
+	}
+	
 	// Determine current workspace ID from URL, localStorage, or default to first
     let workspaceId: string;
 	if (urlParams.workspace && allWorkspaces.some(w => w.id === urlParams.workspace)) {
@@ -29,7 +47,7 @@ export const load: PageLoad = async ({ url }) => {
 			workspaceId = savedWorkspace;
 		} else {
 			// Default to first workspace
-            workspaceId = allWorkspaces[0]?.id || 'personal';
+            workspaceId = allWorkspaces[0].id;
 		}
 	}
 	

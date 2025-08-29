@@ -1,7 +1,6 @@
 import { type Page, expect } from '@playwright/test';
 import { 
 	prepareForScreenshot,
-	setupEmptyState,
 	buildAppUrl,
 	waitForAppReady,
 	SCREENSHOT_OPTIONS
@@ -80,34 +79,26 @@ export class VisualTestPage {
 		// Set up deterministic environment
 		await prepareForScreenshot(this.page);
 		
-		// Set up empty state if requested
+		// Navigate to the requested view
+		await this.navigateTo({
+			workspace: options?.workspace,
+			perspective: options?.perspective,
+			projectView: options?.projectView,
+			projectName: options?.projectName
+		});
+		
+		// Handle different states
 		if (options?.emptyState) {
-			await setupEmptyState(this.page);
-			// Navigate to the requested view
-			await this.navigateTo({
-				workspace: options?.workspace,
-				perspective: options?.perspective,
-				projectView: options?.projectView,
-				projectName: options?.projectName
-			});
+			// Empty state - no data should be present
+			// Since we removed automatic mock data loading, the app should start empty
 		} else if (options?.withCompleted) {
-			// For completed tasks, navigate first, then complete tasks
-			await this.navigateTo({
-				workspace: options?.workspace,
-				perspective: options?.perspective,
-				projectView: options?.projectView,
-				projectName: options?.projectName
-			});
+			// First load mock data
+			await this.loadMockData();
 			// Complete half of the tasks
 			await this.completeTasksForView(options?.workspace, options?.perspective);
 		} else {
-			// Normal navigation
-			await this.navigateTo({
-				workspace: options?.workspace,
-				perspective: options?.perspective,
-				projectView: options?.projectView,
-				projectName: options?.projectName
-			});
+			// Normal state with mock data
+			await this.loadMockData();
 		}
 	}
 
@@ -132,6 +123,16 @@ export class VisualTestPage {
 				localStorage.setItem('karma-tasks-tasks', JSON.stringify([]));
 			}
 		});
+	}
+
+	/**
+	 * Load mock data into the application
+	 */
+	async loadMockData() {
+		// Click the refresh button to load mock data
+		const refreshButton = this.page.locator('button').filter({ hasText: 'Refresh' });
+		await refreshButton.click();
+		await waitForAppReady(this.page);
 	}
 
 	/**

@@ -36,11 +36,6 @@ export class LocalStorageAdapter implements WorkspaceAPI {
 
   constructor(config: LocalStorageConfig = {}) {
     this.prefix = config.storagePrefix || 'karma-tasks';
-    
-    // Initialize with mock data if empty (only in browser)
-    if (browser) {
-      this.initializeIfEmpty();
-    }
   }
 
   private getStorageKey(collection: string, workspaceId?: string): string {
@@ -68,7 +63,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
     await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
   }
 
-  private initializeIfEmpty(): void {
+  public initializeWithMockData(): void {
     const workspaces = this.loadCollection<WorkspaceDto>('workspaces');
 
     if (workspaces.length === 0) {

@@ -42,6 +42,11 @@
 	}
 	
 	async function handleRefresh() {
+		// Load mock data if storage is empty
+		if (typeof window !== 'undefined') {
+			const { db } = await import('$lib/api/persistence/localStorageAdapter');
+			db.initializeWithMockData();
+		}
 		await invalidateAll();
 	}
 </script>
