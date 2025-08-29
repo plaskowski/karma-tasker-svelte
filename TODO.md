@@ -4,10 +4,10 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] Clean up taskStore from unrelated code, maybe it is not needed anymore?
-- [ ] questions:
-  - what is in src/lib/styles/tokens.css?
-  - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
+- [X] Clean up taskStore from unrelated code, maybe it is not needed anymore?
+- [X] questions:
+  - X what is in src/lib/styles/tokens.css?
+  - X showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
 - [ ] persistence refactor follow-ups:
   - clean up MIGRATION comments
   - how to clear optional field in update request
@@ -33,6 +33,7 @@
   - Make dropdowns and selects properly identifiable
 - [ ] use parallel routes for sidebar/main pane
    - plus extract main pane page/layout from TaskList.svelte
+   - plus move showCreateEditor to main pane
 - [ ] why Workspace type has perspectives, what they are used for?
 
 ### Clean-ups
