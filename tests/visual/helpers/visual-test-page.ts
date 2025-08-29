@@ -89,8 +89,12 @@ export class VisualTestPage {
 		
 		// Handle different states
 		if (options?.emptyState) {
-			// Empty state - no data should be present
-			// Since we removed automatic mock data loading, the app should start empty
+			// Empty state - first load mock data to establish workspace structure
+			await this.loadMockData();
+			// Then delete all tasks while keeping workspace structure
+			await this.page.evaluate(() => {
+				return (window as any).__testingFacade?.deleteAllTasks();
+			});
 		} else if (options?.withCompleted) {
 			// First load mock data
 			await this.loadMockData();

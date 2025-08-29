@@ -10,6 +10,8 @@ import { toDomainTasks } from '$lib/api/persistence/mappers';
 export interface TestingFacade {
 	// Clear all data for empty state testing
 	clearAllData: () => void;
+	// Delete all tasks while keeping projects and workspaces
+	deleteAllTasks: () => Promise<void>;
 	// Complete half of tasks from specified workspace and perspective
 	completeHalfOfTasks: (workspaceId?: string, perspective?: string) => Promise<void>;
 }
@@ -29,6 +31,21 @@ export function createTestingFacade(): TestingFacade {
 				}
 			}
 			keysToRemove.forEach(key => localStorage.removeItem(key));
+		},
+		async deleteAllTasks() {
+			// Get all workspaces
+			const workspaceDtos = await db.getWorkspaces();
+			
+			// Delete tasks from each workspace
+			for (const workspace of workspaceDtos) {
+				const wsApi = db.forWorkspace(workspace.id);
+				const taskDtos = await wsApi.getTasks();
+				
+				// Delete each task
+				for (const task of taskDtos) {
+					await wsApi.deleteTask(task.id);
+				}
+			}
 		},
 		async completeHalfOfTasks(workspaceId?: string, perspective?: string) {
 			// Default to personal workspace if not specified
