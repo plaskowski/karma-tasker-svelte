@@ -1,31 +1,14 @@
-import type { Project, PerspectiveConfig, Workspace } from '$lib/types';
+import type { Project, PerspectiveConfig, Workspace, WorkspaceData } from '$lib/types';
 
 /**
  * WorkspaceContext - A rich workspace object that encapsulates all workspace-related
  * data and operations. Exposes only methods, no raw data fields.
  */
-export interface WorkspaceContext {
-  // Identity
-  getId(): string;
-  getName(): string;
-  
-  // Projects
-  getProjects(): readonly Project[];
-  getProject(id: string): Project | undefined;
-  getProjectsSortedByOrder(): readonly Project[];
-  getDefaultProject(): Project | undefined;
-  hasProject(id: string): boolean;
-  
-  // Perspectives  
-  getPerspectives(): readonly PerspectiveConfig[];
-  getPerspective(id: string): PerspectiveConfig | undefined;
-  getDefaultPerspective(): PerspectiveConfig | undefined;
-  hasPerspective(id: string): boolean;
-  getPerspectiveOrder(id: string): number;
-  
-  
-}
+export type WorkspaceContext = WorkspaceData;
 
+/**
+ * DEPRECATED: Class-based context. Migrate to `WorkspaceData` + helpers.
+ */
 export class WorkspaceContextImpl implements WorkspaceContext {
   constructor(
     private readonly workspace: Workspace,
