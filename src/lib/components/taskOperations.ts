@@ -10,8 +10,8 @@ export function sortTasksByPerspectiveThenOrder(
   perspectives: readonly Perspective[]
 ): Task[] {
   return [...tasks].sort((a, b) => {
-    const perspA = a.perspectiveId ? getPerspectiveOrder(a.perspectiveId, perspectives) : Number.MAX_SAFE_INTEGER;
-    const perspB = b.perspectiveId ? getPerspectiveOrder(b.perspectiveId, perspectives) : Number.MAX_SAFE_INTEGER;
+    const perspA = getPerspectiveOrder(a.perspectiveId, perspectives);
+    const perspB = getPerspectiveOrder(b.perspectiveId, perspectives);
     if (perspA !== perspB) return perspA - perspB;
     return a.order - b.order;
   });
@@ -22,8 +22,8 @@ export function sortTasksByProjectThenOrder(
   projects: readonly Project[]
 ): Task[] {
   return [...tasks].sort((a, b) => {
-    const projectA = a.projectId ? getProject(a.projectId, projects) : undefined;
-    const projectB = b.projectId ? getProject(b.projectId, projects) : undefined;
+    const projectA = getProject(a.projectId, projects);
+    const projectB = getProject(b.projectId, projects);
     const orderA = projectA?.order ?? Number.MAX_SAFE_INTEGER;
     const orderB = projectB?.order ?? Number.MAX_SAFE_INTEGER;
     if (orderA !== orderB) return orderA - orderB;
@@ -35,11 +35,9 @@ export function groupTasksByProject(tasks: Task[]): Map<string, Task[]> {
   const groups = new Map<string, Task[]>();
   
   tasks.forEach(task => {
-    if (task.projectId) {
-      const existing = groups.get(task.projectId) || [];
-      existing.push(task);
-      groups.set(task.projectId, existing);
-    }
+    const existing = groups.get(task.projectId) || [];
+    existing.push(task);
+    groups.set(task.projectId, existing);
   });
   
   return groups;
@@ -57,12 +55,9 @@ export function groupTasksByPerspective(
   });
   
   tasks.forEach(task => {
-    const perspectiveId = task.perspectiveId || getDefaultPerspective(perspectives)?.id;
-    if (perspectiveId) {
-      const existing = groups.get(perspectiveId) || [];
-      existing.push(task);
-      groups.set(perspectiveId, existing);
-    }
+    const existing = groups.get(task.perspectiveId) || [];
+    existing.push(task);
+    groups.set(task.perspectiveId, existing);
   });
   
   return groups;

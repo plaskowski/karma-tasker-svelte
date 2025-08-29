@@ -50,15 +50,13 @@ import {
 
 	// Helper methods
 	function getTaskProjectName(task: Task): string {
-		if (!task.projectId) return '';
 		const project = findProject(workspace, task.projectId);
 		return project?.name || task.projectId;
 	}
 
 	function getTaskPerspectiveName(task: Task): string {
-		if (!task.perspectiveId) return '';
 		const perspective = findPerspective(workspace, task.perspectiveId);
-		return perspective?.name || '';
+		return perspective?.name || task.perspectiveId;
 	}
 
 	function toggleInlineEditor(taskId: string) {

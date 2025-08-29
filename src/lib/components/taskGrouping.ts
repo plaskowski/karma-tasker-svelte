@@ -45,18 +45,8 @@ export function getTaskGroups(
   if (groupingType === 'project') {
     // Group by project (used in perspective and all views)
     const tasksByProject = groupTasksByProject(activeTasks);
-    const tasksWithoutProject = activeTasks.filter(t => !t.projectId);
-
-    // Add Actions section for tasks without a project (GTD single actions)
-    if (tasksWithoutProject.length > 0) {
-      groups.push({
-        id: 'actions',
-        title: 'Actions',
-        tasks: sortTasksByPerspectiveThenOrder(tasksWithoutProject, getPerspectives(workspace))
-      });
-    }
-
-    // Add project groups sorted by project order
+    
+    // Sort projects by their order
     const sortedProjects = [...tasksByProject.entries()].sort(([idA], [idB]) => {
       const projectA = findProject(workspace, idA);
       const projectB = findProject(workspace, idB);
