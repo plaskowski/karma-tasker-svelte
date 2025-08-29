@@ -4,7 +4,7 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] review files sizes and split the big ones
+- [x] review files sizes and split the big ones
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
