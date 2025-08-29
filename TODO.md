@@ -4,8 +4,6 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-
-### Further Refactor
 - [ ] review files sizes and split the big ones
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
