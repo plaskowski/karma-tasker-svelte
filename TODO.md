@@ -12,6 +12,13 @@
   - Should remove navigation store entirely and use URL as single source of truth
   - Navigation changes should use goto() to update URL, triggering load function
   - This would make navigation fully data-driven through SvelteKit load pattern
+- [ ] Clean up workspaceContext implementation
+  - WorkspaceContext is mostly migrated (no $workspaceContext subscriptions)
+  - But WorkspaceContextImpl is duplicated in +page.ts
+  - WorkspaceContext type still lives in stores directory
+  - setCurrentWorkspace still modifies store (should use URL param instead)
+  - Should move WorkspaceContext interface and implementation to lib/types or lib/models
+  - Workspace changes should update URL ?workspace= param, not store
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
