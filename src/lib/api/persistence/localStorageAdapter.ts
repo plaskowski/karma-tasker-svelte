@@ -15,7 +15,7 @@ import type {
   UpdatePerspectiveRequest,
   TaskFilter
 } from './index';
-import { getFieldValue, shouldUpdateField } from './requests';
+import { getFieldValue, shouldUpdateField } from './fieldUpdates';
 import { toWorkspaceDto, toProjectDto, toTaskDto } from './mappers';
 import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
 

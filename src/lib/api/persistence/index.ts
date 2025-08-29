@@ -5,3 +5,4 @@
 export * from './dto';
 export * from './requests';
 export * from './interfaces';
+export * from './fieldUpdates';

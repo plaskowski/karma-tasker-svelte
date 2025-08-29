@@ -11,7 +11,7 @@ import type {
   CreateWorkspaceRequest,
   UpdateWorkspaceRequest
 } from './index';
-import { clearField } from './requests';
+import { clearField } from './fieldUpdates';
 
 /**
  * Mappers to convert between API DTOs and domain models.
