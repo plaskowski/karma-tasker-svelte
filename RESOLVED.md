@@ -28,6 +28,10 @@
 - [x] "All" view respects project order - Proper sorting when displaying project groups
 
 ### UI/UX Improvements
+- [x] rewrite viewModel to canonic SvelteKit approach - Removed ViewModel pattern, use local component state with $derived
+- [x] review files sizes and split the big ones - Split TaskList into smaller components (TaskListHeader, TaskListEmpty, TaskGroup)
+- [x] rename perspective to perspectiveId everywhere - Standardized field naming across codebase
+- [x] merge $currentWorkspace into $workspaceContext - Simplified state management structure
 - [x] convert WorkspaceContext from model class to data type plus helper methods:
   - [x] create WorkspaceData interface (plain data)
   - [x] create workspaceHelpers.ts with pure functions
