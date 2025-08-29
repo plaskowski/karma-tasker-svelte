@@ -58,8 +58,8 @@ export function toDomainPerspective(dto: PerspectiveDto): Perspective {
   return {
     id: dto.id,
     name: dto.name,
-    icon: dto.icon || 'inbox', // Provide default icon if not present
-    order: dto.order || 0 // Provide default order if not present
+    icon: dto.icon,
+    order: dto.order,
   };
 }
 

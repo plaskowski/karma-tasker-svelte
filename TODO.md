@@ -11,8 +11,8 @@
 ### Clean-ups
 - [ ] fix Clear Completed button
 - [ ] rename NewTaskDialog.svelte
-- [ ] remove TaskDetailsDialog?
-- [ ] remove fallback to 'inbox' (we can't hardcode it)
+- [X] remove TaskDetailsDialog?
+- [X] remove fallback to 'inbox' (we can't hardcode it)
 - [ ] get rid of all fallbaks on projectId and perspectiveId
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?
 - [ ] name default project better
