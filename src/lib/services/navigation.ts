@@ -101,17 +101,16 @@ export class NavigationService {
 	 * Initializes navigation state from URL parameters
 	 * Returns a NavigationState object that can be used to set stores or pass as data
 	 */
-	static initializeNavigationFromURL(
+    static initializeNavigationFromURL(
 		urlParams: {
 			view: ViewType | null;
 			perspective: string | null;
 			project: string | null;
 		},
-		workspaceContext: {
-			hasPerspective: (id: string) => boolean;
-			hasProject: (id: string) => boolean;
-			getDefaultPerspective: () => { id: string } | undefined;
-		}
+        workspaceContext: {
+            perspectives: { id: string }[];
+            projects: { id: string }[];
+        }
 	): { currentView: ViewType; currentPerspectiveId?: string; currentProjectId?: string } {
 		// Default navigation state
 		let navigationState: { currentView: ViewType; currentPerspectiveId?: string; currentProjectId?: string } = {
@@ -122,28 +121,24 @@ export class NavigationService {
 			switch (urlParams.view) {
 				case 'perspective':
 					navigationState.currentView = 'perspective';
-					if (urlParams.perspective && workspaceContext.hasPerspective(urlParams.perspective)) {
+                    if (urlParams.perspective && workspaceContext.perspectives.some(p => p.id === urlParams.perspective)) {
 						navigationState.currentPerspectiveId = urlParams.perspective;
 					} else {
 						// Use default perspective as fallback
-						const defaultPerspective = workspaceContext.getDefaultPerspective();
-						if (defaultPerspective) {
-							navigationState.currentPerspectiveId = defaultPerspective.id;
-						}
+                        const defaultPerspective = workspaceContext.perspectives[0];
+                        if (defaultPerspective) navigationState.currentPerspectiveId = defaultPerspective.id;
 					}
 					break;
 					
 				case 'project':
-					if (urlParams.project && workspaceContext.hasProject(urlParams.project)) {
+                    if (urlParams.project && workspaceContext.projects.some(p => p.id === urlParams.project)) {
 						navigationState.currentView = 'project';
 						navigationState.currentProjectId = urlParams.project;
 					} else {
 						// Fallback to default perspective
 						navigationState.currentView = 'perspective';
-						const defaultPerspective = workspaceContext.getDefaultPerspective();
-						if (defaultPerspective) {
-							navigationState.currentPerspectiveId = defaultPerspective.id;
-						}
+                        const defaultPerspective = workspaceContext.perspectives[0];
+                        if (defaultPerspective) navigationState.currentPerspectiveId = defaultPerspective.id;
 					}
 					break;
 					
@@ -157,10 +152,8 @@ export class NavigationService {
 			}
 		} else {
 			// No valid view in URL, use default perspective
-			const defaultPerspective = workspaceContext.getDefaultPerspective();
-			if (defaultPerspective) {
-				navigationState.currentPerspectiveId = defaultPerspective.id;
-			}
+            const defaultPerspective = workspaceContext.perspectives[0];
+            if (defaultPerspective) navigationState.currentPerspectiveId = defaultPerspective.id;
 		}
 
 		return navigationState;
