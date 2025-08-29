@@ -38,6 +38,10 @@ export const load: PageLoad = async ({ url }) => {
 	}
 	
 	// Return initial data for the page
+	// Note: The app currently uses stores for data management rather than 
+	// passing data through load functions. Converting to load-based data
+	// would require refactoring all components to accept props instead of
+	// subscribing to stores - a major architectural change.
 	return {
 		initialWorkspaceId: currentWorkspaceContext.getId(),
 		initialNavigation: navigationState
