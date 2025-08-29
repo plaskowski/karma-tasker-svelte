@@ -42,7 +42,7 @@ export class WorkspaceService {
 		// Convert to domain models
 		const workspaceProjectsData = toDomainProjects(projectDtos, workspaceId)
 			.sort((a, b) => a.order - b.order);
-		const allTasks = toDomainTasks(taskDtos, workspaceId);
+		const allTasks = toDomainTasks(taskDtos);
 		
 		const workspacePerspectivesData = perspectiveDtos
 			.map(toDomainPerspective)

@@ -34,8 +34,7 @@
 				description: taskData.description, 
 				projectId: taskData.projectId, 
 				perspectiveId: taskData.perspective 
-			},
-			data.workspaceContext.id
+			}
 		);
 		const wsApi = db.forWorkspace(data.workspaceContext.id);
 		await wsApi.createTask(toCreateTaskRequest(preparedTask));
