@@ -1,6 +1,12 @@
 import type { Task, ViewType, NavigationState } from '$lib/types';
 import type { WorkspaceContext } from '$lib/models/WorkspaceContext';
 import { get, type Writable } from 'svelte/store';
+import { 
+  sortTasksByPerspectiveThenOrder, 
+  sortTasksByProjectThenOrder, 
+  groupTasksByProject, 
+  groupTasksByPerspective 
+} from './taskOperations';
 
 // View state - raw data from props and stores
 export interface TaskListViewState {
@@ -66,7 +72,7 @@ export function createTaskListViewModel(
 
     if (groupingType === 'project') {
       // Group by project (used in perspective and all views)
-      const tasksByProject = state.workspace.groupTasksByProject(activeTasks);
+      const tasksByProject = groupTasksByProject(activeTasks);
       const ungroupedTasks = activeTasks.filter(t => !t.projectId);
 
       // Add Actions section for ungrouped tasks
@@ -74,7 +80,7 @@ export function createTaskListViewModel(
         groups.push({
           id: 'actions',
           title: 'Actions',
-          tasks: state.workspace.sortTasksByPerspectiveThenOrder(ungroupedTasks)
+          tasks: sortTasksByPerspectiveThenOrder(ungroupedTasks, state.workspace.getPerspectives())
         });
       }
 
@@ -90,12 +96,12 @@ export function createTaskListViewModel(
         groups.push({
           id: `project-${projectId}`,
           title: project?.name || projectId,
-          tasks: state.workspace.sortTasksByPerspectiveThenOrder(tasks)
+          tasks: sortTasksByPerspectiveThenOrder(tasks, state.workspace.getPerspectives())
         });
       });
     } else if (groupingType === 'perspective') {
       // Group by perspective (used in project and project-all views)
-      const tasksByPerspective = state.workspace.groupTasksByPerspective(activeTasks);
+      const tasksByPerspective = groupTasksByPerspective(activeTasks, state.workspace.getPerspectives());
       
       // Add perspective groups in order
       state.workspace.getPerspectives().forEach(perspective => {
@@ -103,7 +109,7 @@ export function createTaskListViewModel(
         if (tasks.length > 0) {
           // Sort differently based on specific view
           const sortedTasks = state.navigation.currentView === 'project-all' 
-            ? state.workspace.sortTasksByProjectThenOrder(tasks)
+            ? sortTasksByProjectThenOrder(tasks, state.workspace.getProjects())
             : tasks.sort((a, b) => a.order - b.order);
           
           groups.push({
