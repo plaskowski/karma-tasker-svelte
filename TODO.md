@@ -4,12 +4,6 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] Complete data loading refactoring - remove persisted stores
-  - ✅ load() now reads from persistence API (db.getWorkspaces(), etc.)
-  - ✅ Data flows: persistence API -> load() -> components
-  - ❌ Still using persisted stores in taskStore.ts (lines 20-22)
-  - ❌ Need to remove persisted() wrapper and use localStorage directly in API
-  - ❌ Task CRUD operations still update persisted stores
 - [ ] Clean up taskStore from unrelated code, maybe it is not needed anymore?
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?

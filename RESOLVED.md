@@ -162,10 +162,18 @@
 - **Component composition** with clear separation of concerns
 - **Error handling** and graceful fallbacks for data consistency
 
-### Data Loading Architecture (Partial)
+### Data Loading Architecture (Completed)
+- [x] Complete data loading refactoring - remove persisted stores
+  - load() now reads from persistence API (db.getWorkspaces(), etc.)
+  - Data flows: persistence API -> load() -> components
+  - Removed all persisted stores from taskStore.ts
+  - LocalStorageAdapter uses workspace-scoped buckets directly
+  - Task CRUD operations use db.forWorkspace() API
+  - Data stored as karma-tasks-{workspaceId}-{collection}
 - [x] load() function reads from persistence API - The load() function now reads directly from db.getWorkspaces(), db.getTasks(), db.getProjects()
 - [x] Data flows from persistence API to load() to components - Components receive data as props from the load function
 - [x] Removed navigation and workspace store dependencies - Navigation is URL-driven, workspace context passed as props
+- [x] Make Project.icon required field - Removed all fallbacks, enforced type safety
 
 ### Canon Migration Follow-ups (Completed)
 - [x] prepareTaskForCreation#projectId and perspective are now required - no defaults needed
