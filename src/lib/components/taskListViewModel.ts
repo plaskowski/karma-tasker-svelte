@@ -13,7 +13,6 @@ export interface TaskListViewState {
 // Actions the view can trigger
 export interface TaskListActions {
   onTaskToggle: (id: string) => void | Promise<void>;
-  onTaskClick: (task: Task) => void;
   onUpdateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   onNewTask?: () => void;
   onCleanup?: () => void;
@@ -253,10 +252,6 @@ export function createTaskListViewModel(
 
     // Actions (all actions go through VM)
     handleTaskToggle: actions.onTaskToggle,
-    handleTaskClick(task: Task) {
-      // Call the original handler
-      actions.onTaskClick(task);
-    },
     handleUpdateTask: actions.onUpdateTask,
     handleNewTask: actions.onNewTask,
     handleCleanup: actions.onCleanup,

@@ -6,7 +6,6 @@
 	import { invalidateAll } from '$app/navigation';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';
-	import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
 	import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
 	import { NavigationService } from '$lib/services/navigation';
 	import { TaskService } from '$lib/services/tasks';
@@ -28,8 +27,6 @@
 	let currentNavigation = $derived(data.navigation);
 
 	// UI state
-	let showTaskDetailsDialog = $state(false);
-	let selectedTask: Task | null = $state(null);
 	let showCreateEditor = $state(false);
 	let createEditorEl = $state<HTMLElement | null>(null);
 
@@ -83,12 +80,6 @@
 
 
 
-	function handleTaskClick(task: Task) {
-		selectedTask = task;
-		showTaskDetailsDialog = true;
-	}
-
-
 
 	// Handle new task creation
     function handleNewTask() {
@@ -100,10 +91,6 @@
         showCreateEditor = false;
     }
 
-	function handleTaskDetailsClose() {
-		showTaskDetailsDialog = false;
-		selectedTask = null;
-	}
 
 	// Handle cleanup action
 	function handleCleanup() {
@@ -167,7 +154,6 @@
             navigation={currentNavigation}
             onTaskToggle={handleTaskToggle}
 
-            onTaskClick={handleTaskClick}
             onUpdateTask={async (id, updates) => {
                 const wsApi = db.forWorkspace(workspaceContext.getId());
                 await wsApi.updateTask(id, toUpdateTaskRequest(updates));
@@ -214,18 +200,3 @@
         {/if}
     </div>
 </div>
-
-    
-
-<!-- Task Details Modal -->
-<TaskDetailsDialog 
-	open={showTaskDetailsDialog} 
-	task={selectedTask} 
-	workspace={workspaceContext}
-	onUpdateTask={async (id, updates) => {
-		const wsApi = db.forWorkspace(workspaceContext.getId());
-		await wsApi.updateTask(id, toUpdateTaskRequest(updates));
-		await invalidateAll();
-	}}
-	on:close={handleTaskDetailsClose} 
-/>

@@ -14,7 +14,6 @@
 		workspace,
 		navigation,
 		onTaskToggle,
-		onTaskClick,
 		onUpdateTask,
 		showCompleted = false,
 		onNewTask,
@@ -36,7 +35,6 @@
 	// Define actions
 	const actions: TaskListActions = {
 		onTaskToggle,
-		onTaskClick,
 		onUpdateTask,
 		onNewTask,
 		onCleanup,
@@ -131,7 +129,6 @@
 								<UiTaskItem
 									{task}
 									onToggle={vm.handleTaskToggle}
-									onClick={() => vm.handleTaskClick(task)}
 									showProjectBadge={vm.showProjectBadge}
 									showPerspectiveBadge={vm.showPerspectiveBadge}
 									perspectiveName={vm.getTaskPerspectiveName(task)}
@@ -151,7 +148,6 @@
 						<UiTaskItem
 							{task}
 							onToggle={vm.handleTaskToggle}
-							onClick={() => vm.handleTaskClick(task)}
 							showProjectBadge={vm.showProjectBadge}
 							showPerspectiveBadge={vm.showPerspectiveBadge}
 							perspectiveName={vm.getTaskPerspectiveName(task)}

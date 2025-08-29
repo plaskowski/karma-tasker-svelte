@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '$lib/styles/global.css';
-	import '$lib/styles/tokens.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { initializeTestingFacade } from '$lib/testing/testingFacade';
 	import { onMount } from 'svelte';

@@ -4,7 +4,6 @@
 	interface Props {
 		task: Task;
 		onToggle: (id: string) => void;
-		onClick: (task: Task) => void;
 
 		showProjectBadge?: boolean;
 		showPerspectiveBadge?: boolean;
@@ -12,15 +11,11 @@
 		projectName?: string;
 	}
 
-	let { task, onToggle, onClick, showProjectBadge = true, showPerspectiveBadge = false, perspectiveName, projectName }: Props = $props();
+	let { task, onToggle, showProjectBadge = true, showPerspectiveBadge = false, perspectiveName, projectName }: Props = $props();
 </script>
 
 <div
-	class="group flex items-start gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer"
-	onclick={() => onClick(task)}
-	onkeydown={(e) => e.key === 'Enter' && onClick(task)}
-	role="button"
-	tabindex="0"
+	class="group flex items-start gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded"
 >
 	<!-- Completion checkbox -->
 	<button
