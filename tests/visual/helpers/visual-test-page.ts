@@ -91,18 +91,33 @@ export class VisualTestPage {
 		if (options?.emptyState) {
 			// Empty state - first load mock data to establish workspace structure
 			await this.loadMockData();
+			// Reload page to reflect the data changes
+			await this.page.reload();
+			await waitForAppReady(this.page);
 			// Then delete all tasks while keeping workspace structure
 			await this.page.evaluate(() => {
 				return (window as any).__testingFacade?.deleteAllTasks();
 			});
+			// Reload again to show empty state
+			await this.page.reload();
+			await waitForAppReady(this.page);
 		} else if (options?.withCompleted) {
 			// First load mock data
 			await this.loadMockData();
+			// Reload page to reflect the data changes
+			await this.page.reload();
+			await waitForAppReady(this.page);
 			// Complete half of the tasks
 			await this.completeTasksForView(options?.workspace, options?.perspective);
+			// Reload again to show completed state
+			await this.page.reload();
+			await waitForAppReady(this.page);
 		} else {
 			// Normal state with mock data
 			await this.loadMockData();
+			// Reload page to reflect the data changes
+			await this.page.reload();
+			await waitForAppReady(this.page);
 		}
 	}
 
@@ -133,10 +148,10 @@ export class VisualTestPage {
 	 * Load mock data into the application
 	 */
 	async loadMockData() {
-		// Click the refresh button to load mock data
-		const refreshButton = this.page.locator('button').filter({ hasText: 'Refresh' });
-		await refreshButton.click();
-		await waitForAppReady(this.page);
+		// Use the testing facade to load mock data
+		await this.page.evaluate(() => {
+			return (window as any).__testingFacade?.loadMockData();
+		});
 	}
 
 	/**

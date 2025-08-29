@@ -6,10 +6,14 @@
 import { db } from '$lib/api/persistence/localStorageAdapter';
 import type { Task } from '$lib/types';
 import { toDomainTasks } from '$lib/api/persistence/mappers';
+import { mockTasks, mockProjects, mockWorkspaces } from '$lib/data/mockData';
+import { toTaskDto, toProjectDto, toWorkspaceDto } from '$lib/api/persistence/mappers';
 
 export interface TestingFacade {
 	// Clear all data for empty state testing
 	clearAllData: () => void;
+	// Load mock data into localStorage
+	loadMockData: () => Promise<void>;
 	// Delete all tasks while keeping projects and workspaces
 	deleteAllTasks: () => Promise<void>;
 	// Complete half of tasks from specified workspace and perspective
@@ -31,6 +35,34 @@ export function createTestingFacade(): TestingFacade {
 				}
 			}
 			keysToRemove.forEach(key => localStorage.removeItem(key));
+		},
+		async loadMockData() {
+			// Clear existing data first
+			this.clearAllData();
+			
+			// Add workspaces
+			for (const workspace of mockWorkspaces) {
+				await db.createWorkspace(toWorkspaceDto(workspace));
+			}
+			
+			// Add perspectives to personal workspace
+			const personalWs = db.forWorkspace('personal');
+			await personalWs.createPerspective({ id: 'inbox', name: 'Inbox', order: 0 });
+			await personalWs.createPerspective({ id: 'first', name: 'First', order: 1 });
+			await personalWs.createPerspective({ id: 'next', name: 'Next', order: 2 });
+			await personalWs.createPerspective({ id: 'someday', name: 'Someday', order: 3 });
+			
+			// Add projects to personal workspace
+			for (const project of mockProjects) {
+				if (project.workspaceId === 'personal') {
+					await personalWs.createProject(toProjectDto(project));
+				}
+			}
+			
+			// Add tasks to personal workspace
+			for (const task of mockTasks) {
+				await personalWs.createTask(toTaskDto(task));
+			}
 		},
 		async deleteAllTasks() {
 			// Get all workspaces
