@@ -8,6 +8,7 @@
 - [x] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
+- [ ] rewrite handleTaskToggle into handleUpdateTask
 - [ ] get rid of switching over view type
 - [ ] emit events instead of onXXXX props?
 - [x] merge $currentWorkspace into $workspaceContext
