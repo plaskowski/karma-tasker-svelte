@@ -35,6 +35,14 @@ export interface Workspace {
   createdAt: Date;
 }
 
+// Plain data shape used across the app instead of a class-based context
+export interface WorkspaceData {
+  id: string;
+  name: string;
+  projects: readonly Project[];
+  perspectives: readonly PerspectiveConfig[];
+}
+
 // UI-specific types can stay here
 export type ViewType = 'perspective' | 'project' | 'project-all' | 'all';
 
