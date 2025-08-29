@@ -55,7 +55,7 @@ export class TaskService {
 			title: string;
 			description?: string;
 			projectId: string;
-			perspective: string;
+			perspectiveId: string;
 		},
 		workspaceId: string
 	): Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'> {
@@ -65,7 +65,7 @@ export class TaskService {
 			projectId: taskData.projectId,
 			workspaceId: workspaceId,
 			completed: false,
-			perspectiveId: taskData.perspective
+			perspectiveId: taskData.perspectiveId
 		};
 	}
 

@@ -183,7 +183,7 @@
                                 throw new Error('Project and perspective are required for task creation');
                             }
                             const taskData = TaskService.prepareTaskForCreation(
-                                { title, description, projectId, perspective },
+                                { title, description, projectId, perspectiveId: perspective },
                                 workspaceContext.id
                             );
                             const wsApi = db.forWorkspace(workspaceContext.id);
