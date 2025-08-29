@@ -66,33 +66,20 @@
         }
     }
 
-	// Handle view changes
-	function handleViewChange(view: import('$lib/types').ViewType, perspectiveId?: string) {
-		if (view === 'perspective' && perspectiveId) {
-			navigation.setPerspectiveView(perspectiveId);
-			updateURL(view, perspectiveId);
+	// Handle navigation changes
+	function handleNavigate(view: import('$lib/types').ViewType, options?: { perspectiveId?: string; projectId?: string }) {
+		if (view === 'perspective' && options?.perspectiveId) {
+			navigation.setPerspectiveView(options.perspectiveId);
+			updateURL(view, options.perspectiveId);
 		} else if (view === 'all') {
 			navigation.setAllView();
 			updateURL(view);
 		} else if (view === 'project-all') {
 			navigation.setProjectAllView();
 			updateURL(view);
-		} else if (view === 'project') {
-			// Keep current project if switching to project view
-			const projectId = $navigation.currentProjectId;
-			if (projectId) {
-				updateURL(view, undefined, projectId);
-			}
-		}
-	}
-
-	// Handle project selection
-	function handleProjectSelect(projectId: string | undefined) {
-		if (projectId) {
-			navigation.setProjectView(projectId);
-			updateURL('project', undefined, projectId);
-		} else {
-			navigation.update(state => ({ ...state, currentProjectId: undefined }));
+		} else if (view === 'project' && options?.projectId) {
+			navigation.setProjectView(options.projectId);
+			updateURL('project', undefined, options.projectId);
 		}
 	}
 
@@ -321,8 +308,7 @@
 		navigation={$navigation}
 		workspace={$workspaceContext}
 		workspaces={$workspaces}
-		onViewChange={handleViewChange}
-		onProjectSelect={handleProjectSelect}
+		onNavigate={handleNavigate}
 		onWorkspaceChange={handleWorkspaceChange}
 	/>
 

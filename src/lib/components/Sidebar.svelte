@@ -11,8 +11,7 @@
 		navigation: NavigationState;
 		workspace: WorkspaceContext;
 		workspaces: Workspace[];
-		onViewChange: (view: ViewType, perspectiveId?: string) => void;
-		onProjectSelect: (projectId: string | undefined) => void;
+		onNavigate: (view: ViewType, options?: { perspectiveId?: string; projectId?: string }) => void;
 		onWorkspaceChange: (workspaceId: string) => void;
 	}
 
@@ -20,8 +19,7 @@
 		navigation,
 		workspace,
 		workspaces,
-		onViewChange, 
-		onProjectSelect,
+		onNavigate,
 		onWorkspaceChange
 	}: Props = $props();
 
@@ -157,7 +155,7 @@
             {#each sidebarItems as item}
 				{@const Icon = item.icon}
 				<button
-					onclick={() => onViewChange(item.id === 'all' ? 'all' : 'perspective', item.id === 'all' ? undefined : item.id)}
+					onclick={() => onNavigate(item.id === 'all' ? 'all' : 'perspective', item.id === 'all' ? undefined : { perspectiveId: item.id })}
 					class="w-full btn btn-base text-left {(navigation.currentView === 'perspective' && navigation.currentPerspectiveId === item.id) || (navigation.currentView === 'all' && item.id === 'all')
 					? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 						: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
@@ -176,10 +174,7 @@
 			{#each workspace.getProjects() as project}
 				{@const ProjectIcon = getProjectIcon(project.id)}
 				<button
-					onclick={() => {
-						onViewChange('project');
-						onProjectSelect(project.id);
-					}}
+					onclick={() => onNavigate('project', { projectId: project.id })}
 					class="w-full btn btn-base text-left {navigation.currentView === 'project' && navigation.currentProjectId === project.id
 						? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 						: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
@@ -191,10 +186,7 @@
 			
 			<!-- All Projects view -->
 			<button
-				onclick={() => {
-					onViewChange('project-all');
-					onProjectSelect(undefined);
-				}}
+				onclick={() => onNavigate('project-all')}
 				class="w-full btn btn-base text-left {navigation.currentView === 'project-all'
 					? 'bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100'
 					: 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}"
