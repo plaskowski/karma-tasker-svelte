@@ -112,6 +112,10 @@ export class TaskService {
 		if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
 			return navigation.currentPerspectiveId;
 		}
-        return getDefaultPerspective(workspaceContext)?.id || 'inbox';
+        const defaultPerspective = getDefaultPerspective(workspaceContext);
+        if (!defaultPerspective) {
+            throw new Error('No default perspective configured for current workspace');
+        }
+        return defaultPerspective.id;
 	}
 }
