@@ -9,16 +9,14 @@
   - what is in src/lib/styles/tokens.css?
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
 - [ ] persistence refactor follow-ups:
-  - hide PersistenceConfig
   - clean up MIGRATION comments
   - how to clear optional field in update request
   - why update requests dont hold entity ID
   - Workspace type vs WorkspaceContext
 
 ### Further Refactor
-- [ ] review remaining stores
+- [ ] review remaining stores against [svelteKit-app-architecture.md](docs/svelteKit-app-architecture.md)
 - [ ] review files sizes and split the big ones
-- [ ] setup linter and formatter
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
@@ -50,6 +48,7 @@
 - [ ] ...
 
 ### Technical improvements
+- [ ] setup linter and formatter
 - [ ] consolidate all class attribute spagetti into semantic classes
 - [ ] Real backend API integration
 - [ ] Offline support with sync
