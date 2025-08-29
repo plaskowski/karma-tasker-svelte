@@ -48,6 +48,7 @@
 - [ ] get rid of all fallbaks on projectId and perspectiveId
 - [ ] make NavigationService.updateURL() take NavigationState
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?
+- [ ] set NavigationState as whole to store instead of the dedicated methods
 - [ ] (?) why filterTasksByNavigation was not used
 - [ ] we should not rely on taskService.loadTasks(), they should be loaded on demand with queries
 - [ ] introduce structure into project (kind of MVVM or something, research what is common for SvelteKit)
