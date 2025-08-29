@@ -1,16 +1,15 @@
 <script lang="ts">
 	import {
-		workspaces,
-		filteredTasks,
 		toggleTaskComplete,
 		addTask,
 		updateTask,
 		resetToInitialState
 	} from '$lib/stores/taskStore';
 	import { navigation } from '$lib/stores/navigationStore';
-	import { workspaceContext, setCurrentWorkspace } from '$lib/stores/workspaceContext';
+	import { setCurrentWorkspace } from '$lib/stores/workspaceContext';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { invalidateAll } from '$app/navigation';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import TaskList from '$lib/components/TaskList.svelte';
 	import TaskDetailsDialog from '$lib/components/TaskDetailsDialog.svelte';
@@ -28,6 +27,12 @@
 
 	// Component receives data from +page.ts
 	let { data }: { data: PageData } = $props();
+	
+	// Reactive references to loaded data
+	let workspaceContext = $derived(data.workspaceContext);
+	let currentTasks = $derived(data.tasks);
+	let allWorkspaces = $derived(data.workspaces);
+	let currentNavigation = $derived(data.navigation);
 
 	// UI state
 	let showTaskDetailsDialog = $state(false);
@@ -38,13 +43,15 @@
 
 	// Handle navigation changes
 	function handleNavigate(view: ViewType, options?: { perspectiveId?: string; projectId?: string }) {
-		handleNavigateService(view, $workspaceContext, options);
+		handleNavigateService(view, workspaceContext, options);
 	}
 
 	// Handle workspace change
 	function handleWorkspaceChange(workspaceId: string) {
 		setCurrentWorkspace(workspaceId);
-		handleWorkspaceChangeService(workspaceId, $workspaceContext, $navigation);
+		handleWorkspaceChangeService(workspaceId, workspaceContext, currentNavigation);
+		// Reload data after workspace change
+		invalidateAll();
 	}
 
 	// Initialize keyboard navigation on mount
@@ -52,11 +59,11 @@
 		// Ensure URL stays in sync with navigation state
 		NavigationService.updateURLIfChanged(
 			$page.url.searchParams,
-			$navigation.currentView,
+			currentNavigation.currentView,
 			{
-				perspectiveId: $navigation.currentPerspectiveId,
-				projectId: $navigation.currentProjectId,
-				workspaceId: $workspaceContext.getId()
+				perspectiveId: currentNavigation.currentPerspectiveId,
+				projectId: currentNavigation.currentProjectId,
+				workspaceId: workspaceContext.getId()
 			}
 		);
 
@@ -72,6 +79,8 @@
 	async function handleTaskToggle(id: string) {
 		try {
 			await toggleTaskComplete(id);
+			// Reload data after task update
+			await invalidateAll();
 		} catch (error) {
 			console.error('Failed to toggle task:', error);
 		}
@@ -109,12 +118,14 @@
 	
 	// Create a new task object with defaults based on current context
 	function createNewTaskWithDefaults(): Task {
-		return TaskService.createNewTaskWithDefaults($workspaceContext, $navigation);
+		return TaskService.createNewTaskWithDefaults(workspaceContext, currentNavigation);
 	}
 
 	// Handle refresh action
 	function handleRefresh() {
-		handleRefreshService($workspaces, $workspaceContext, resetToInitialState);
+		handleRefreshService(allWorkspaces, workspaceContext, resetToInitialState);
+		// Reload data after refresh
+		invalidateAll();
 	}
 
     // Auto-scroll the create editor into view whenever it opens
@@ -127,7 +138,7 @@
     // Close inline/create editors when navigation changes
     $effect(() => {
         // React to any navigation changes
-        $navigation;
+        currentNavigation;
         // Close the creation editor when navigating
         showCreateEditor = false;
     });
@@ -146,9 +157,9 @@
 <div class="h-full flex dark">
 	<!-- Sidebar -->
         <Sidebar
-		navigation={$navigation}
-		workspace={$workspaceContext}
-		workspaces={$workspaces}
+		navigation={currentNavigation}
+		workspace={workspaceContext}
+		workspaces={allWorkspaces}
 		onNavigate={handleNavigate}
 		onWorkspaceChange={handleWorkspaceChange}
 	/>
@@ -157,14 +168,15 @@
     <div class="flex-1 flex flex-col overflow-hidden">
         <!-- Task List fills remaining space -->
         <TaskList
-            tasks={$filteredTasks}
-            workspace={$workspaceContext}
-            navigation={$navigation}
+            tasks={currentTasks}
+            workspace={workspaceContext}
+            navigation={currentNavigation}
             onTaskToggle={handleTaskToggle}
 
             onTaskClick={handleTaskClick}
             onUpdateTask={async (id, updates) => {
                 await updateTask(id, updates);
+                await invalidateAll();
             }}
 
             showCompleted={true}
@@ -183,7 +195,7 @@
                 >
                     <TaskEditorForm
                         task={createNewTaskWithDefaults()}
-                        workspace={$workspaceContext}
+                        workspace={workspaceContext}
                         save={async ({ title, description, projectId, perspective }) => {
                             // Ensure projectId and perspective are always set
                             if (!projectId || !perspective) {
@@ -191,9 +203,11 @@
                             }
                             const taskData = TaskService.prepareTaskForCreation(
                                 { title, description, projectId, perspective },
-                                $workspaceContext.getId()
+                                workspaceContext.getId()
                             );
                             await addTask(taskData);
+                            // Reload data after task creation
+                            await invalidateAll();
                             // Close after successful create
                             handleCreateClose();
                         }}
@@ -211,9 +225,10 @@
 <TaskDetailsDialog 
 	open={showTaskDetailsDialog} 
 	task={selectedTask} 
-	workspace={$workspaceContext}
+	workspace={workspaceContext}
 	onUpdateTask={async (id, updates) => {
 		await updateTask(id, updates);
+		await invalidateAll();
 	}}
 	on:close={handleTaskDetailsClose} 
 />

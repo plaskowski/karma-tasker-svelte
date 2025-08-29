@@ -16,6 +16,7 @@
   - showTaskDetailsDialog - does it have to be at root page level? same for showCreateEditor.
 
 ### Further Refactor
+- [ ] convert to local DB (e.g. IndexedDB with Dexie) so it is closer to real backend
 - [ ] rename perspective to perspectiveId everywhere
 - [ ] rewrite viewModel to canonic SvelteKit approach
 - [ ] load only current workspace tasks (drop its workspaceId field)
@@ -38,7 +39,7 @@
   - Add semantic HTML roles where appropriate
   - Ensure task completion buttons are easily selectable
   - Make dropdowns and selects properly identifiable
-
+``
 ### Advanced Organization
 - [ ] fix Clear Completed button
 - [ ] project/perspective badges zamienione
