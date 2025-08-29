@@ -4,6 +4,14 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
+- [ ] Complete data loading refactoring - load() should be the central point
+  - Currently load() just reads from stores using get()
+  - Stores are still the source of truth (persisted to localStorage)
+  - This is backwards - load() should load data, not stores
+  - Should move localStorage persistence to load function
+  - Remove persisted stores entirely
+  - Data should flow: localStorage -> load() -> components
+  - Not: localStorage -> stores -> load() -> components
 - [ ] Clean up taskStore from unrelated code, maybe it is not needed anymore?
 - [ ] questions:
   - what is in src/lib/styles/tokens.css?
