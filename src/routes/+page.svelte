@@ -51,14 +51,7 @@
 	}
 	
 	async function handleClearCompleted() {
-		const wsApi = db.forWorkspace(data.workspaceContext.id);
-		const completedTasks = data.tasks.filter(task => task.completed);
-		
-		// Delete all completed tasks
-		for (const task of completedTasks) {
-			await wsApi.deleteTask(task.id);
-		}
-		
+		await TaskService.clearCompletedTasks(data.workspaceContext.id, data.tasks);
 		await invalidateAll();
 	}
 </script>
