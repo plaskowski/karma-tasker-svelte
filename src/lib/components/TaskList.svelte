@@ -118,16 +118,22 @@ import {
 
 				<!-- Completed Tasks -->
 				{#if (showCompleted || completedTasks.length > 0) && completedTasks.length > 0}
-					<div class="mb-3">
-						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400">Done</h3>
-					</div>
-					{#each completedTasks as task (task.id)}
-						<UiTaskItem
-							{task}
-							onToggle={onTaskToggle}
-							badgeText={getBadgeText(task, navigation, workspace)}
-						/>
-					{/each}
+					<TaskGroupComponent
+						title="Done"
+						tasks={completedTasks}
+						{workspace}
+						{navigation}
+						isGroupTitle={false}
+						showProjectBadge={showProjectBadge}
+						showPerspectiveBadge={showPerspectiveBadge}
+						{getTaskProjectName}
+						{getTaskPerspectiveName}
+						{isEditingTask}
+						{toggleInlineEditor}
+						{closeInlineEditor}
+						{onTaskToggle}
+						{onUpdateTask}
+					/>
 				{/if}
 			</div>
 		{/if}
