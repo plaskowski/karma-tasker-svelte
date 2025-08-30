@@ -31,6 +31,7 @@
 - [x] "All" view respects project order - Proper sorting when displaying project groups
 
 ### UI/UX Improvements
+- [x] fold badge properties into single badgeText property - Consolidated showProjectBadge, showPerspectiveBadge, perspectiveName, projectName into single computed badgeText prop
 - [x] rewrite viewModel to canonic SvelteKit approach - Removed ViewModel pattern, use local component state with $derived
 - [x] review files sizes and split the big ones - Split TaskList into smaller components (TaskListHeader, TaskListEmpty, TaskGroup)
 - [x] rename perspective to perspectiveId everywhere - Standardized field naming across codebase
