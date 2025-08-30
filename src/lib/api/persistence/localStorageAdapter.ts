@@ -281,8 +281,9 @@ export class LocalStorageAdapter implements WorkspaceAPI {
   async createTask(workspaceId: string, request: CreateTaskRequest): Promise<TaskDto> {
     await this.delay();
     
-    // Simulate occasional failures (10% chance)
-    if (Math.random() < 0.1) {
+    // Simulate occasional failures (10% chance) - disabled in test mode
+    const isTestMode = typeof window !== 'undefined' && (window as any).__testingFacade;
+    if (!isTestMode && Math.random() < 0.1) {
       throw new Error('Network error');
     }
     
