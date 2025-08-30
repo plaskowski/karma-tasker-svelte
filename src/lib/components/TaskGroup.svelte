@@ -10,6 +10,7 @@
 		workspace: WorkspaceData;
 		navigation: NavigationState;
 		isGroupTitle?: boolean;
+		isCompleted?: boolean;
 		showProjectBadge: boolean;
 		showPerspectiveBadge: boolean;
 		getTaskProjectName: (task: Task) => string;
@@ -27,6 +28,7 @@
 		workspace,
 		navigation,
 		isGroupTitle = false,
+		isCompleted = false,
 		showProjectBadge,
 		showPerspectiveBadge,
 		getTaskProjectName,
@@ -39,9 +41,9 @@
 	}: Props = $props();
 </script>
 
-<div class="mb-6">
+<div class="mb-6 {isCompleted ? 'opacity-75' : ''}">
 	<div class="mb-3">
-		<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {isGroupTitle && title.startsWith('project-') ? 'capitalize' : ''}">
+		<h3 class="text-base font-medium {isCompleted ? 'text-gray-400 dark:text-gray-500' : 'text-gray-500 dark:text-gray-400'} {isGroupTitle && title.startsWith('project-') ? 'capitalize' : ''}">
 			<span>{title}</span>
 		</h3>
 	</div>

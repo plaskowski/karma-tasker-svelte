@@ -124,6 +124,7 @@ import {
 						{workspace}
 						{navigation}
 						isGroupTitle={false}
+						isCompleted={true}
 						showProjectBadge={showProjectBadge}
 						showPerspectiveBadge={showPerspectiveBadge}
 						{getTaskProjectName}
