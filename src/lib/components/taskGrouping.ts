@@ -55,9 +55,12 @@ export function getTaskGroups(
 
     sortedProjects.forEach(([projectId, tasks]) => {
       const project = findProject(workspace, projectId);
+      if (!project) {
+        throw new Error(`Project with ID ${projectId} not found in workspace`);
+      }
       groups.push({
         id: `project-${projectId}`,
-        title: project?.name || projectId,
+        title: project.name,
         tasks: sortTasksByPerspectiveThenOrder(tasks, getPerspectives(workspace))
       });
     });

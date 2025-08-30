@@ -51,12 +51,18 @@ import {
 	// Helper methods
 	function getTaskProjectName(task: Task): string {
 		const project = findProject(workspace, task.projectId);
-		return project?.name || task.projectId;
+		if (!project) {
+			throw new Error(`Project with ID ${task.projectId} not found in workspace`);
+		}
+		return project.name;
 	}
 
 	function getTaskPerspectiveName(task: Task): string {
 		const perspective = findPerspective(workspace, task.perspectiveId);
-		return perspective?.name || task.perspectiveId;
+		if (!perspective) {
+			throw new Error(`Perspective with ID ${task.perspectiveId} not found in workspace`);
+		}
+		return perspective.name;
 	}
 
 	function toggleInlineEditor(taskId: string) {

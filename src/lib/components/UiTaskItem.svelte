@@ -68,9 +68,9 @@
 				data-testid="project-badge"
 				data-project={task.projectId}
 				role="status"
-				aria-label="Project: {projectName || task.projectId}"
+				aria-label="Project: {projectName ?? (() => { throw new Error(`No project name provided for task ${task.id} with projectId ${task.projectId}`); })()}"
 			>
-				{projectName || task.projectId}
+				{projectName ?? (() => { throw new Error(`No project name provided for task ${task.id} with projectId ${task.projectId}`); })()}
 			</span>
 		{/if}
 	</div>

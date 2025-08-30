@@ -24,13 +24,16 @@
     // Preselect defaults when dialog opens
     $effect(() => {
         if (open) {
-            // Use provided default or first project
             if (!projectId) {
-                const defaultProject = workspace.projects[0];
-                projectId = defaultProjectId || defaultProject?.id;
+                if (!defaultProjectId) {
+                    throw new Error('No default project provided and no projectId set');
+                }
+                projectId = defaultProjectId;
             }
-            // Use provided default perspective
-            if (!perspective && defaultPerspectiveId) {
+            if (!perspective) {
+                if (!defaultPerspectiveId) {
+                    throw new Error('No default perspective provided and no perspective set');
+                }
                 perspective = defaultPerspectiveId;
             }
         }
@@ -41,9 +44,10 @@
 
 		submitting = true;
 		try {
-        // Pick first project of the current workspace if none selected
-        const defaultProject = workspace.projects[0];
-        const finalProjectId = projectId || defaultProject?.id;
+        if (!projectId) {
+            throw new Error('Project ID is required');
+        }
+        const finalProjectId = projectId;
 
 			await onAddTask({
 				title: title.trim(),
@@ -51,7 +55,7 @@
 				projectId: finalProjectId,
                 workspaceId: workspace.id,
                 completed: false,
-                perspectiveId: perspective || undefined, // undefined = inbox
+                perspectiveId: perspective || (() => { throw new Error('Perspective is required'); })()
 			});
 
 			// Reset form

@@ -26,8 +26,18 @@
 		switch (navigation.currentView) {
 			case 'all': return 'All';
 			case 'project-all': return 'All Projects';
-			case 'project': return currentProject?.name || 'Project';
-			case 'perspective': return currentPerspective?.name || 'Tasks';
+			case 'project': {
+			if (!currentProject) {
+				throw new Error('Current project not found');
+			}
+			return currentProject.name;
+		}
+			case 'perspective': {
+			if (!currentPerspective) {
+				throw new Error('Current perspective not found');
+			}
+			return currentPerspective.name;
+		}
 			default: return 'Tasks';
 		}
 	});
