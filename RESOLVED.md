@@ -30,6 +30,10 @@
 - [x] Show completed items in Inbox - Fixed perspective view to display Done section
 - [x] "All" view respects project order - Proper sorting when displaying project groups
 
+### Clean-ups
+- [x] remove TaskDetailsDialog?
+- [x] remove fallback to 'inbox' (we can't hardcode it)
+
 ### UI/UX Improvements
 - [x] fold badge properties into single badgeText property - Consolidated showProjectBadge, showPerspectiveBadge, perspectiveName, projectName into single computed badgeText prop
 - [x] rewrite viewModel to canonic SvelteKit approach - Removed ViewModel pattern, use local component state with $derived

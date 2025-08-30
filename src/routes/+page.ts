@@ -66,10 +66,15 @@ export const load: PageLoad = async ({ url }) => {
 	// Apply view-specific filtering
     if (navigationState.currentView === 'perspective') {
 		const perspectiveId = navigationState.currentPerspectiveId;
+        if (!perspectiveId) {
+            throw new Error('Perspective ID is required for perspective view');
+        }
         const perspectives = workspaceContext.perspectives;
         const isKnownPerspective = perspectives.some(p => p.id === perspectiveId);
-        const effectivePerspective = isKnownPerspective ? perspectiveId : perspectives[0]?.id;
-		workspaceTasks = workspaceTasks.filter(task => task.perspectiveId === effectivePerspective);
+        if (!isKnownPerspective) {
+            throw new Error(`Unknown perspective ID: ${perspectiveId}`);
+        }
+		workspaceTasks = workspaceTasks.filter(task => task.perspectiveId === perspectiveId);
 	} else if (navigationState.currentView === 'project') {
 		if (navigationState.currentProjectId) {
 			workspaceTasks = workspaceTasks.filter(task => task.projectId === navigationState.currentProjectId);
