@@ -4,6 +4,9 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
+- [ ] remove automatic data filling - it should happen only on "Refresh" action
+- [ ] fix visual tests (they lack workspace setup - projects/perspectives)
+- [ ] fix interaction tests
 - [ ] rewrite handleTaskToggle into handleUpdateTask
 - [ ] get rid of switching over view type
 - [ ] emit events instead of onXXXX props?
