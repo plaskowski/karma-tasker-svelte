@@ -30,6 +30,10 @@
 - [x] Show completed items in Inbox - Fixed perspective view to display Done section
 - [x] "All" view respects project order - Proper sorting when displaying project groups
 
+### Clean-ups
+- [x] remove TaskDetailsDialog?
+- [x] remove fallback to 'inbox' (we can't hardcode it)
+
 ### UI/UX Improvements
 - [x] rewrite viewModel to canonic SvelteKit approach - Removed ViewModel pattern, use local component state with $derived
 - [x] review files sizes and split the big ones - Split TaskList into smaller components (TaskListHeader, TaskListEmpty, TaskGroup)
