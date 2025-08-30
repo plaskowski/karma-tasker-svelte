@@ -1,5 +1,6 @@
 import type { Task, NavigationState, WorkspaceData } from '$lib/types';
 import { getDefaultPerspective, getDefaultProject, getWorkspaceId } from '$lib/helpers/workspaceHelpers';
+import { db } from '$lib/api/persistence/localStorageAdapter';
 
 export class TaskService {
 	/**
@@ -111,5 +112,18 @@ export class TaskService {
             throw new Error('No default perspective configured for current workspace');
         }
         return defaultPerspective.id;
+	}
+
+	/**
+	 * Clear all completed tasks from a workspace
+	 */
+	static async clearCompletedTasks(workspaceId: string, tasks: Task[]): Promise<void> {
+		const wsApi = db.forWorkspace(workspaceId);
+		const completedTasks = tasks.filter(task => task.completed);
+		
+		// Delete all completed tasks
+		for (const task of completedTasks) {
+			await wsApi.deleteTask(task.id);
+		}
 	}
 }

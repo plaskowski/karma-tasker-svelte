@@ -56,4 +56,31 @@ test.describe('Task Management Flow', () => {
 		// Take screenshot
 		await taskManager.screenshot('03-task-completed.png');
 	});
+
+	test('Clear completed tasks', async () => {
+		// Take screenshot showing tasks with completed ones
+		await taskManager.screenshot('04a-tasks-with-completed.png');
+		
+		// Verify we have completed tasks before clearing
+		const initialCompletedCount = await taskManager.getCompletedTaskCount();
+		expect(initialCompletedCount).toBeGreaterThan(0);
+		
+		// Get total task count before clearing
+		const initialTaskCount = await taskManager.getTaskCount();
+		
+		// Click Clear Completed button
+		await taskManager.clearCompleted();
+		
+		// Take screenshot after clearing
+		await taskManager.screenshot('04b-tasks-after-clear-completed.png');
+		
+		// Verify completed tasks are gone
+		const finalCompletedCount = await taskManager.getCompletedTaskCount();
+		expect(finalCompletedCount).toBe(0);
+		
+		// Verify that incomplete tasks still exist (should be fewer total tasks now)
+		const finalTaskCount = await taskManager.getTaskCount();
+		expect(finalTaskCount).toBeLessThan(initialTaskCount);
+		expect(finalTaskCount).toBeGreaterThan(0);
+	});
 });

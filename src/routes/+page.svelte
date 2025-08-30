@@ -49,6 +49,11 @@
 		}
 		await invalidateAll();
 	}
+	
+	async function handleClearCompleted() {
+		await TaskService.clearCompletedTasks(data.workspaceContext.id, data.tasks);
+		await invalidateAll();
+	}
 </script>
 
 <div class="h-full flex dark">
@@ -59,5 +64,6 @@
 		onUpdateTask={handleUpdateTask}
 		onCreateTask={handleCreateTask}
 		onRefresh={handleRefresh}
+		onClearCompleted={handleClearCompleted}
 	/>
 </div>

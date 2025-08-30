@@ -9,7 +9,7 @@
 - [ ] emit events instead of onXXXX props?
 
 ### Clean-ups
-- [ ] fix Clear Completed button
+- [X] fix Clear Completed button
 - [ ] rename NewTaskDialog.svelte
 - [ ] get rid of all fallbaks on projectId and perspectiveId
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?

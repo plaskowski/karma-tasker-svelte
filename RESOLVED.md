@@ -8,6 +8,13 @@
   - [x] Introduce a visual-test(page) object with all the new methods - Created VisualTestPage class
   - [x] Don't use localStorage directly from test, expose a testing facade in window object - Created TestingFacade
   - [x] Remove duplicate and unused code from test-utils - Cleaned up test utilities
+
+### UI/UX Improvements
+- [x] **Clear Completed button functionality** - Transform non-functional Cleanup button into working Clear Completed feature
+  - [x] Implement service method for clearing completed tasks
+  - [x] Update button labeling and tooltips for better UX
+  - [x] Add comprehensive E2E interaction test
+  - [x] Refactor logic to TaskService for better architecture
   - [x] Extract page objects for interaction tests - Created InteractionTestPage with TaskPage
   - [x] Cover remaining interaction scenarios - Created comprehensive E2E tests for perspective navigation, workspace switching, and keyboard shortcuts
   - [x] Cover completed items with visual test - Added visual regression tests for all views showing completed tasks in Done section

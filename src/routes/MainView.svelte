@@ -15,9 +15,10 @@
 		onUpdateTask: (id: string, updates: any) => Promise<void>;
 		onCreateTask: (taskData: { title: string; description?: string; projectId: string; perspective: string }) => Promise<void>;
 		onRefresh: () => Promise<void>;
+		onClearCompleted: () => Promise<void>;
 	}
 
-	let { data, onTaskToggle, onUpdateTask, onCreateTask, onRefresh }: MainViewProps = $props();
+	let { data, onTaskToggle, onUpdateTask, onCreateTask, onRefresh, onClearCompleted }: MainViewProps = $props();
 	
 	let workspaceContext = $derived(data.workspaceContext);
 	let currentTasks = $derived(data.tasks);
@@ -56,8 +57,8 @@
 		showCreateEditor = false;
 	}
 
-	function handleCleanup() {
-		console.log('Cleanup triggered');
+	async function handleCleanup() {
+		await onClearCompleted();
 	}
 	
 	function createNewTaskWithDefaults(): Task {
