@@ -55,9 +55,10 @@
 				<button
 					onclick={onCleanup}
 					class="btn btn-base btn-outline"
+					title="Clear all completed tasks"
 				>
 					<Zap class="w-4 h-4" />
-					<span>Cleanup</span>
+					<span>Clear Completed</span>
 				</button>
 			{/if}
 			

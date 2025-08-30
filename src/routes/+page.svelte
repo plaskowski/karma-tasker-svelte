@@ -49,6 +49,18 @@
 		}
 		await invalidateAll();
 	}
+	
+	async function handleClearCompleted() {
+		const wsApi = db.forWorkspace(data.workspaceContext.id);
+		const completedTasks = data.tasks.filter(task => task.completed);
+		
+		// Delete all completed tasks
+		for (const task of completedTasks) {
+			await wsApi.deleteTask(task.id);
+		}
+		
+		await invalidateAll();
+	}
 </script>
 
 <div class="h-full flex dark">
@@ -59,5 +71,6 @@
 		onUpdateTask={handleUpdateTask}
 		onCreateTask={handleCreateTask}
 		onRefresh={handleRefresh}
+		onClearCompleted={handleClearCompleted}
 	/>
 </div>
