@@ -9,7 +9,7 @@
 - [ ] emit events instead of onXXXX props?
 
 ### Clean-ups
-- [ ] fix Clear Completed button
+- [X] fix Clear Completed button
 - [ ] rename NewTaskDialog.svelte
 - [X] remove TaskDetailsDialog?
 - [X] remove fallback to 'inbox' (we can't hardcode it)
