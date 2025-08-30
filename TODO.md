@@ -4,7 +4,6 @@
 *See [README.md](./README.md) for project overview and motivation.*
 
 ### Next steps
-- [ ] remove automatic data filling - it should happen only on "Refresh" action
 - [ ] fix visual tests (they lack workspace setup - projects/perspectives)
 - [ ] fix interaction tests
 - [ ] rewrite handleTaskToggle into handleUpdateTask

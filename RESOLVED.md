@@ -10,6 +10,7 @@
   - [x] Remove duplicate and unused code from test-utils - Cleaned up test utilities
 
 ### UI/UX Improvements
+- [x] remove automatic data filling - it should happen only on "Refresh" action
 - [x] fix Clear Completed button
 - [x] **Clear Completed button functionality** - Transform non-functional Cleanup button into working Clear Completed feature
   - [x] Implement service method for clearing completed tasks
