@@ -59,6 +59,16 @@ import {
 		return perspective?.name || task.perspectiveId;
 	}
 
+	function getBadgeText(task: Task): string | undefined {
+		if (showPerspectiveBadge) {
+			return getTaskPerspectiveName(task);
+		}
+		if (showProjectBadge && task.projectId) {
+			return getTaskProjectName(task);
+		}
+		return undefined;
+	}
+
 	function toggleInlineEditor(taskId: string) {
 		inlineEditingTaskId = inlineEditingTaskId === taskId ? null : taskId;
 	}
@@ -122,10 +132,7 @@ import {
 						<UiTaskItem
 							{task}
 							onToggle={onTaskToggle}
-							showProjectBadge={showProjectBadge}
-							showPerspectiveBadge={showPerspectiveBadge}
-							perspectiveName={getTaskPerspectiveName(task)}
-							projectName={getTaskProjectName(task)}
+							badgeText={getBadgeText(task)}
 						/>
 					{/each}
 				{/if}

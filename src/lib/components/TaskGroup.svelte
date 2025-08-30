@@ -34,6 +34,16 @@
 		onTaskToggle,
 		onUpdateTask
 	}: Props = $props();
+
+	function getBadgeText(task: Task): string | undefined {
+		if (showPerspectiveBadge) {
+			return getTaskPerspectiveName(task);
+		}
+		if (showProjectBadge && task.projectId) {
+			return getTaskProjectName(task);
+		}
+		return undefined;
+	}
 </script>
 
 <div class="mb-6">
@@ -61,10 +71,7 @@
 				<UiTaskItem
 					{task}
 					onToggle={onTaskToggle}
-					showProjectBadge={showProjectBadge}
-					showPerspectiveBadge={showPerspectiveBadge}
-					perspectiveName={getTaskPerspectiveName(task)}
-					projectName={getTaskProjectName(task)}
+					badgeText={getBadgeText(task)}
 				/>
 			</div>
 		{/if}
