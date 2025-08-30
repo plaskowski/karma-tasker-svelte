@@ -39,23 +39,30 @@
         }
     });
 
+    function validateForm(): { projectId: string; perspectiveId: string } {
+        if (!projectId) {
+            throw new Error('Project ID is required');
+        }
+        if (!perspective) {
+            throw new Error('Perspective is required');
+        }
+        return { projectId, perspectiveId: perspective };
+    }
+
 	async function handleSubmit() {
 		if (!title.trim()) return;
 
 		submitting = true;
 		try {
-        if (!projectId) {
-            throw new Error('Project ID is required');
-        }
-        const finalProjectId = projectId;
+        const validated = validateForm();
 
 			await onAddTask({
 				title: title.trim(),
 				description: description.trim() || undefined,
-				projectId: finalProjectId,
+				projectId: validated.projectId,
                 workspaceId: workspace.id,
                 completed: false,
-                perspectiveId: perspective || (() => { throw new Error('Perspective is required'); })()
+                perspectiveId: validated.perspectiveId
 			});
 
 			// Reset form

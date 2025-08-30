@@ -12,6 +12,13 @@
 	}
 
 	let { task, onToggle, showProjectBadge = true, showPerspectiveBadge = false, perspectiveName, projectName }: Props = $props();
+
+    function getRequiredProjectName(): string {
+        if (!projectName) {
+            throw new Error(`No project name provided for task ${task.id} with projectId ${task.projectId}`);
+        }
+        return projectName;
+    }
 </script>
 
 <div
@@ -68,9 +75,9 @@
 				data-testid="project-badge"
 				data-project={task.projectId}
 				role="status"
-				aria-label="Project: {projectName ?? (() => { throw new Error(`No project name provided for task ${task.id} with projectId ${task.projectId}`); })()}"
+				aria-label="Project: {getRequiredProjectName()}"
 			>
-				{projectName ?? (() => { throw new Error(`No project name provided for task ${task.id} with projectId ${task.projectId}`); })()}
+				{getRequiredProjectName()}
 			</span>
 		{/if}
 	</div>
