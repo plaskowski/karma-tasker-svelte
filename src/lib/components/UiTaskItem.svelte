@@ -4,14 +4,10 @@
     interface Props {
 		task: Task;
 		onToggle: (id: string) => void;
-
-		showProjectBadge?: boolean;
-		showPerspectiveBadge?: boolean;
-		perspectiveName?: string;
-		projectName?: string;
+		badgeText?: string;
 	}
 
-	let { task, onToggle, showProjectBadge = true, showPerspectiveBadge = false, perspectiveName, projectName }: Props = $props();
+	let { task, onToggle, badgeText }: Props = $props();
 </script>
 
 <div
@@ -46,34 +42,19 @@
 		{/if}
 	</div>
 
-	<!-- Badges (right side) -->
-	<div class="flex-shrink-0 mr-2 self-baseline flex gap-2">
-		<!-- Perspective badge -->
-		{#if showPerspectiveBadge && perspectiveName}
+	<!-- Badge (right side) -->
+	{#if badgeText}
+		<div class="flex-shrink-0 mr-2 self-baseline">
 			<span 
 				class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded"
-				data-testid="perspective-badge"
-                data-perspective={task.perspectiveId}
+				data-testid="badge"
 				role="status"
-				aria-label="Perspective: {perspectiveName}"
+				aria-label="Badge: {badgeText}"
 			>
-				{perspectiveName}
+				{badgeText}
 			</span>
-		{/if}
-		
-		<!-- Project badge -->
-		{#if task.projectId && showProjectBadge}
-			<span 
-				class="text-xs leading-5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded"
-				data-testid="project-badge"
-				data-project={task.projectId}
-				role="status"
-				aria-label="Project: {projectName || task.projectId}"
-			>
-				{projectName || task.projectId}
-			</span>
-		{/if}
-	</div>
+		</div>
+	{/if}
 
 
 </div>

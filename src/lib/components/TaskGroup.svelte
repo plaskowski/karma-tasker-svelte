@@ -1,13 +1,16 @@
 <script lang="ts">
-	import type { Task, WorkspaceData } from '$lib/types';
+	import type { Task, WorkspaceData, NavigationState } from '$lib/types';
 	import UiTaskItem from './UiTaskItem.svelte';
 	import TaskInlineEditor from './TaskInlineEditor.svelte';
+	import { getBadgeText } from './taskGrouping';
 	
 	interface Props {
 		title: string;
 		tasks: Task[];
 		workspace: WorkspaceData;
+		navigation: NavigationState;
 		isGroupTitle?: boolean;
+		isCompleted?: boolean;
 		showProjectBadge: boolean;
 		showPerspectiveBadge: boolean;
 		getTaskProjectName: (task: Task) => string;
@@ -23,7 +26,9 @@
 		title,
 		tasks,
 		workspace,
+		navigation,
 		isGroupTitle = false,
+		isCompleted = false,
 		showProjectBadge,
 		showPerspectiveBadge,
 		getTaskProjectName,
@@ -36,9 +41,9 @@
 	}: Props = $props();
 </script>
 
-<div class="mb-6">
+<div class="mb-6 {isCompleted ? 'opacity-75' : ''}">
 	<div class="mb-3">
-		<h3 class="text-base font-medium text-gray-500 dark:text-gray-400 {isGroupTitle && title.startsWith('project-') ? 'capitalize' : ''}">
+		<h3 class="text-base font-medium {isCompleted ? 'text-gray-400 dark:text-gray-500' : 'text-gray-500 dark:text-gray-400'} {isGroupTitle && title.startsWith('project-') ? 'capitalize' : ''}">
 			<span>{title}</span>
 		</h3>
 	</div>
@@ -61,10 +66,7 @@
 				<UiTaskItem
 					{task}
 					onToggle={onTaskToggle}
-					showProjectBadge={showProjectBadge}
-					showPerspectiveBadge={showPerspectiveBadge}
-					perspectiveName={getTaskPerspectiveName(task)}
-					projectName={getTaskProjectName(task)}
+					badgeText={getBadgeText(task, navigation, workspace)}
 				/>
 			</div>
 		{/if}

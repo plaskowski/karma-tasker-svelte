@@ -9,7 +9,8 @@ import TaskGroupComponent from './TaskGroup.svelte';
 import { 
   getTaskGroups, 
   shouldShowProjectBadge, 
-  shouldShowPerspectiveBadge
+  shouldShowPerspectiveBadge,
+  getBadgeText
 } from './taskGrouping';
 
 	interface Props {
@@ -59,6 +60,7 @@ import {
 		return perspective?.name || task.perspectiveId;
 	}
 
+
 	function toggleInlineEditor(taskId: string) {
 		inlineEditingTaskId = inlineEditingTaskId === taskId ? null : taskId;
 	}
@@ -100,6 +102,7 @@ import {
 						title={group.title}
 						tasks={group.tasks}
 						{workspace}
+						{navigation}
 						isGroupTitle={true}
 						showProjectBadge={showProjectBadge}
 						showPerspectiveBadge={showPerspectiveBadge}
@@ -115,19 +118,23 @@ import {
 
 				<!-- Completed Tasks -->
 				{#if (showCompleted || completedTasks.length > 0) && completedTasks.length > 0}
-					<div class="mb-3">
-						<h3 class="text-base font-medium text-gray-500 dark:text-gray-400">Done</h3>
-					</div>
-					{#each completedTasks as task (task.id)}
-						<UiTaskItem
-							{task}
-							onToggle={onTaskToggle}
-							showProjectBadge={showProjectBadge}
-							showPerspectiveBadge={showPerspectiveBadge}
-							perspectiveName={getTaskPerspectiveName(task)}
-							projectName={getTaskProjectName(task)}
-						/>
-					{/each}
+					<TaskGroupComponent
+						title="Done"
+						tasks={completedTasks}
+						{workspace}
+						{navigation}
+						isGroupTitle={false}
+						isCompleted={true}
+						showProjectBadge={showProjectBadge}
+						showPerspectiveBadge={showPerspectiveBadge}
+						{getTaskProjectName}
+						{getTaskPerspectiveName}
+						{isEditingTask}
+						{toggleInlineEditor}
+						{closeInlineEditor}
+						{onTaskToggle}
+						{onUpdateTask}
+					/>
 				{/if}
 			</div>
 		{/if}
