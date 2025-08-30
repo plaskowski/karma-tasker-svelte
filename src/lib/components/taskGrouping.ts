@@ -1,5 +1,5 @@
 import type { Task, WorkspaceData, NavigationState, ViewType } from '$lib/types';
-import { findProject, getPerspectives, getProjects } from '$lib/helpers/workspaceHelpers';
+import { findProject, findPerspective, getPerspectives, getProjects } from '$lib/helpers/workspaceHelpers';
 import { 
   sortTasksByPerspectiveThenOrder, 
   sortTasksByProjectThenOrder, 
@@ -109,4 +109,26 @@ export function shouldShowProjectBadge(navigation: NavigationState): boolean {
 export function shouldShowPerspectiveBadge(navigation: NavigationState): boolean {
   const groupingType = getGroupingType(navigation.currentView);
   return groupingType !== 'perspective' && navigation.currentView !== 'perspective';
+}
+
+/**
+ * Gets badge text for a task based on current navigation state
+ */
+export function getBadgeText(
+  task: Task, 
+  navigation: NavigationState, 
+  workspace: WorkspaceData
+): string | undefined {
+  const showPerspectiveBadge = shouldShowPerspectiveBadge(navigation);
+  const showProjectBadge = shouldShowProjectBadge(navigation);
+
+  if (showPerspectiveBadge) {
+    const perspective = findPerspective(workspace, task.perspectiveId);
+    return perspective?.name || task.perspectiveId;
+  }
+  if (showProjectBadge && task.projectId) {
+    const project = findProject(workspace, task.projectId);
+    return project?.name || task.projectId;
+  }
+  return undefined;
 }

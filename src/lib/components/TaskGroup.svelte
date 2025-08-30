@@ -1,12 +1,14 @@
 <script lang="ts">
-	import type { Task, WorkspaceData } from '$lib/types';
+	import type { Task, WorkspaceData, NavigationState } from '$lib/types';
 	import UiTaskItem from './UiTaskItem.svelte';
 	import TaskInlineEditor from './TaskInlineEditor.svelte';
+	import { getBadgeText } from './taskGrouping';
 	
 	interface Props {
 		title: string;
 		tasks: Task[];
 		workspace: WorkspaceData;
+		navigation: NavigationState;
 		isGroupTitle?: boolean;
 		showProjectBadge: boolean;
 		showPerspectiveBadge: boolean;
@@ -23,6 +25,7 @@
 		title,
 		tasks,
 		workspace,
+		navigation,
 		isGroupTitle = false,
 		showProjectBadge,
 		showPerspectiveBadge,
@@ -34,16 +37,6 @@
 		onTaskToggle,
 		onUpdateTask
 	}: Props = $props();
-
-	function getBadgeText(task: Task): string | undefined {
-		if (showPerspectiveBadge) {
-			return getTaskPerspectiveName(task);
-		}
-		if (showProjectBadge && task.projectId) {
-			return getTaskProjectName(task);
-		}
-		return undefined;
-	}
 </script>
 
 <div class="mb-6">
@@ -71,7 +64,7 @@
 				<UiTaskItem
 					{task}
 					onToggle={onTaskToggle}
-					badgeText={getBadgeText(task)}
+					badgeText={getBadgeText(task, navigation, workspace)}
 				/>
 			</div>
 		{/if}

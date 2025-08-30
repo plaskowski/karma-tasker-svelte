@@ -9,7 +9,8 @@ import TaskGroupComponent from './TaskGroup.svelte';
 import { 
   getTaskGroups, 
   shouldShowProjectBadge, 
-  shouldShowPerspectiveBadge
+  shouldShowPerspectiveBadge,
+  getBadgeText
 } from './taskGrouping';
 
 	interface Props {
@@ -59,15 +60,6 @@ import {
 		return perspective?.name || task.perspectiveId;
 	}
 
-	function getBadgeText(task: Task): string | undefined {
-		if (showPerspectiveBadge) {
-			return getTaskPerspectiveName(task);
-		}
-		if (showProjectBadge && task.projectId) {
-			return getTaskProjectName(task);
-		}
-		return undefined;
-	}
 
 	function toggleInlineEditor(taskId: string) {
 		inlineEditingTaskId = inlineEditingTaskId === taskId ? null : taskId;
@@ -110,6 +102,7 @@ import {
 						title={group.title}
 						tasks={group.tasks}
 						{workspace}
+						{navigation}
 						isGroupTitle={true}
 						showProjectBadge={showProjectBadge}
 						showPerspectiveBadge={showPerspectiveBadge}
@@ -132,7 +125,7 @@ import {
 						<UiTaskItem
 							{task}
 							onToggle={onTaskToggle}
-							badgeText={getBadgeText(task)}
+							badgeText={getBadgeText(task, navigation, workspace)}
 						/>
 					{/each}
 				{/if}
