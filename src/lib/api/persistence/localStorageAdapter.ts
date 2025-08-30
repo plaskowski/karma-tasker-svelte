@@ -361,7 +361,20 @@ export class LocalStorageAdapter implements WorkspaceAPI {
       },
       
       async createPerspective(request: CreatePerspectiveRequest): Promise<PerspectiveDto> {
-        throw new Error('Not implemented');
+        await adapter.delay();
+        const perspectives = adapter.loadCollection<PerspectiveDto>('perspectives', workspaceId);
+        
+        const newPerspective: PerspectiveDto = {
+          id: request.id,
+          name: request.name,
+          icon: request.icon || '',
+          order: request.order || perspectives.length
+        };
+        
+        perspectives.push(newPerspective);
+        adapter.saveCollection('perspectives', perspectives, workspaceId);
+        
+        return newPerspective;
       },
       
       async updatePerspective(perspectiveId: string, request: UpdatePerspectiveRequest): Promise<PerspectiveDto> {

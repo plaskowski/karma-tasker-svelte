@@ -40,19 +40,25 @@ export function createTestingFacade(): TestingFacade {
 			// Clear existing data first
 			this.clearAllData();
 			
-			// Add workspaces
+			// Add workspaces and their perspectives
 			for (const workspace of mockWorkspaces) {
+				// Create workspace
 				await db.createWorkspace(toWorkspaceDto(workspace));
+				
+				// Add perspectives using the API
+				const wsApi = db.forWorkspace(workspace.id);
+				for (const perspective of workspace.perspectives) {
+					await wsApi.createPerspective({
+						id: perspective.id,
+						name: perspective.name,
+						icon: perspective.icon,
+						order: perspective.order
+					});
+				}
 			}
 			
-			// Add perspectives to personal workspace
-			const personalWs = db.forWorkspace('personal');
-			await personalWs.createPerspective({ id: 'inbox', name: 'Inbox', order: 0 });
-			await personalWs.createPerspective({ id: 'first', name: 'First', order: 1 });
-			await personalWs.createPerspective({ id: 'next', name: 'Next', order: 2 });
-			await personalWs.createPerspective({ id: 'someday', name: 'Someday', order: 3 });
-			
 			// Add projects to personal workspace
+			const personalWs = db.forWorkspace('personal');
 			for (const project of mockProjects) {
 				if (project.workspaceId === 'personal') {
 					await personalWs.createProject(toProjectDto(project));
