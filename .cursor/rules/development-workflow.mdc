@@ -1,4 +1,6 @@
 ---
+alwaysApply: true
+---
 name: Development Workflow
 scopes:
   - "*"

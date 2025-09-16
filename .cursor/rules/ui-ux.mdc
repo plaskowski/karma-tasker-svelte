@@ -1,4 +1,6 @@
 ---
+alwaysApply: true
+---
 name: UI/UX Standards
 scopes:
   - "*"

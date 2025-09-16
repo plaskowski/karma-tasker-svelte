@@ -1,4 +1,6 @@
 ---
+alwaysApply: true
+---
 name: Code Quality Standards
 scopes:
   - "*"

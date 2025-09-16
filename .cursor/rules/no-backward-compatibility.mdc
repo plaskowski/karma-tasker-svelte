@@ -1,4 +1,6 @@
 ---
+alwaysApply: true
+---
 name: No Backward Compatibility
 scopes:
   - "*"
