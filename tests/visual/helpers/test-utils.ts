@@ -176,6 +176,11 @@ export function visualTest(config: VisualTestConfig) {
 }
 
 /**
+ * Import real mock data
+ */
+import { mockTasks, mockProjects, mockWorkspaces } from '../../../src/lib/data/mockData';
+
+/**
  * State injection types and utilities for visual tests
  */
 export interface TestState {
@@ -201,67 +206,13 @@ export const stateBuilder = {
 	 * Create state focused on a specific project with its tasks
 	 */
 	forProject: (projectId: string, options?: { taskCount?: number; withCompleted?: boolean }) => {
-		// Import mock data - we'll inline this for now
-		const mockWorkspaces = [
-			{
-				id: 'personal',
-				name: 'Personal',
-				perspectives: [
-					{ id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
-					{ id: 'first', name: 'First', icon: 'zap', order: 2 },
-					{ id: 'next', name: 'Next', icon: 'clock', order: 3 },
-					{ id: 'someday', name: 'Someday', icon: 'archive', order: 4 },
-				],
-				createdAt: new Date('2024-01-15')
-			}
-		];
-
-		const mockProjects = [
-			{ id: 'personal-default', name: 'Personal Actions', icon: 'user', workspaceId: 'personal', order: 1, createdAt: new Date('2024-01-15') },
-			{ id: 'household', name: 'Household', icon: 'home', workspaceId: 'personal', order: 2, createdAt: new Date('2024-01-15') },
-			{ id: 'finances', name: 'Finances', icon: 'building', workspaceId: 'personal', order: 3, createdAt: new Date('2024-01-15') },
-			{ id: 'health', name: 'Health', icon: 'activity', workspaceId: 'personal', order: 4, createdAt: new Date('2024-01-15') },
-		];
-
-		// Tasks for personal-default project
-		const mockTasks = [
-			{
-				id: '3',
-				title: 'Call insurance company',
-				description: '',
-				completed: false,
-				perspectiveId: 'first',
-				projectId: 'personal-default',
-				order: 1,
-				createdAt: new Date('2024-01-17'),
-				updatedAt: new Date('2024-01-17'),
-			},
-			{
-				id: '32',
-				title: 'Watch financial planning webinar',
-				description: 'Thursday 7pm',
-				completed: false,
-				perspectiveId: 'first',
-				projectId: 'personal-default',
-				order: 2,
-				createdAt: new Date('2024-02-15'),
-				updatedAt: new Date('2024-02-15'),
-			},
-			{
-				id: '33',
-				title: 'Update emergency contact list',
-				description: '',
-				completed: false,
-				perspectiveId: 'inbox',
-				projectId: 'personal-default',
-				order: 3,
-				createdAt: new Date('2024-02-16'),
-				updatedAt: new Date('2024-02-16'),
-			}
-		];
+		// Use real mock data
+		const allWorkspaces = mockWorkspaces;
+		const allProjects = mockProjects;
+		let allTasks = [...mockTasks];
 
 		// Filter tasks for the specific project
-		let projectTasks = mockTasks.filter(t => t.projectId === projectId);
+		let projectTasks = allTasks.filter(t => t.projectId === projectId);
 
 		// Apply completion if requested
 		if (options?.withCompleted) {
@@ -272,8 +223,8 @@ export const stateBuilder = {
 		}
 
 		return {
-			workspaces: mockWorkspaces,
-			projects: mockProjects,
+			workspaces: allWorkspaces,
+			projects: allProjects,
 			tasks: projectTasks
 		};
 	},
@@ -282,17 +233,36 @@ export const stateBuilder = {
 	 * Full mock data state
 	 */
 	full: () => {
-		// We'll implement this later - for now return minimal state
-		return stateBuilder.forProject('personal-default');
+		return {
+			workspaces: mockWorkspaces,
+			projects: mockProjects,
+			tasks: mockTasks
+		};
+	},
+
+	/**
+	 * State with some tasks completed
+	 */
+	withCompleted: (completionRatio = 0.5) => {
+		const completedTasks = mockTasks.map((task, index) => ({
+			...task,
+			completed: index < Math.floor(mockTasks.length * completionRatio)
+		}));
+
+		return {
+			workspaces: mockWorkspaces,
+			projects: mockProjects,
+			tasks: completedTasks
+		};
 	},
 
 	/**
 	 * Empty state - just workspace structure
 	 */
 	empty: () => {
-		const state = stateBuilder.forProject('personal-default');
 		return {
-			...state,
+			workspaces: mockWorkspaces,
+			projects: mockProjects,
 			tasks: []
 		};
 	}
