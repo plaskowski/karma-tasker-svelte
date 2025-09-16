@@ -2,8 +2,7 @@ import { type Page, expect } from '@playwright/test';
 import { 
 	prepareForScreenshot,
 	buildAppUrl,
-	waitForAppReady,
-	SCREENSHOT_OPTIONS
+	waitForAppReady
 } from './test-utils';
 
 /**
@@ -125,7 +124,7 @@ export class VisualTestPage {
 	 * Take a screenshot and compare with baseline
 	 */
 	async expectScreenshot(name: string) {
-		await expect(this.page).toHaveScreenshot(name, SCREENSHOT_OPTIONS);
+		await expect(this.page).toHaveScreenshot(name);
 	}
 
 	/**

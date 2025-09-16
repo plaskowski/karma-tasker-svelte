@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { injectTestState, stateBuilder, buildAppUrl, prepareForScreenshot, waitForAppReady, SCREENSHOT_OPTIONS } from '../helpers/test-utils';
+import { injectTestState, stateBuilder, buildAppUrl, prepareForScreenshot, waitForAppReady } from '../helpers/test-utils';
 
 test('Single Project - full state', async ({ page }) => {
 	// Inject state for Personal Default project
@@ -15,5 +15,5 @@ test('Single Project - full state', async ({ page }) => {
 	
 	await page.goto(url);
 	await waitForAppReady(page);
-	await expect(page).toHaveScreenshot('single-full.png', SCREENSHOT_OPTIONS);
+	await expect(page).toHaveScreenshot('single-full.png');
 });

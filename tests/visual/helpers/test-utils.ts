@@ -131,14 +131,6 @@ export function buildAppUrl(options?: {
 	return params.toString() ? `/?${params.toString()}` : '/';
 }
 
-/**
- * Standard screenshot options for visual tests
- */
-export const SCREENSHOT_OPTIONS = {
-	fullPage: true,
-	animations: 'disabled' as const,
-	maxDiffPixels: 100
-} as const;
 
 /**
  * Navigate and wait for app to be ready - used by E2E tests
