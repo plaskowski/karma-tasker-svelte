@@ -130,6 +130,14 @@ export class LocalStorageAdapter implements WorkspaceAPI {
   }
 
   /**
+   * Convert date field to ISO string, handling both Date objects and strings
+   */
+  private ensureDateString(dateValue: any): string {
+    if (!dateValue) return new Date().toISOString();
+    return typeof dateValue === 'string' ? dateValue : dateValue.toISOString();
+  }
+
+  /**
    * Load injected test state directly into localStorage
    */
   private loadInjectedTestState(testState: any): void {
@@ -148,7 +156,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
       const workspaceDtos = testState.workspaces.map((w: any) => ({
         id: w.id,
         name: w.name,
-        created_at: w.createdAt ? (typeof w.createdAt === 'string' ? w.createdAt : w.createdAt.toISOString()) : new Date().toISOString()
+        created_at: this.ensureDateString(w.createdAt)
       }));
       this.saveCollection('workspaces', workspaceDtos);
 
@@ -185,7 +193,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
           name: p.name,
           order: p.order,
           icon: p.icon,
-          created_at: p.createdAt ? (typeof p.createdAt === 'string' ? p.createdAt : p.createdAt.toISOString()) : new Date().toISOString()
+          created_at: this.ensureDateString(p.createdAt)
         }));
         this.saveCollection('projects', workspaceProjects, workspaceId);
       });
@@ -217,8 +225,8 @@ export class LocalStorageAdapter implements WorkspaceAPI {
           perspective: t.perspectiveId,
           completed: t.completed,
           order: t.order,
-          created_at: t.createdAt ? (typeof t.createdAt === 'string' ? t.createdAt : t.createdAt.toISOString()) : new Date().toISOString(),
-          updated_at: t.updatedAt ? (typeof t.updatedAt === 'string' ? t.updatedAt : t.updatedAt.toISOString()) : new Date().toISOString()
+          created_at: this.ensureDateString(t.createdAt),
+          updated_at: this.ensureDateString(t.updatedAt)
         }));
         this.saveCollection('tasks', workspaceTasks, workspaceId);
       });
