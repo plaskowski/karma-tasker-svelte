@@ -1,4 +1,4 @@
-import {type Page, expect } from '@playwright/test';
+import {type Page, expect, test } from '@playwright/test';
 
 /**
  * Freeze time to a fixed date for deterministic testing
@@ -139,6 +139,40 @@ export async function navigateToApp(page: Page, path: string = '/') {
 	await prepareForScreenshot(page);
 	await page.goto(path);
 	await waitForAppReady(page);
+}
+
+/**
+ * Configuration for a visual test
+ */
+export interface VisualTestConfig {
+	name: string;
+	state: () => TestState;
+	url: {
+		workspace?: string;
+		view?: 'perspective' | 'project' | 'project-all' | 'all';
+		perspective?: string;
+		project?: string;
+	};
+	screenshot: string;
+}
+
+/**
+ * Create a declarative visual test from configuration
+ */
+export function visualTest(config: VisualTestConfig) {
+	test(config.name, async ({ page }) => {
+		// Prepare page and inject state
+		await prepareForScreenshot(page);
+		await injectTestState(page, config.state());
+		
+		// Navigate to the specified URL
+		const url = buildAppUrl(config.url);
+		await page.goto(url);
+		await waitForAppReady(page);
+		
+		// Take screenshot
+		await expect(page).toHaveScreenshot(config.screenshot);
+	});
 }
 
 /**
