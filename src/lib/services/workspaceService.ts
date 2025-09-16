@@ -7,6 +7,9 @@ export class WorkspaceService {
 	 * Load all workspaces with their perspectives
 	 */
     async getAllWorkspaces(): Promise<WorkspaceInfo[]> {
+		// Initialize data if empty (including injected test state)
+		db.initializeWithMockData();
+		
 		const workspaceDtos = await db.getWorkspaces();
 		
         const allWorkspaces: WorkspaceInfo[] = [];

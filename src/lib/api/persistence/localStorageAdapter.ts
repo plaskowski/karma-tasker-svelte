@@ -66,9 +66,12 @@ export class LocalStorageAdapter implements WorkspaceAPI {
   public initializeWithMockData(): void {
     // Check for injected test state first (only in test environments)
     if (typeof window !== 'undefined' && (window as any).__testState) {
+      console.log('Found injected test state, loading...');
       this.loadInjectedTestState((window as any).__testState);
       return;
     }
+    
+    console.log('No injected test state found, loading normal mock data...');
 
     const workspaces = this.loadCollection<WorkspaceDto>('workspaces');
 
@@ -133,6 +136,8 @@ export class LocalStorageAdapter implements WorkspaceAPI {
    * Load injected test state directly into localStorage
    */
   private loadInjectedTestState(testState: any): void {
+    console.log('Loading injected test state:', testState);
+    
     // Clear existing data first
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
