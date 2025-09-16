@@ -1,8 +1,8 @@
-import { test } from '@playwright/test';
-import { VisualTestPage } from '../helpers/visual-test-page';
+import { visualTest, stateBuilder } from '../helpers/test-utils';
 
-test('All Projects - full state', async ({ page }) => {
-	const visualTest = new VisualTestPage(page);
-	await visualTest.setup({ projectView: 'all' });
-	await visualTest.expectScreenshot('all-full.png');
+visualTest({
+	name: 'All Projects - full state',
+	state: stateBuilder.full,
+	url: { view: 'project-all' },
+	screenshot: 'all-full.png'
 });
