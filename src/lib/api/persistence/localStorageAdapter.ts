@@ -64,6 +64,12 @@ export class LocalStorageAdapter implements WorkspaceAPI {
   }
 
   public initializeWithMockData(): void {
+    // Check for injected test state first (only in test environments)
+    if (typeof window !== 'undefined' && (window as any).__testState) {
+      this.loadInjectedTestState((window as any).__testState);
+      return;
+    }
+
     const workspaces = this.loadCollection<WorkspaceDto>('workspaces');
 
     if (workspaces.length === 0) {
@@ -119,6 +125,102 @@ export class LocalStorageAdapter implements WorkspaceAPI {
             updated_at: t.updatedAt.toISOString()
           }));
         this.saveCollection('tasks', workspaceTasks, workspace.id);
+      });
+    }
+  }
+
+  /**
+   * Load injected test state directly into localStorage
+   */
+  private loadInjectedTestState(testState: any): void {
+    // Clear existing data first
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(this.prefix)) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+
+    // Load workspaces
+    if (testState.workspaces) {
+      const workspaceDtos = testState.workspaces.map((w: any) => ({
+        id: w.id,
+        name: w.name,
+        created_at: w.createdAt ? w.createdAt.toISOString() : new Date().toISOString()
+      }));
+      this.saveCollection('workspaces', workspaceDtos);
+
+      // Load perspectives, projects, and tasks for each workspace
+      testState.workspaces.forEach((workspace: any) => {
+        // Store perspectives for this workspace
+        if (workspace.perspectives) {
+          const workspacePerspectives = workspace.perspectives.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            icon: p.icon,
+            order: p.order || 0
+          }));
+          this.saveCollection('perspectives', workspacePerspectives, workspace.id);
+        }
+      });
+    }
+
+    // Load projects
+    if (testState.projects) {
+      // Group projects by workspace
+      const projectsByWorkspace = new Map<string, any[]>();
+      testState.projects.forEach((project: any) => {
+        if (!projectsByWorkspace.has(project.workspaceId)) {
+          projectsByWorkspace.set(project.workspaceId, []);
+        }
+        projectsByWorkspace.get(project.workspaceId)!.push(project);
+      });
+
+      // Save projects for each workspace
+      projectsByWorkspace.forEach((projects, workspaceId) => {
+        const workspaceProjects = projects.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          order: p.order,
+          icon: p.icon,
+          created_at: p.createdAt ? p.createdAt.toISOString() : new Date().toISOString()
+        }));
+        this.saveCollection('projects', workspaceProjects, workspaceId);
+      });
+    }
+
+    // Load tasks
+    if (testState.tasks) {
+      // Group tasks by workspace based on their project
+      const tasksByWorkspace = new Map<string, any[]>();
+      
+      testState.tasks.forEach((task: any) => {
+        // Find the workspace for this task's project
+        const project = testState.projects?.find((p: any) => p.id === task.projectId);
+        const workspaceId = project?.workspaceId || 'personal'; // Fallback to personal
+        
+        if (!tasksByWorkspace.has(workspaceId)) {
+          tasksByWorkspace.set(workspaceId, []);
+        }
+        tasksByWorkspace.get(workspaceId)!.push(task);
+      });
+
+      // Save tasks for each workspace
+      tasksByWorkspace.forEach((tasks, workspaceId) => {
+        const workspaceTasks = tasks.map((t: any) => ({
+          id: t.id,
+          title: t.title,
+          description: t.description,
+          project_id: t.projectId,
+          perspective: t.perspectiveId,
+          completed: t.completed,
+          order: t.order,
+          created_at: t.createdAt ? t.createdAt.toISOString() : new Date().toISOString(),
+          updated_at: t.updatedAt ? t.updatedAt.toISOString() : new Date().toISOString()
+        }));
+        this.saveCollection('tasks', workspaceTasks, workspaceId);
       });
     }
   }

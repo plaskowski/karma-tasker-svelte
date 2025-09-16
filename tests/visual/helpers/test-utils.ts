@@ -149,3 +149,126 @@ export async function navigateToApp(page: Page, path: string = '/') {
 	await waitForAppReady(page);
 }
 
+/**
+ * State injection types and utilities for visual tests
+ */
+export interface TestState {
+	workspaces?: any[];
+	tasks?: any[];
+	projects?: any[];
+}
+
+/**
+ * Inject test state into the page before app initialization
+ */
+export async function injectTestState(page: Page, state: TestState) {
+	await page.addInitScript((injectedState) => {
+		(window as any).__testState = injectedState;
+	}, state);
+}
+
+/**
+ * State builder utilities for common test scenarios
+ */
+export const stateBuilder = {
+	/**
+	 * Create state focused on a specific project with its tasks
+	 */
+	forProject: (projectId: string, options?: { taskCount?: number; withCompleted?: boolean }) => {
+		// Import mock data - we'll inline this for now
+		const mockWorkspaces = [
+			{
+				id: 'personal',
+				name: 'Personal',
+				perspectives: [
+					{ id: 'inbox', name: 'Inbox', icon: 'inbox', order: 1 },
+					{ id: 'first', name: 'First', icon: 'zap', order: 2 },
+					{ id: 'next', name: 'Next', icon: 'clock', order: 3 },
+					{ id: 'someday', name: 'Someday', icon: 'archive', order: 4 },
+				],
+				createdAt: new Date('2024-01-15')
+			}
+		];
+
+		const mockProjects = [
+			{ id: 'personal-default', name: 'Personal Actions', icon: 'user', workspaceId: 'personal', order: 1, createdAt: new Date('2024-01-15') },
+			{ id: 'household', name: 'Household', icon: 'home', workspaceId: 'personal', order: 2, createdAt: new Date('2024-01-15') },
+			{ id: 'finances', name: 'Finances', icon: 'building', workspaceId: 'personal', order: 3, createdAt: new Date('2024-01-15') },
+			{ id: 'health', name: 'Health', icon: 'activity', workspaceId: 'personal', order: 4, createdAt: new Date('2024-01-15') },
+		];
+
+		// Tasks for personal-default project
+		const mockTasks = [
+			{
+				id: '3',
+				title: 'Call insurance company',
+				description: '',
+				completed: false,
+				perspectiveId: 'first',
+				projectId: 'personal-default',
+				order: 1,
+				createdAt: new Date('2024-01-17'),
+				updatedAt: new Date('2024-01-17'),
+			},
+			{
+				id: '32',
+				title: 'Watch financial planning webinar',
+				description: 'Thursday 7pm',
+				completed: false,
+				perspectiveId: 'first',
+				projectId: 'personal-default',
+				order: 2,
+				createdAt: new Date('2024-02-15'),
+				updatedAt: new Date('2024-02-15'),
+			},
+			{
+				id: '33',
+				title: 'Update emergency contact list',
+				description: '',
+				completed: false,
+				perspectiveId: 'inbox',
+				projectId: 'personal-default',
+				order: 3,
+				createdAt: new Date('2024-02-16'),
+				updatedAt: new Date('2024-02-16'),
+			}
+		];
+
+		// Filter tasks for the specific project
+		let projectTasks = mockTasks.filter(t => t.projectId === projectId);
+
+		// Apply completion if requested
+		if (options?.withCompleted) {
+			projectTasks = projectTasks.map((task, index) => ({
+				...task,
+				completed: index % 2 === 0 // Complete every other task
+			}));
+		}
+
+		return {
+			workspaces: mockWorkspaces,
+			projects: mockProjects,
+			tasks: projectTasks
+		};
+	},
+
+	/**
+	 * Full mock data state
+	 */
+	full: () => {
+		// We'll implement this later - for now return minimal state
+		return stateBuilder.forProject('personal-default');
+	},
+
+	/**
+	 * Empty state - just workspace structure
+	 */
+	empty: () => {
+		const state = stateBuilder.forProject('personal-default');
+		return {
+			...state,
+			tasks: []
+		};
+	}
+};
+
