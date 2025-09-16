@@ -66,12 +66,9 @@ export class LocalStorageAdapter implements WorkspaceAPI {
   public initializeWithMockData(): void {
     // Check for injected test state first (only in test environments)
     if (typeof window !== 'undefined' && (window as any).__testState) {
-      console.log('Found injected test state, loading...');
       this.loadInjectedTestState((window as any).__testState);
       return;
     }
-    
-    console.log('No injected test state found, loading normal mock data...');
 
     const workspaces = this.loadCollection<WorkspaceDto>('workspaces');
 
@@ -136,8 +133,6 @@ export class LocalStorageAdapter implements WorkspaceAPI {
    * Load injected test state directly into localStorage
    */
   private loadInjectedTestState(testState: any): void {
-    console.log('Loading injected test state:', testState);
-    
     // Clear existing data first
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
@@ -153,7 +148,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
       const workspaceDtos = testState.workspaces.map((w: any) => ({
         id: w.id,
         name: w.name,
-        created_at: w.createdAt ? w.createdAt.toISOString() : new Date().toISOString()
+        created_at: w.createdAt ? (typeof w.createdAt === 'string' ? w.createdAt : w.createdAt.toISOString()) : new Date().toISOString()
       }));
       this.saveCollection('workspaces', workspaceDtos);
 
@@ -190,7 +185,7 @@ export class LocalStorageAdapter implements WorkspaceAPI {
           name: p.name,
           order: p.order,
           icon: p.icon,
-          created_at: p.createdAt ? p.createdAt.toISOString() : new Date().toISOString()
+          created_at: p.createdAt ? (typeof p.createdAt === 'string' ? p.createdAt : p.createdAt.toISOString()) : new Date().toISOString()
         }));
         this.saveCollection('projects', workspaceProjects, workspaceId);
       });
@@ -222,8 +217,8 @@ export class LocalStorageAdapter implements WorkspaceAPI {
           perspective: t.perspectiveId,
           completed: t.completed,
           order: t.order,
-          created_at: t.createdAt ? t.createdAt.toISOString() : new Date().toISOString(),
-          updated_at: t.updatedAt ? t.updatedAt.toISOString() : new Date().toISOString()
+          created_at: t.createdAt ? (typeof t.createdAt === 'string' ? t.createdAt : t.createdAt.toISOString()) : new Date().toISOString(),
+          updated_at: t.updatedAt ? (typeof t.updatedAt === 'string' ? t.updatedAt : t.updatedAt.toISOString()) : new Date().toISOString()
         }));
         this.saveCollection('tasks', workspaceTasks, workspaceId);
       });
