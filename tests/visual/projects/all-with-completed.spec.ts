@@ -1,12 +1,8 @@
-import { test } from '@playwright/test';
-import { VisualTestPage } from '../helpers/visual-test-page';
+import { visualTest, stateBuilder } from '../helpers/test-utils';
 
-test('All projects view - with completed tasks', async ({ page }) => {
-	const visualTest = new VisualTestPage(page);
-	await visualTest.setup({
-		withCompleted: true,
-		workspace: 'hobby',
-		projectView: 'all'
-	});
-	await visualTest.expectScreenshot('all-projects-with-completed.png');
+visualTest({
+	name: 'All projects view - with completed tasks',
+	state: stateBuilder.withCompleted,
+	url: { view: 'project-all', workspace: 'hobby' },
+	screenshot: 'all-projects-with-completed.png'
 });
