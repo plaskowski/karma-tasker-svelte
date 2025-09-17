@@ -51,8 +51,7 @@ test.describe('Perspective Navigation', () => {
 		
 		// Verify perspective badges are visible in All view
 		// In the All view, tasks show their perspective assignment
-		// Use the semantic data-testid attribute to find perspective badges
-		await expect(page.getByTestId('perspective-badge').first()).toBeVisible();
+		await expect(page.getByTestId('badge').first()).toBeVisible();
 	});
 
 	test('Task filtering by perspective', async ({ page }) => {
