@@ -10,48 +10,41 @@ test.describe('Perspective Navigation', () => {
 	});
 
 	test('Switch between perspectives using sidebar', async ({ page }) => {
-		// Click on First perspective
-		await page.locator('button:has-text("First")').click();
-		await page.waitForTimeout(500);
+		// Switch to First perspective
+		await taskManager.switchPerspective('First');
 		
 		// Verify URL updated
-		expect(page.url()).toContain('view=perspective');
-		expect(page.url()).toContain('perspective=first');
+		await taskManager.expectUrlToContain(['view=perspective', 'perspective=first']);
 		
-		// Click on Next perspective
-		await page.locator('button:has-text("Next")').click();
-		await page.waitForTimeout(500);
+		// Switch to Next perspective
+		await taskManager.switchPerspective('Next');
 		
 		// Verify URL updated
-		expect(page.url()).toContain('perspective=next');
+		await taskManager.expectUrlToContain(['perspective=next']);
 		
-		// Click on Someday perspective
-		await page.locator('button:has-text("Someday")').click();
-		await page.waitForTimeout(500);
+		// Switch to Someday perspective
+		await taskManager.switchPerspective('Someday');
 		
 		// Verify URL updated
-		expect(page.url()).toContain('perspective=someday');
+		await taskManager.expectUrlToContain(['perspective=someday']);
 		
 		// Go back to Inbox
-		await page.locator('button:has-text("Inbox")').click();
-		await page.waitForTimeout(500);
+		await taskManager.switchPerspective('Inbox');
 		
 		// Verify URL updated
-		expect(page.url()).toContain('perspective=inbox');
+		await taskManager.expectUrlToContain(['perspective=inbox']);
 	});
 
 	test('Switch to All view', async ({ page }) => {
-		// Click on All view (in Views section, not Projects)
-		const viewsSection = page.locator('h3:has-text("Views")').locator('..');
-		await viewsSection.locator('button:has-text("All")').click();
-		await page.waitForTimeout(500);
+		// Switch to All view
+		await taskManager.switchToAllView();
 		
 		// Verify URL updated to show all view
-		expect(page.url()).toContain('view=all');
+		await taskManager.expectUrlToContain(['view=all']);
 		
 		// Verify perspective badges are visible in All view
 		// In the All view, tasks show their perspective assignment
-		await expect(page.getByTestId('badge').first()).toBeVisible();
+		await taskManager.expectBadgesVisible();
 	});
 
 	test('Task filtering by perspective', async ({ page }) => {
@@ -59,32 +52,27 @@ test.describe('Perspective Navigation', () => {
 		await taskManager.createTask('Inbox Task');
 		
 		// Navigate to Next perspective
-		await page.locator('button:has-text("Next")').click();
-		await page.waitForTimeout(500);
+		await taskManager.switchPerspective('Next');
 		
 		// Create a task in Next
 		await taskManager.createTask('Next Task');
 		
 		// Go back to Inbox
-		await page.locator('button:has-text("Inbox")').click();
-		await page.waitForTimeout(500);
+		await taskManager.switchPerspective('Inbox');
 		
 		// Verify only Inbox task is visible
 		await expect(page.locator('text="Inbox Task"')).toBeVisible();
 		await expect(page.locator('text="Next Task"')).not.toBeVisible();
 		
 		// Go to Next
-		await page.locator('button:has-text("Next")').click();
-		await page.waitForTimeout(500);
+		await taskManager.switchPerspective('Next');
 		
 		// Verify only Next task is visible
 		await expect(page.locator('text="Next Task"')).toBeVisible();
 		await expect(page.locator('text="Inbox Task"')).not.toBeVisible();
 		
 		// Go to All view
-		const viewsSection = page.locator('h3:has-text("Views")').locator('..');
-		await viewsSection.locator('button:has-text("All")').click();
-		await page.waitForTimeout(500);
+		await taskManager.switchToAllView();
 		
 		// Verify both tasks are visible
 		await expect(page.locator('text="Inbox Task"')).toBeVisible();

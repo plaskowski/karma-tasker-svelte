@@ -173,6 +173,32 @@ export class TaskManagerPage {
 	}
 
 	/**
+	 * Switch to All view
+	 */
+	async switchToAllView() {
+		const viewsSection = this.page.locator('h3:has-text("Views")').locator('..');
+		await viewsSection.locator('button:has-text("All")').click();
+		await this.page.waitForTimeout(500);
+	}
+
+	/**
+	 * Check if URL contains expected parameters
+	 */
+	async expectUrlToContain(expectedParams: string[]) {
+		const url = this.page.url();
+		for (const param of expectedParams) {
+			expect(url).toContain(param);
+		}
+	}
+
+	/**
+	 * Check if perspective badges are visible
+	 */
+	async expectBadgesVisible() {
+		await expect(this.page.getByTestId('badge').first()).toBeVisible();
+	}
+
+	/**
 	 * Switch to a different workspace
 	 */
 	async switchWorkspace(workspaceName: string) {
