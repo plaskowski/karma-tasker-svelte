@@ -1,13 +1,12 @@
-import { test } from '@playwright/test';
-import { VisualTestPage } from '../helpers/visual-test-page';
+import { visualTest, stateBuilder } from '../helpers/test-utils';
 
-test('Single project view - with completed tasks', async ({ page }) => {
-	const visualTest = new VisualTestPage(page);
-	await visualTest.setup({
-		withCompleted: true,
+visualTest({
+	name: 'Single project view - with completed tasks',
+	state: () => stateBuilder.forProject('photography', { withCompleted: true }),
+	url: {
 		workspace: 'hobby',
-		projectView: 'single',
-		projectName: 'photography'
-	});
-	await visualTest.expectScreenshot('single-project-with-completed.png');
+		view: 'project',
+		project: 'photography'
+	},
+	screenshot: 'single-project-with-completed.png'
 });
