@@ -103,7 +103,7 @@ export function getTaskGroups(
  */
 export function shouldShowProjectBadge(navigation: NavigationState): boolean {
   const groupingType = getGroupingType(navigation.currentView);
-  return groupingType !== 'project' && navigation.currentView !== 'project';
+  return groupingType !== 'project';
 }
 
 /**
@@ -111,7 +111,7 @@ export function shouldShowProjectBadge(navigation: NavigationState): boolean {
  */
 export function shouldShowPerspectiveBadge(navigation: NavigationState): boolean {
   const groupingType = getGroupingType(navigation.currentView);
-  return groupingType !== 'perspective' && navigation.currentView !== 'perspective';
+  return groupingType !== 'perspective';
 }
 
 /**

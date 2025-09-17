@@ -10,9 +10,16 @@ test.describe('Perspective Navigation', () => {
 	});
 
 	test('Switch between perspectives using sidebar', async ({ page }) => {
+		// Wait for full page load
+		await page.waitForLoadState('networkidle');
+		
 		// Click on First perspective
 		await page.locator('button:has-text("First")').click();
-		await page.waitForTimeout(500);
+		
+		// Wait for navigation to complete - look for URL change
+		await page.waitForFunction(() => {
+			return window.location.search.includes('perspective=first');
+		}, { timeout: 5000 });
 		
 		// Verify URL updated
 		expect(page.url()).toContain('view=perspective');
@@ -20,21 +27,31 @@ test.describe('Perspective Navigation', () => {
 		
 		// Click on Next perspective
 		await page.locator('button:has-text("Next")').click();
-		await page.waitForTimeout(500);
+		
+		// Wait for URL to update
+		await page.waitForFunction(() => {
+			return window.location.search.includes('perspective=next');
+		}, { timeout: 5000 });
 		
 		// Verify URL updated
 		expect(page.url()).toContain('perspective=next');
 		
 		// Click on Someday perspective
 		await page.locator('button:has-text("Someday")').click();
-		await page.waitForTimeout(500);
+		
+		await page.waitForFunction(() => {
+			return window.location.search.includes('perspective=someday');
+		}, { timeout: 5000 });
 		
 		// Verify URL updated
 		expect(page.url()).toContain('perspective=someday');
 		
 		// Go back to Inbox
 		await page.locator('button:has-text("Inbox")').click();
-		await page.waitForTimeout(500);
+		
+		await page.waitForFunction(() => {
+			return window.location.search.includes('perspective=inbox');
+		}, { timeout: 5000 });
 		
 		// Verify URL updated
 		expect(page.url()).toContain('perspective=inbox');
@@ -44,7 +61,11 @@ test.describe('Perspective Navigation', () => {
 		// Click on All view (in Views section, not Projects)
 		const viewsSection = page.locator('h3:has-text("Views")').locator('..');
 		await viewsSection.locator('button:has-text("All")').click();
-		await page.waitForTimeout(500);
+		
+		// Wait for navigation to complete
+		await page.waitForFunction(() => {
+			return window.location.search.includes('view=all');
+		}, { timeout: 5000 });
 		
 		// Verify URL updated to show all view
 		expect(page.url()).toContain('view=all');
