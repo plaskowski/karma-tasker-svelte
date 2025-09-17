@@ -6,6 +6,7 @@
 ### Next steps
 - [ ] fix visual tests (they lack workspace setup - projects/perspectives)
 - [ ] fix interaction tests
+- [ ] rewrite all interaction tests to use dedicated Page object
 - [ ] rewrite handleTaskToggle into handleUpdateTask
 - [ ] get rid of switching over view type
 - [ ] emit events instead of onXXXX props?
