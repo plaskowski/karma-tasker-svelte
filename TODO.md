@@ -5,7 +5,7 @@
 
 ### Next steps
 - [ ] fix remaining failing tests in e2e/keyboard-shortcuts.spec.ts
-- [ ] rewrite all interaction tests to use dedicated Page object
+- [ ] rewrite all interaction tests to use dedicated Page object (have dedicated test() wrapper)
 - [ ] rewrite handleTaskToggle into handleUpdateTask
 - [ ] get rid of switching over view type
 - [ ] emit events instead of onXXXX props?
