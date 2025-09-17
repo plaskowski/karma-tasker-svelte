@@ -22,20 +22,24 @@ export class TaskManagerPage {
 	 * Create a new task with given title and optional description
 	 */
 	async createTask(title: string, description?: string, screenshotName?: string) {
-		// Press 'n' to open new task editor
-		await this.page.keyboard.press('n');
-		await this.page.waitForTimeout(500);
-		
+		// Click "New Item" button to open new task editor
+		const newItemButton = this.page.locator('button:has-text("New Item")');
+		await expect(newItemButton).toBeVisible({ timeout: 5000 });
+		await newItemButton.click();
+
+		// Wait for the task editor panel to appear
+		await this.page.waitForSelector('[role="dialog"][data-testid="task-editor-panel"]', { state: 'visible', timeout: 5000 });
+
 		// Take screenshot after opening editor if name provided
 		if (screenshotName) {
 			await this.screenshot(screenshotName);
 		}
-		
+
 		// Fill in title
 		const titleInput = this.page.locator('input[type="text"]').first();
 		await expect(titleInput).toBeVisible({ timeout: 5000 });
 		await titleInput.fill(title);
-		
+
 		// Fill in description if provided
 		if (description) {
 			const descriptionInput = this.page.locator('textarea').first();
@@ -43,12 +47,12 @@ export class TaskManagerPage {
 				await descriptionInput.fill(description);
 			}
 		}
-		
+
 		// Save the task - be more specific with the button selector
 		const saveButton = this.page.locator('button:has-text("Save")');
 		await expect(saveButton).toBeVisible();
 		await saveButton.click();
-		
+
 		// Wait for either the editor to close OR the task to appear
 		// This handles the race condition where the task might appear before the editor closes
 		await Promise.race([
@@ -57,10 +61,10 @@ export class TaskManagerPage {
 			// Or wait for the task to appear (which also means save succeeded)
 			this.page.waitForSelector(`text="${title}"`, { state: 'visible', timeout: 10000 })
 		]);
-		
+
 		// Give a small delay to ensure UI has settled
 		await this.page.waitForTimeout(500);
-		
+
 		// Then verify task was created
 		await expect(this.page.locator(`text="${title}"`)).toBeVisible({ timeout: 5000 });
 	}
