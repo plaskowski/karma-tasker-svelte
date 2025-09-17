@@ -9,7 +9,7 @@ test.describe('Perspective Navigation', () => {
 		await taskManager.goto();
 	});
 
-	test('Switch between perspectives using sidebar', async ({ page }) => {
+	test('Switch between perspectives using sidebar', async () => {
 		// Switch to First perspective
 		await taskManager.switchPerspective('First');
 		
@@ -35,7 +35,7 @@ test.describe('Perspective Navigation', () => {
 		await taskManager.expectUrlToContain(['perspective=inbox']);
 	});
 
-	test('Switch to All view', async ({ page }) => {
+	test('Switch to All view', async () => {
 		// Switch to All view
 		await taskManager.switchToAllView();
 		
@@ -47,7 +47,7 @@ test.describe('Perspective Navigation', () => {
 		await taskManager.expectBadgesVisible();
 	});
 
-	test('Task filtering by perspective', async ({ page }) => {
+	test('Task filtering by perspective', async () => {
 		// Create a task in Inbox
 		await taskManager.createTask('Inbox Task');
 		
@@ -61,21 +61,20 @@ test.describe('Perspective Navigation', () => {
 		await taskManager.switchPerspective('Inbox');
 		
 		// Verify only Inbox task is visible
-		await expect(page.locator('text="Inbox Task"')).toBeVisible();
-		await expect(page.locator('text="Next Task"')).not.toBeVisible();
+		await taskManager.expectTaskVisible('Inbox Task');
+		await taskManager.expectTaskNotVisible('Next Task');
 		
 		// Go to Next
 		await taskManager.switchPerspective('Next');
 		
 		// Verify only Next task is visible
-		await expect(page.locator('text="Next Task"')).toBeVisible();
-		await expect(page.locator('text="Inbox Task"')).not.toBeVisible();
+		await taskManager.expectTaskVisible('Next Task');
+		await taskManager.expectTaskNotVisible('Inbox Task');
 		
 		// Go to All view
 		await taskManager.switchToAllView();
 		
 		// Verify both tasks are visible
-		await expect(page.locator('text="Inbox Task"')).toBeVisible();
-		await expect(page.locator('text="Next Task"')).toBeVisible();
+		await taskManager.expectTasksVisible(['Inbox Task', 'Next Task']);
 	});
 });
