@@ -85,7 +85,6 @@
 	class="flex-1 flex flex-col overflow-hidden"
 	use:keyboard={{
 		'n': handleNewTask,
-		'n+mod': handleNewTask,
 		'escape': handleEscape
 	}}
 	tabindex="-1"

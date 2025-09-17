@@ -7,17 +7,14 @@ export function keyboard(node: HTMLElement, handlers: Record<string, () => void>
             return;
         }
 
-        const key = event.key.toLowerCase();
-        const modifierKey = event.ctrlKey || event.metaKey;
-
-        // Handle modified keys (ctrl+n, cmd+n)
-        if (modifierKey && handlers[`${key}+mod`]) {
-            event.preventDefault();
-            handlers[`${key}+mod`]();
+        // Skip if any modifier keys are pressed (let system handle them)
+        if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
             return;
         }
 
-        // Handle simple keys (n)
+        const key = event.key.toLowerCase();
+
+        // Handle simple keys only
         if (handlers[key]) {
             event.preventDefault();
             handlers[key]();

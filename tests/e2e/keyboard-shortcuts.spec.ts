@@ -39,37 +39,6 @@ test.describe('Keyboard Shortcuts', () => {
 		await expect(page.locator('text="Task created with N shortcut"')).toBeVisible();
 	});
 
-	test('Open new task editor with Ctrl+N', async ({ page }) => {
-		// Focus the main content area that has the keyboard action
-		const mainArea = page.locator('div.flex-1.flex.flex-col.overflow-hidden');
-		await mainArea.focus();
-
-		// Press Ctrl+N to open new task editor
-		await page.keyboard.down('Control');
-		await page.keyboard.press('n');
-		await page.keyboard.up('Control');
-
-		// Wait for the task editor panel to appear
-		await page.waitForSelector('[role="dialog"][data-testid="task-editor-panel"]', { state: 'visible', timeout: 5000 });
-
-		// Verify task editor is visible
-		const titleInput = page.locator('input[type="text"]').first();
-		await expect(titleInput).toBeVisible();
-
-		// Type a task title
-		await titleInput.fill('Task created with Ctrl+N');
-
-		// Save the task
-		const saveButton = page.locator('button:has-text("Save")');
-		await expect(saveButton).toBeVisible();
-		await saveButton.click();
-
-		// Wait for task to be saved and editor to close
-		await page.waitForSelector('[role="dialog"][data-testid="task-editor-panel"]', { state: 'hidden', timeout: 5000 });
-
-		// Verify task was created
-		await expect(page.locator('text="Task created with Ctrl+N"')).toBeVisible();
-	});
 
 	test('Escape key behavior in task editor', async ({ page }) => {
 		// Focus the main content area and open new task editor
