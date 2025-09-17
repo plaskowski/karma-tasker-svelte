@@ -61,20 +61,21 @@ test.describe('Perspective Navigation', () => {
 		await taskManager.switchPerspective('Inbox');
 		
 		// Verify only Inbox task is visible
-		await taskManager.expectTaskVisible('Inbox Task');
-		await taskManager.expectTaskNotVisible('Next Task');
+		expect(await taskManager.taskExists('Inbox Task')).toBe(true);
+		expect(await taskManager.taskExists('Next Task')).toBe(false);
 		
 		// Go to Next
 		await taskManager.switchPerspective('Next');
 		
 		// Verify only Next task is visible
-		await taskManager.expectTaskVisible('Next Task');
-		await taskManager.expectTaskNotVisible('Inbox Task');
+		expect(await taskManager.taskExists('Next Task')).toBe(true);
+		expect(await taskManager.taskExists('Inbox Task')).toBe(false);
 		
 		// Go to All view
 		await taskManager.switchToAllView();
 		
 		// Verify both tasks are visible
-		await taskManager.expectTasksVisible(['Inbox Task', 'Next Task']);
+		expect(await taskManager.taskExists('Inbox Task')).toBe(true);
+		expect(await taskManager.taskExists('Next Task')).toBe(true);
 	});
 });

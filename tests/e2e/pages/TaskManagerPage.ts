@@ -198,37 +198,6 @@ export class TaskManagerPage {
 		await expect(this.page.getByTestId('badge').first()).toBeVisible();
 	}
 
-	/**
-	 * Expect a task to be visible
-	 */
-	async expectTaskVisible(taskTitle: string) {
-		await expect(this.page.locator(`text="${taskTitle}"`)).toBeVisible();
-	}
-
-	/**
-	 * Expect a task to not be visible
-	 */
-	async expectTaskNotVisible(taskTitle: string) {
-		await expect(this.page.locator(`text="${taskTitle}"`)).not.toBeVisible();
-	}
-
-	/**
-	 * Expect multiple tasks to be visible
-	 */
-	async expectTasksVisible(taskTitles: string[]) {
-		for (const title of taskTitles) {
-			await this.expectTaskVisible(title);
-		}
-	}
-
-	/**
-	 * Expect multiple tasks to not be visible
-	 */
-	async expectTasksNotVisible(taskTitles: string[]) {
-		for (const title of taskTitles) {
-			await this.expectTaskNotVisible(title);
-		}
-	}
 
 	/**
 	 * Switch to a different workspace
