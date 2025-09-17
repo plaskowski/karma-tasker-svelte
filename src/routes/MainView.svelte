@@ -5,7 +5,7 @@
 	import TaskEditorForm from '$lib/components/TaskEditorForm.svelte';
 	import { NavigationService } from '$lib/services/navigation';
 	import { TaskService } from '$lib/services/tasks';
-	import { handleKeyboardShortcut } from '$lib/services/pageHandlers';
+	import { keyboard } from '$lib/actions/keyboard';
 	import type { Task } from '$lib/types';
 	import type { PageData } from './$types';
 
@@ -19,7 +19,7 @@
 	}
 
 	let { data, onTaskToggle, onUpdateTask, onCreateTask, onRefresh, onClearCompleted }: MainViewProps = $props();
-	
+
 	let workspaceContext = $derived(data.workspaceContext);
 	let currentTasks = $derived(data.tasks);
 	let currentNavigation = $derived(data.navigation);
@@ -33,12 +33,6 @@
 			currentNavigation,
 			{ workspaceId: workspaceContext.id }
 		);
-
-		window.addEventListener('keydown', handleKeydown);
-
-		return () => {
-			window.removeEventListener('keydown', handleKeydown);
-		};
 	});
 
 	async function handleTaskToggle(id: string) {
@@ -57,10 +51,16 @@
 		showCreateEditor = false;
 	}
 
+	function handleEscape() {
+		if (showCreateEditor) {
+			showCreateEditor = false;
+		}
+	}
+
 	async function handleCleanup() {
 		await onClearCompleted();
 	}
-	
+
 	function createNewTaskWithDefaults(): Task {
 		return TaskService.createNewTaskWithDefaults(workspaceContext, currentNavigation);
 	}
@@ -79,16 +79,17 @@
 		currentNavigation;
 		showCreateEditor = false;
 	});
-
-	function handleKeydown(event: KeyboardEvent) {
-		handleKeyboardShortcut(event, {
-			onNewTask: () => { showCreateEditor = true; },
-			onEscape: showCreateEditor ? () => { showCreateEditor = false; } : undefined
-		});
-	}
 </script>
 
-<div class="flex-1 flex flex-col overflow-hidden">
+<div
+	class="flex-1 flex flex-col overflow-hidden"
+	use:keyboard={{
+		'n': handleNewTask,
+		'n+mod': handleNewTask,
+		'escape': handleEscape
+	}}
+	tabindex="-1"
+>
 	<TaskList
 		tasks={currentTasks}
 		workspace={workspaceContext}
