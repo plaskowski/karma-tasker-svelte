@@ -1,8 +1,8 @@
-import { test } from '@playwright/test';
-import { VisualTestPage } from '../helpers/visual-test-page';
+import { visualTest, stateBuilder } from '../helpers/test-utils';
 
-test('All perspective - empty state', async ({ page }) => {
-	const visualTest = new VisualTestPage(page);
-	await visualTest.setup({ perspective: 'All', emptyState: true });
-	await visualTest.expectScreenshot('all-empty.png');
+visualTest({
+	name: 'All perspective - empty state',
+	state: stateBuilder.empty,
+	url: { view: 'all', workspace: 'personal' },
+	screenshot: 'all-empty.png'
 });
