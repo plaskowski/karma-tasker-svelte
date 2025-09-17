@@ -172,6 +172,7 @@ export class TaskManagerPage {
 	 */
 	async switchPerspective(perspectiveName: string) {
 		const perspectiveButton = this.page.locator('button').filter({ hasText: perspectiveName });
+		await expect(perspectiveButton).toBeVisible({ timeout: 5000 });
 		await perspectiveButton.first().click();
 
 		// Wait for URL to be updated with the new perspective
@@ -212,11 +213,22 @@ export class TaskManagerPage {
 	 * Switch to a different workspace
 	 */
 	async switchWorkspace(workspaceName: string) {
-		// This would need to be implemented based on actual UI
-		const workspaceSelector = this.page.locator('[title*="workspace"]').first();
+		// Click the workspace selector button
+		const workspaceSelector = this.page.locator('button[title="Switch workspace"]');
+		await expect(workspaceSelector).toBeVisible({ timeout: 5000 });
 		await workspaceSelector.click();
-		await this.page.locator(`text="${workspaceName}"`).click();
-		await this.page.waitForTimeout(500);
+
+		// Wait for dropdown to appear
+		await this.page.waitForTimeout(300);
+
+		// Click on the workspace option
+		const workspaceOption = this.page.locator('button').filter({ hasText: workspaceName });
+		await expect(workspaceOption).toBeVisible({ timeout: 5000 });
+		await workspaceOption.click();
+
+		// Wait for URL to update with the workspace parameter
+		const expectedWorkspace = workspaceName.toLowerCase();
+		await this.page.waitForURL(`**/?*workspace=${expectedWorkspace}*`, { timeout: 5000 });
 	}
 
 	/**
