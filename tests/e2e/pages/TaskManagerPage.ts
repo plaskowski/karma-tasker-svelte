@@ -239,9 +239,23 @@ export class TaskManagerPage {
 	 * Click the Clear Completed button
 	 */
 	async clearCompleted() {
-		const clearButton = this.page.locator('button').filter({ hasText: 'Clear Completed' });
+		const clearButton = this.page.locator('button').filter({ hasText: 'Clear' });
 		await expect(clearButton).toBeVisible({ timeout: 5000 });
+
+		// Get initial count of completed tasks before clearing
+		const initialCompletedCount = await this.getCompletedTaskCount();
+
 		await clearButton.click();
+
+		// Wait for completed tasks to be removed from DOM
+		if (initialCompletedCount > 0) {
+			await this.page.waitForFunction(() => {
+				const completedTasks = document.querySelectorAll('span.line-through');
+				return completedTasks.length === 0;
+			}, { timeout: 10000 });
+		}
+
+		// Small additional wait to ensure UI has fully settled
 		await this.page.waitForTimeout(500);
 	}
 
@@ -249,7 +263,8 @@ export class TaskManagerPage {
 	 * Get count of completed tasks (tasks with line-through style)
 	 */
 	async getCompletedTaskCount(): Promise<number> {
-		const completedTasks = this.page.locator('span.line-through');
+		// Look for task titles that have line-through (completed tasks)
+		const completedTasks = this.page.locator('span.line-through').filter({ hasText: /.+/ });
 		return await completedTasks.count();
 	}
 

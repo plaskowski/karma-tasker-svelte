@@ -58,9 +58,15 @@ test.describe('Task Management Flow', () => {
 	});
 
 	test('Clear completed tasks', async () => {
+		// First create and complete some tasks
+		await taskManager.createTask('Task to complete 1');
+		await taskManager.createTask('Task to complete 2');
+		await taskManager.completeTask('Task to complete 1');
+		await taskManager.completeTask('Task to complete 2');
+
 		// Take screenshot showing tasks with completed ones
 		await taskManager.screenshot('04a-tasks-with-completed.png');
-		
+
 		// Verify we have completed tasks before clearing
 		const initialCompletedCount = await taskManager.getCompletedTaskCount();
 		expect(initialCompletedCount).toBeGreaterThan(0);
