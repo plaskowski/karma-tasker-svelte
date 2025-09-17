@@ -169,7 +169,10 @@ export class TaskManagerPage {
 	async switchPerspective(perspectiveName: string) {
 		const perspectiveButton = this.page.locator('button').filter({ hasText: perspectiveName });
 		await perspectiveButton.first().click();
-		await this.page.waitForTimeout(500);
+
+		// Wait for URL to be updated with the new perspective
+		const expectedParam = perspectiveName.toLowerCase();
+		await this.page.waitForURL(`**/?*perspective=${expectedParam}*`, { timeout: 5000 });
 	}
 
 	/**
@@ -178,7 +181,9 @@ export class TaskManagerPage {
 	async switchToAllView() {
 		const viewsSection = this.page.locator('h3:has-text("Views")').locator('..');
 		await viewsSection.locator('button:has-text("All")').click();
-		await this.page.waitForTimeout(500);
+
+		// Wait for URL to be updated with the All view
+		await this.page.waitForURL('**/?*view=all*', { timeout: 5000 });
 	}
 
 	/**
