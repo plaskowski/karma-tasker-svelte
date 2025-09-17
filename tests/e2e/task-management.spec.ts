@@ -58,6 +58,9 @@ test.describe('Task Management Flow', () => {
 	});
 
 	test('Clear completed tasks', async () => {
+		// Switch to Next perspective for a clean test environment
+		await taskManager.switchPerspective('Next');
+
 		// First create and complete some tasks
 		await taskManager.createTask('Task to complete 1');
 		await taskManager.createTask('Task to complete 2');
