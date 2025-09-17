@@ -26,6 +26,7 @@
 
 	let showCreateEditor = $state(false);
 	let createEditorEl = $state<HTMLElement | null>(null);
+	let mainAreaEl = $state<HTMLElement | null>(null);
 
 	onMount(() => {
 		NavigationService.updateURLIfChanged(
@@ -33,6 +34,13 @@
 			currentNavigation,
 			{ workspaceId: workspaceContext.id }
 		);
+
+		// Auto-focus the main area on mount so keyboard shortcuts work immediately
+		setTimeout(() => {
+			if (mainAreaEl) {
+				mainAreaEl.focus();
+			}
+		}, 100);
 	});
 
 	async function handleTaskToggle(id: string) {
@@ -54,6 +62,10 @@
 	function handleEscape() {
 		if (showCreateEditor) {
 			showCreateEditor = false;
+			// Return focus to main area so keyboard shortcuts work again
+			if (mainAreaEl) {
+				mainAreaEl.focus();
+			}
 		}
 	}
 
@@ -79,15 +91,29 @@
 		currentNavigation;
 		showCreateEditor = false;
 	});
+
+	// Ensure focus is returned to main area after task creation
+	$effect(() => {
+		if (!showCreateEditor && mainAreaEl) {
+			// Small delay to ensure any UI updates are complete
+			setTimeout(() => {
+				if (mainAreaEl) {
+					mainAreaEl.focus();
+				}
+			}, 100);
+		}
+	});
 </script>
 
 <div
+	bind:this={mainAreaEl}
 	class="flex-1 flex flex-col overflow-hidden"
 	use:keyboard={{
 		'n': handleNewTask,
 		'escape': handleEscape
 	}}
 	tabindex="-1"
+	style="outline: none;"
 >
 	<TaskList
 		tasks={currentTasks}
