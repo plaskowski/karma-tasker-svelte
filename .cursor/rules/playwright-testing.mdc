@@ -1,0 +1,26 @@
+---
+alwaysApply: true
+---
+name: Playwright Testing Rules
+scopes:
+  - "*"
+visibility: project
+priority: high
+---
+
+Always use `--reporter=line` to avoid interactive HTML report server.
+
+## Essential Commands
+```bash
+# Standard run
+npx playwright test --reporter=line
+
+# Single test  
+npx playwright test tests/e2e/specific.spec.ts --reporter=line
+
+# Debug (headed)
+npx playwright test tests/e2e/specific.spec.ts --headed --reporter=line
+```
+## Never Use
+- `npx playwright test` (starts server)
+- `npx playwright test --ui` (interactive mode)
