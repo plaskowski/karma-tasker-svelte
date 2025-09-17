@@ -9,6 +9,6 @@ This project follows specific development guidelines organized by category:
 @.cursor/rules/project-specific.mdc
 @.cursor/rules/ui-ux.mdc
 @.cursor/rules/no-backward-compatibility.mdc
-@.cursor/rules/refresh-trigger.mdc
 
 Please review and follow all guidelines in the referenced files when working on this project.
+Skip sweat talk, be concise and to the point.
