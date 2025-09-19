@@ -5,7 +5,7 @@ import {
   toDomainProjects,
   toDomainPerspective,
 } from "$lib/api/persistence/mappers";
-import type { Workspace, Task, WorkspaceData, WorkspaceInfo } from "$lib/types";
+import type { Task, WorkspaceData, WorkspaceInfo } from "$lib/types";
 
 export class WorkspaceService {
   /**

@@ -1,8 +1,6 @@
 <script lang="ts">
   import type { Task, WorkspaceData, NavigationState } from "$lib/types";
   import { findPerspective, findProject } from "$lib/helpers/workspaceHelpers";
-  import UiTaskItem from "./UiTaskItem.svelte";
-  import TaskInlineEditor from "./TaskInlineEditor.svelte";
   import TaskListHeader from "./TaskListHeader.svelte";
   import TaskListEmpty from "./TaskListEmpty.svelte";
   import TaskGroupComponent from "./TaskGroup.svelte";
@@ -10,7 +8,6 @@
     getTaskGroups,
     shouldShowProjectBadge,
     shouldShowPerspectiveBadge,
-    getBadgeText,
   } from "./taskGrouping";
 
   interface Props {

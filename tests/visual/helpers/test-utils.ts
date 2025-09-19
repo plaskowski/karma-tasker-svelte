@@ -181,7 +181,7 @@ import {
   mockTasks,
   mockProjects,
   mockWorkspaces,
-} from "../../../src/lib/data/mockData";
+} from "$lib/data/mockData";
 
 /**
  * State injection types and utilities for visual tests

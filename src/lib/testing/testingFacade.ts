@@ -104,8 +104,8 @@ export function createTestingFacade(): TestingFacade {
       // Filter tasks based on criteria
       let eligibleTasks = allTasks.filter((task: Task) => {
         if (task.completed) return false; // Skip already completed
-        if (perspective && task.perspectiveId !== perspective) return false;
-        return true;
+        return !(perspective && task.perspectiveId !== perspective);
+
       });
 
       // Complete half of the eligible tasks (at least 1, round up)
