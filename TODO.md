@@ -6,6 +6,7 @@ _See [README.md](./README.md) for project overview and motivation._
 ### Next steps
 
 - [ ] use ISO string instead of Date object (as it gets serialized) - see docs/discovery/DateMigration.md
+- [ ] better align with SvelteKit5 - [link](./docs/discovery/SVELTEKIT_IMPROVEMENT_TASKS.md)
 - [ ] fix remaining failing tests in e2e/keyboard-shortcuts.spec.ts
 - [ ] rewrite all interaction tests to use dedicated Page object (have dedicated test() wrapper)
 - [ ] rewrite handleTaskToggle into handleUpdateTask
