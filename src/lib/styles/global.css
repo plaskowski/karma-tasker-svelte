@@ -1,19 +1,26 @@
-@import 'tailwindcss';
-@import '@skeletonlabs/skeleton';
-@import '@skeletonlabs/skeleton/themes/wintry';
+@import "tailwindcss";
+@import "@skeletonlabs/skeleton";
+@import "@skeletonlabs/skeleton/themes/wintry";
 
-html, body { 
+html,
+body {
   height: 100vh;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
 @layer components {
   /* Base button styles */
   .btn {
-    @apply inline-flex items-center gap-2 rounded-md transition-colors whitespace-nowrap select-none;
+    @apply inline-flex items-center gap-2 rounded-md whitespace-nowrap transition-colors select-none;
   }
 
   /* Slightly larger sizes by default */
@@ -31,11 +38,11 @@ html, body {
 
   /* Outline button as default presentation */
   .btn-outline {
-    @apply border border-gray-300 dark:border-gray-600 bg-transparent text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700;
+    @apply border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700;
   }
 
   /* Unified top bar style for Sidebar and TaskList headers */
   .topbar {
-    @apply h-12 px-6 border-b border-gray-200 dark:border-gray-700 flex items-center flex-none;
+    @apply flex h-12 flex-none items-center border-b border-gray-200 px-6 dark:border-gray-700;
   }
 }

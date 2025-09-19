@@ -1,106 +1,110 @@
-import { test, expect } from '@playwright/test';
-import { TaskManagerPage } from './pages/TaskManagerPage';
+import { test, expect } from "@playwright/test";
+import { TaskManagerPage } from "./pages/TaskManagerPage";
 
-test.describe('Workspace Switching', () => {
-	let taskManager: TaskManagerPage;
+test.describe("Workspace Switching", () => {
+  let taskManager: TaskManagerPage;
 
-	test.beforeEach(async ({ page }) => {
-		taskManager = new TaskManagerPage(page);
-		await taskManager.goto();
-	});
+  test.beforeEach(async ({ page }) => {
+    taskManager = new TaskManagerPage(page);
+    await taskManager.goto();
+  });
 
-	test('Switch workspaces using dropdown', async ({ page }) => {
-		// Switch to Work workspace
-		await taskManager.switchWorkspace('Work');
+  test("Switch workspaces using dropdown", async ({ page }) => {
+    // Switch to Work workspace
+    await taskManager.switchWorkspace("Work");
 
-		// Verify URL updated
-		expect(page.url()).toContain('workspace=work');
+    // Verify URL updated
+    expect(page.url()).toContain("workspace=work");
 
-		// Switch to Hobby workspace
-		await taskManager.switchWorkspace('Hobby');
+    // Switch to Hobby workspace
+    await taskManager.switchWorkspace("Hobby");
 
-		// Verify URL updated
-		expect(page.url()).toContain('workspace=hobby');
+    // Verify URL updated
+    expect(page.url()).toContain("workspace=hobby");
 
-		// Switch back to Personal
-		await taskManager.switchWorkspace('Personal');
+    // Switch back to Personal
+    await taskManager.switchWorkspace("Personal");
 
-		// Verify URL updated
-		expect(page.url()).toContain('workspace=personal');
-	});
+    // Verify URL updated
+    expect(page.url()).toContain("workspace=personal");
+  });
 
-	test('Workspace-specific task filtering', async ({ page }) => {
-		// Create a task in Personal workspace
-		await taskManager.createTask('Personal Task');
+  test("Workspace-specific task filtering", async ({ page }) => {
+    // Create a task in Personal workspace
+    await taskManager.createTask("Personal Task");
 
-		// Switch to Work workspace
-		await taskManager.switchWorkspace('Work');
+    // Switch to Work workspace
+    await taskManager.switchWorkspace("Work");
 
-		// Verify Personal task is not visible
-		await expect(page.locator('text="Personal Task"')).not.toBeVisible();
+    // Verify Personal task is not visible
+    await expect(page.locator('text="Personal Task"')).not.toBeVisible();
 
-		// Create a task in Work workspace
-		await taskManager.createTask('Work Task');
+    // Create a task in Work workspace
+    await taskManager.createTask("Work Task");
 
-		// Verify Work task is visible
-		await expect(page.locator('text="Work Task"')).toBeVisible();
+    // Verify Work task is visible
+    await expect(page.locator('text="Work Task"')).toBeVisible();
 
-		// Switch to Hobby workspace
-		await taskManager.switchWorkspace('Hobby');
+    // Switch to Hobby workspace
+    await taskManager.switchWorkspace("Hobby");
 
-		// Verify neither task is visible
-		await expect(page.locator('text="Personal Task"')).not.toBeVisible();
-		await expect(page.locator('text="Work Task"')).not.toBeVisible();
+    // Verify neither task is visible
+    await expect(page.locator('text="Personal Task"')).not.toBeVisible();
+    await expect(page.locator('text="Work Task"')).not.toBeVisible();
 
-		// Create a task in Hobby workspace
-		await taskManager.createTask('Hobby Task');
+    // Create a task in Hobby workspace
+    await taskManager.createTask("Hobby Task");
 
-		// Switch back to Personal
-		await taskManager.switchWorkspace('Personal');
+    // Switch back to Personal
+    await taskManager.switchWorkspace("Personal");
 
-		// Verify only Personal task is visible
-		await expect(page.locator('text="Personal Task"')).toBeVisible();
-		await expect(page.locator('text="Work Task"')).not.toBeVisible();
-		await expect(page.locator('text="Hobby Task"')).not.toBeVisible();
-	});
+    // Verify only Personal task is visible
+    await expect(page.locator('text="Personal Task"')).toBeVisible();
+    await expect(page.locator('text="Work Task"')).not.toBeVisible();
+    await expect(page.locator('text="Hobby Task"')).not.toBeVisible();
+  });
 
-	test('Perspective availability per workspace', async ({ page }) => {
-		// In Personal workspace, verify available perspectives
-		const personalPerspectives = ['Inbox', 'First', 'Next', 'Someday'];
-		for (const perspective of personalPerspectives) {
-			await expect(page.locator(`button:has-text("${perspective}")`)).toBeVisible();
-		}
+  test("Perspective availability per workspace", async ({ page }) => {
+    // In Personal workspace, verify available perspectives
+    const personalPerspectives = ["Inbox", "First", "Next", "Someday"];
+    for (const perspective of personalPerspectives) {
+      await expect(
+        page.locator(`button:has-text("${perspective}")`),
+      ).toBeVisible();
+    }
 
-		// Switch to Work workspace
-		await taskManager.switchWorkspace('Work');
+    // Switch to Work workspace
+    await taskManager.switchWorkspace("Work");
 
-		// Verify Work workspace perspectives
-		const workPerspectives = ['Inbox', 'First', 'Next', 'Review'];
-		for (const perspective of workPerspectives) {
-			await expect(page.locator(`button:has-text("${perspective}")`)).toBeVisible();
-		}
-	});
+    // Verify Work workspace perspectives
+    const workPerspectives = ["Inbox", "First", "Next", "Review"];
+    for (const perspective of workPerspectives) {
+      await expect(
+        page.locator(`button:has-text("${perspective}")`),
+      ).toBeVisible();
+    }
+  });
 
-	test('URL state persistence when switching workspaces', async ({ page }) => {
-		// Navigate to Next perspective
-		await taskManager.switchPerspective('Next');
-		expect(page.url()).toContain('perspective=next');
+  test("URL state persistence when switching workspaces", async ({ page }) => {
+    // Navigate to Next perspective
+    await taskManager.switchPerspective("Next");
+    expect(page.url()).toContain("perspective=next");
 
-		// Switch to Work workspace
-		await taskManager.switchWorkspace('Work');
+    // Switch to Work workspace
+    await taskManager.switchWorkspace("Work");
 
-		// Verify workspace changed but perspective is maintained
-		expect(page.url()).toContain('workspace=work');
-		expect(page.url()).toContain('perspective=next');
+    // Verify workspace changed but perspective is maintained
+    expect(page.url()).toContain("workspace=work");
+    expect(page.url()).toContain("perspective=next");
 
-		// Navigate to First perspective
-		await taskManager.switchPerspective('First');
+    // Navigate to First perspective
+    await taskManager.switchPerspective("First");
 
-		// Switch back to Personal
-		await taskManager.switchWorkspace('Personal');
+    // Switch back to Personal
+    await taskManager.switchWorkspace("Personal");
 
-		// Verify workspace changed and perspective is maintained
-		expect(page.url()).toContain('workspace=personal');
-		expect(page.url()).toContain('perspective=first');
-	});
+    // Verify workspace changed and perspective is maintained
+    expect(page.url()).toContain("workspace=personal");
+    expect(page.url()).toContain("perspective=first");
+  });
 });

@@ -5,17 +5,20 @@ A modern, GTD-aligned task management application built with SvelteKit. Organize
 ## ✨ Key Features
 
 ### 🏢 **Multi-Workspace Organization**
+
 - **Personal**, **Work**, and **Hobby** contexts
 - Workspace-specific projects and perspectives
 - URL-based state persistence for bookmarkable views
 
 ### 🎯 **GTD-Aligned Perspectives**
+
 - **Inbox** - Unprocessed tasks awaiting organization
-- **First** - Priority tasks for immediate focus  
+- **First** - Priority tasks for immediate focus
 - **Next** - Actionable tasks by context
 - **Someday/Review/Ideas** - Future considerations (configurable per workspace)
 
 ### 📊 **Smart Task Organization**
+
 - Required project assignment for all tasks
 - Workspace-aware task and project filtering
 - Clean, distraction-free interface
@@ -44,6 +47,7 @@ npm run dev -- --open
 ## 🏗️ Development
 
 ### Available Scripts
+
 ```bash
 npm run dev          # Development server
 npm run build        # Production build
@@ -52,6 +56,7 @@ npm run lint         # Check for linting errors
 ```
 
 ### Project Structure
+
 ```
 src/
 ├── lib/
@@ -66,6 +71,7 @@ src/
 ## 📋 Project Philosophy
 
 ### Why Build This?
+
 Created to address key limitations in existing GTD tools like Nirvana:
 
 - **Missing workspace support** - Need true context separation for Personal/Work/Hobby
@@ -73,10 +79,11 @@ Created to address key limitations in existing GTD tools like Nirvana:
 - **Inflexible perspectives** - Need configurable views per workspace context
 
 ### GTD-Aligned Design
+
 Built around **Getting Things Done (GTD)** principles with modern productivity enhancements:
 
 - **Capture everything** in the Inbox
-- **Organize by context** using workspaces 
+- **Organize by context** using workspaces
 - **Prioritize explicitly** with the First perspective
 - **Review regularly** using perspective-based views
 - **Collaborate seamlessly** with shared projects and tasks
@@ -89,10 +96,10 @@ Built around **Getting Things Done (GTD)** principles with modern productivity e
 ## 💡 Usage Tips
 
 1. **Start with Inbox** - Capture tasks without thinking about organization
-2. **Process to First** - Move high-priority items to your First perspective  
+2. **Process to First** - Move high-priority items to your First perspective
 3. **Use workspaces** - Switch contexts to stay focused
 4. **Assign projects** - All tasks require project assignment for better organization
 
 ---
 
-*Simple, focused, and GTD-aligned task management for modern workflows.*
+_Simple, focused, and GTD-aligned task management for modern workflows._

@@ -1,206 +1,236 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
-    import type { WorkspaceData } from '$lib/types';
+  import { createEventDispatcher } from "svelte";
+  import type { WorkspaceData } from "$lib/types";
 
-	interface Props {
-		open: boolean;
-        workspace: WorkspaceData;
-		defaultProjectId?: string;
-		defaultPerspectiveId?: string;
-		onAddTask: (task: any) => Promise<void>;
-	}
+  interface Props {
+    open: boolean;
+    workspace: WorkspaceData;
+    defaultProjectId?: string;
+    defaultPerspectiveId?: string;
+    onAddTask: (task: any) => Promise<void>;
+  }
 
-	let { open, workspace, defaultProjectId, defaultPerspectiveId, onAddTask }: Props = $props();
-	
-	const dispatch = createEventDispatcher();
+  let {
+    open,
+    workspace,
+    defaultProjectId,
+    defaultPerspectiveId,
+    onAddTask,
+  }: Props = $props();
 
-	// Form state
-	let title = $state('');
-	let description = $state('');
-    let projectId = $state<string | undefined>(undefined);
-    let perspective = $state('');
-	let submitting = $state(false);
+  const dispatch = createEventDispatcher();
 
-    // Preselect defaults when dialog opens
-    $effect(() => {
-        if (open) {
-            if (!projectId) {
-                if (!defaultProjectId) {
-                    throw new Error('No default project provided and no projectId set');
-                }
-                projectId = defaultProjectId;
-            }
-            if (!perspective) {
-                if (!defaultPerspectiveId) {
-                    throw new Error('No default perspective provided and no perspective set');
-                }
-                perspective = defaultPerspectiveId;
-            }
+  // Form state
+  let title = $state("");
+  let description = $state("");
+  let projectId = $state<string | undefined>(undefined);
+  let perspective = $state("");
+  let submitting = $state(false);
+
+  // Preselect defaults when dialog opens
+  $effect(() => {
+    if (open) {
+      if (!projectId) {
+        if (!defaultProjectId) {
+          throw new Error("No default project provided and no projectId set");
         }
-    });
-
-    function validateForm(): { projectId: string; perspectiveId: string } {
-        if (!projectId) {
-            throw new Error('Project ID is required');
+        projectId = defaultProjectId;
+      }
+      if (!perspective) {
+        if (!defaultPerspectiveId) {
+          throw new Error(
+            "No default perspective provided and no perspective set",
+          );
         }
-        if (!perspective) {
-            throw new Error('Perspective is required');
-        }
-        return { projectId, perspectiveId: perspective };
+        perspective = defaultPerspectiveId;
+      }
     }
+  });
 
-	async function handleSubmit() {
-		if (!title.trim()) return;
+  function validateForm(): { projectId: string; perspectiveId: string } {
+    if (!projectId) {
+      throw new Error("Project ID is required");
+    }
+    if (!perspective) {
+      throw new Error("Perspective is required");
+    }
+    return { projectId, perspectiveId: perspective };
+  }
 
-		submitting = true;
-		try {
-        const validated = validateForm();
+  async function handleSubmit() {
+    if (!title.trim()) return;
 
-			await onAddTask({
-				title: title.trim(),
-				description: description.trim() || undefined,
-				projectId: validated.projectId,
-                workspaceId: workspace.id,
-                completed: false,
-                perspectiveId: validated.perspectiveId
-			});
+    submitting = true;
+    try {
+      const validated = validateForm();
 
-			// Reset form
-			title = '';
-			description = '';
-			projectId = '';
-			perspective = '';
+      await onAddTask({
+        title: title.trim(),
+        description: description.trim() || undefined,
+        projectId: validated.projectId,
+        workspaceId: workspace.id,
+        completed: false,
+        perspectiveId: validated.perspectiveId,
+      });
 
-			dispatch('close');
-		} catch (error) {
-			console.error('Failed to create task:', error);
-		} finally {
-			submitting = false;
-		}
-	}
+      // Reset form
+      title = "";
+      description = "";
+      projectId = "";
+      perspective = "";
 
-	function handleCancel() {
-		// Reset form
-		title = '';
-		description = '';
-		projectId = '';
-		perspective = '';
-		dispatch('close');
-	}
+      dispatch("close");
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    } finally {
+      submitting = false;
+    }
+  }
+
+  function handleCancel() {
+    // Reset form
+    title = "";
+    description = "";
+    projectId = "";
+    perspective = "";
+    dispatch("close");
+  }
 </script>
 
 {#if open}
-	<div class="modal-backdrop">
-		<div class="modal bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-xl shadow-xl">
-			<header class="modal-header mb-4">
-				<h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">New Task</h2>
-			</header>
+  <div class="modal-backdrop">
+    <div
+      class="modal w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800"
+    >
+      <header class="modal-header mb-4">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          New Task
+        </h2>
+      </header>
 
-			<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }} class="space-y-4">
-				<!-- Title -->
-				<div>
-					<label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-						<span>Title *</span>
-					</label>
-					<input
-						id="title"
-						type="text"
-						bind:value={title}
-						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-						placeholder="Enter task title"
-						required
-					/>
-				</div>
+      <form
+        onsubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        class="space-y-4"
+      >
+        <!-- Title -->
+        <div>
+          <label
+            for="title"
+            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            <span>Title *</span>
+          </label>
+          <input
+            id="title"
+            type="text"
+            bind:value={title}
+            class="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            placeholder="Enter task title"
+            required
+          />
+        </div>
 
-				<!-- Description -->
-				<div>
-					<label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-						<span>Description</span>
-					</label>
-					<textarea
-						id="description"
-						bind:value={description}
-						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-						placeholder="Optional description"
-						rows="3"
-					></textarea>
-				</div>
+        <!-- Description -->
+        <div>
+          <label
+            for="description"
+            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            <span>Description</span>
+          </label>
+          <textarea
+            id="description"
+            bind:value={description}
+            class="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            placeholder="Optional description"
+            rows="3"
+          ></textarea>
+        </div>
 
-				<!-- Project -->
-				<div>
-					<label for="project" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-						<span>Project</span>
-					</label>
-					<select
-						id="project"
-						bind:value={projectId}
-						class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-					>
-						<option value="">Default Project</option>
-                    {#each workspace.projects as project}
-							<option value={project.id}>{project.name}</option>
-						{/each}
-					</select>
-				</div>
+        <!-- Project -->
+        <div>
+          <label
+            for="project"
+            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            <span>Project</span>
+          </label>
+          <select
+            id="project"
+            bind:value={projectId}
+            class="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          >
+            <option value="">Default Project</option>
+            {#each workspace.projects as project}
+              <option value={project.id}>{project.name}</option>
+            {/each}
+          </select>
+        </div>
 
-				<!-- Perspective -->
-				<div>
-					<label for="perspective" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-						<span>Perspective</span>
-					</label>
-                    <select
-                        id="perspective"
-                        bind:value={perspective}
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    >
-                        {#each workspace.perspectives as p}
-                            <option value={p.id}>{p.name}</option>
-                        {/each}
-                    </select>
-					<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-						Choose how to categorize this task in your workflow
-					</p>
-				</div>
+        <!-- Perspective -->
+        <div>
+          <label
+            for="perspective"
+            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            <span>Perspective</span>
+          </label>
+          <select
+            id="perspective"
+            bind:value={perspective}
+            class="w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+          >
+            {#each workspace.perspectives as p}
+              <option value={p.id}>{p.name}</option>
+            {/each}
+          </select>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            Choose how to categorize this task in your workflow
+          </p>
+        </div>
 
-				<!-- Actions -->
-				<footer class="modal-footer flex justify-end gap-2 pt-4">
-					<button
-						type="button"
-						onclick={handleCancel}
-						class="btn btn-base bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500"
-						disabled={submitting}
-					>
-						Cancel
-					</button>
-					<button
-						type="submit"
-						class="btn btn-base bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-						disabled={submitting || !title.trim()}
-					>
-						{submitting ? 'Creating...' : 'Create Task'}
-					</button>
-				</footer>
-			</form>
-		</div>
-	</div>
+        <!-- Actions -->
+        <footer class="modal-footer flex justify-end gap-2 pt-4">
+          <button
+            type="button"
+            onclick={handleCancel}
+            class="btn btn-base bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-300 dark:hover:bg-gray-500"
+            disabled={submitting}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-base bg-blue-500 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={submitting || !title.trim()}
+          >
+            {submitting ? "Creating..." : "Create Task"}
+          </button>
+        </footer>
+      </form>
+    </div>
+  </div>
 {/if}
 
 <style>
-	.modal-backdrop {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, 0.5);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		z-index: 999;
-	}
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
 
-	.modal {
-		max-height: 90vh;
-		overflow-y: auto;
-	}
+  .modal {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
 </style>

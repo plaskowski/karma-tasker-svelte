@@ -1,81 +1,94 @@
-import type { ViewType, WorkspaceData, NavigationState } from '$lib/types';
-import { getRequiredDefaultPerspective, hasPerspective } from '$lib/helpers/workspaceHelpers';
-import type { WorkspaceInfo } from '$lib/types';
-import { NavigationService } from './navigation';
+import type { ViewType, WorkspaceData, NavigationState } from "$lib/types";
+import {
+  getRequiredDefaultPerspective,
+  hasPerspective,
+} from "$lib/helpers/workspaceHelpers";
+import type { WorkspaceInfo } from "$lib/types";
+import { NavigationService } from "./navigation";
 
 /**
  * Handles navigation between different views (perspective, project, all, project-all)
  */
 export function handleNavigate(
-    view: ViewType,
-    workspaceContext: WorkspaceData,
-	options?: { perspectiveId?: string; projectId?: string }
+  view: ViewType,
+  workspaceContext: WorkspaceData,
+  options?: { perspectiveId?: string; projectId?: string },
 ) {
-    const workspaceId = workspaceContext.id;
-	
-	// Directly update URL, which will trigger load function
-	if (view === 'perspective' && options?.perspectiveId) {
-        NavigationService.updateURL(
-            { currentView: 'perspective', currentPerspectiveId: options.perspectiveId },
-            { workspaceId }
-        );
-	} else if (view === 'all') {
-        NavigationService.updateURL(
-            { currentView: 'all' },
-            { workspaceId }
-        );
-	} else if (view === 'project-all') {
-        NavigationService.updateURL(
-            { currentView: 'project-all' },
-            { workspaceId }
-        );
-	} else if (view === 'project' && options?.projectId) {
-        NavigationService.updateURL(
-            { currentView: 'project', currentProjectId: options.projectId },
-            { workspaceId }
-        );
-	}
+  const workspaceId = workspaceContext.id;
+
+  // Directly update URL, which will trigger load function
+  if (view === "perspective" && options?.perspectiveId) {
+    NavigationService.updateURL(
+      {
+        currentView: "perspective",
+        currentPerspectiveId: options.perspectiveId,
+      },
+      { workspaceId },
+    );
+  } else if (view === "all") {
+    NavigationService.updateURL({ currentView: "all" }, { workspaceId });
+  } else if (view === "project-all") {
+    NavigationService.updateURL(
+      { currentView: "project-all" },
+      { workspaceId },
+    );
+  } else if (view === "project" && options?.projectId) {
+    NavigationService.updateURL(
+      { currentView: "project", currentProjectId: options.projectId },
+      { workspaceId },
+    );
+  }
 }
 
 /**
  * Handles workspace change and updates navigation accordingly
  */
 export function handleWorkspaceChange(
-    workspaceId: string,
-    workspaceContext: WorkspaceData,
-    currentNavigation: NavigationState
+  workspaceId: string,
+  workspaceContext: WorkspaceData,
+  currentNavigation: NavigationState,
 ) {
-	// Directly update URL based on current view
-	// If we're in project view, switch to first perspective since projects are workspace-specific
-	if (currentNavigation.currentView === 'project' || currentNavigation.currentView === 'project-all') {
-        const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
-        NavigationService.updateURL(
-            { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
-            { workspaceId }
-        );
-	} else if (currentNavigation.currentView === 'perspective') {
-		// Keep current perspective if it exists in new workspace, otherwise use first
-        const perspectiveExists = currentNavigation.currentPerspectiveId ? 
-            hasPerspective(workspaceContext, currentNavigation.currentPerspectiveId) : false;
-		if (!perspectiveExists) {
-            const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
-            NavigationService.updateURL(
-                { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
-                { workspaceId }
-            );
-		} else {
-            NavigationService.updateURL(
-                { currentView: 'perspective', currentPerspectiveId: currentNavigation.currentPerspectiveId },
-                { workspaceId }
-            );
-		}
-	} else {
-		// Keep current view for 'all' view
-        NavigationService.updateURL(
-            { currentView: currentNavigation.currentView },
-            { workspaceId }
-        );
-	}
+  // Directly update URL based on current view
+  // If we're in project view, switch to first perspective since projects are workspace-specific
+  if (
+    currentNavigation.currentView === "project" ||
+    currentNavigation.currentView === "project-all"
+  ) {
+    const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
+    NavigationService.updateURL(
+      { currentView: "perspective", currentPerspectiveId: firstPerspective.id },
+      { workspaceId },
+    );
+  } else if (currentNavigation.currentView === "perspective") {
+    // Keep current perspective if it exists in new workspace, otherwise use first
+    const perspectiveExists = currentNavigation.currentPerspectiveId
+      ? hasPerspective(workspaceContext, currentNavigation.currentPerspectiveId)
+      : false;
+    if (!perspectiveExists) {
+      const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
+      NavigationService.updateURL(
+        {
+          currentView: "perspective",
+          currentPerspectiveId: firstPerspective.id,
+        },
+        { workspaceId },
+      );
+    } else {
+      NavigationService.updateURL(
+        {
+          currentView: "perspective",
+          currentPerspectiveId: currentNavigation.currentPerspectiveId,
+        },
+        { workspaceId },
+      );
+    }
+  } else {
+    // Keep current view for 'all' view
+    NavigationService.updateURL(
+      { currentView: currentNavigation.currentView },
+      { workspaceId },
+    );
+  }
 }
 
 /**
@@ -83,67 +96,71 @@ export function handleWorkspaceChange(
  * Returns true if the event was handled
  */
 export function handleKeyboardShortcut(
-	event: KeyboardEvent,
-	actions: {
-		onNewTask: () => void;
-		onEscape?: () => void;
-	}
+  event: KeyboardEvent,
+  actions: {
+    onNewTask: () => void;
+    onEscape?: () => void;
+  },
 ): boolean {
-	// Allow Escape to close modals/editors even when focused in inputs
-	if (event.key === 'Escape') {
-		if (actions.onEscape) {
-			actions.onEscape();
-			event.preventDefault();
-			return true;
-		}
-		return false;
-	}
+  // Allow Escape to close modals/editors even when focused in inputs
+  if (event.key === "Escape") {
+    if (actions.onEscape) {
+      actions.onEscape();
+      event.preventDefault();
+      return true;
+    }
+    return false;
+  }
 
-	// Don't interfere with typing in inputs for other shortcuts
-	if (event.target instanceof HTMLInputElement || 
-		event.target instanceof HTMLTextAreaElement || 
-		event.target instanceof HTMLSelectElement) {
-		return false;
-	}
+  // Don't interfere with typing in inputs for other shortcuts
+  if (
+    event.target instanceof HTMLInputElement ||
+    event.target instanceof HTMLTextAreaElement ||
+    event.target instanceof HTMLSelectElement
+  ) {
+    return false;
+  }
 
-	// New task (Ctrl+N or Cmd+N)
-	if (event.ctrlKey || event.metaKey) {
-		if (event.key === 'n' || event.key === 'N') {
-			actions.onNewTask();
-			event.preventDefault();
-			return true;
-		}
-	}
+  // New task (Ctrl+N or Cmd+N)
+  if (event.ctrlKey || event.metaKey) {
+    if (event.key === "n" || event.key === "N") {
+      actions.onNewTask();
+      event.preventDefault();
+      return true;
+    }
+  }
 
-	// New task (N key)
-	if (event.key === 'n' || event.key === 'N') {
-		actions.onNewTask();
-		event.preventDefault();
-		return true;
-	}
+  // New task (N key)
+  if (event.key === "n" || event.key === "N") {
+    actions.onNewTask();
+    event.preventDefault();
+    return true;
+  }
 
-	return false;
+  return false;
 }
 
 /**
  * Handles refresh/reset action for development
  */
 export function handleRefresh(
-    workspaces: WorkspaceInfo[],
-    workspaceContext: WorkspaceData,
-	resetToInitialState: () => void
+  workspaces: WorkspaceInfo[],
+  workspaceContext: WorkspaceData,
+  resetToInitialState: () => void,
 ) {
-	// Reset app to initial state (temporary dev feature)
-	resetToInitialState();
-	
-	// Update URL to reflect reset state - use first workspace
-	if (!workspaces[0]?.id) {
-		throw new Error('No workspaces defined. At least one workspace is required.');
-	}
-	const firstWorkspaceId = workspaces[0].id;
-    const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
-    NavigationService.updateURL(
-        { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
-        { workspaceId: firstWorkspaceId }
+  // Reset app to initial state (temporary dev feature)
+  resetToInitialState();
+
+  // Update URL to reflect reset state - use first workspace
+  if (!workspaces[0]?.id) {
+    throw new Error(
+      "No workspaces defined. At least one workspace is required.",
     );
+  }
+  const firstWorkspaceId = workspaces[0].id;
+  const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
+  NavigationService.updateURL(
+    { currentView: "perspective", currentPerspectiveId: firstPerspective.id },
+    { workspaceId: firstWorkspaceId },
+  );
 }

@@ -3,6 +3,7 @@
 ## Current State Analysis
 
 ### Existing Structure
+
 ```
 src/
 ├── lib/
@@ -47,6 +48,7 @@ src/
 ## Research: Official and Community-Recommended Patterns
 
 ### Official SvelteKit Recommendations
+
 Based on the official documentation and community best practices:
 
 1. **Route-centric organization** - Components used in single routes should be colocated with those routes
@@ -56,7 +58,9 @@ Based on the official documentation and community best practices:
 ### Community-Promoted Patterns (2024)
 
 #### MVC-Like Pattern with lib/server
+
 The most promoted pattern for enterprise SvelteKit applications:
+
 ```
 src/lib/
 ├── server/
@@ -71,7 +75,9 @@ src/lib/
 ```
 
 #### Clean Architecture / Hexagonal Architecture
+
 Promoted by thought leaders like Niko Heikkila:
+
 - Domain at the center
 - Parse, don't validate (using Zod or similar)
 - Ports and adapters pattern
@@ -80,6 +86,7 @@ Promoted by thought leaders like Niko Heikkila:
 ## Common SvelteKit Architecture Patterns
 
 ### 1. **Feature-Based Structure**
+
 ```
 src/lib/features/
 ├── tasks/
@@ -90,10 +97,12 @@ src/lib/features/
 ├── projects/
 └── workspaces/
 ```
+
 **Pros:** High cohesion, easy to find related code, scales well
 **Cons:** Can lead to duplication, cross-feature dependencies
 
 ### 2. **Domain-Driven Design (DDD)**
+
 ```
 src/lib/
 ├── domain/          # Business entities and logic
@@ -101,10 +110,12 @@ src/lib/
 ├── infrastructure/  # External concerns (API, storage)
 └── presentation/    # UI components
 ```
+
 **Pros:** Clear boundaries, testable, follows SOLID principles
 **Cons:** Can be overkill for smaller apps, learning curve
 
 ### 3. **Service-Repository Pattern**
+
 ```
 src/lib/
 ├── services/       # Business logic
@@ -112,10 +123,12 @@ src/lib/
 ├── stores/        # State management
 └── components/    # UI only
 ```
+
 **Pros:** Clear separation, familiar pattern, testable
 **Cons:** May need additional abstraction layers
 
 ### 4. **MVVM-like Pattern**
+
 ```
 src/lib/
 ├── views/         # Svelte components (View)
@@ -123,6 +136,7 @@ src/lib/
 ├── models/        # Data structures and business logic
 └── services/      # External interactions
 ```
+
 **Pros:** Familiar to many developers, clear responsibilities
 **Cons:** May not align perfectly with Svelte's reactive model
 
@@ -172,21 +186,25 @@ src/
 ### Implementation Plan
 
 #### Phase 1: Service Layer (Current Task)
+
 1. Extract business logic from `taskStore.ts` into `TaskService`
 2. Create repository abstraction for data persistence
 3. Simplify stores to just hold state
 
 #### Phase 2: Feature Reorganization
+
 1. Move task-related components into `features/tasks/`
 2. Move project-related code into `features/projects/`
 3. Move workspace-related code into `features/workspaces/`
 
 #### Phase 3: Shared Infrastructure
+
 1. Create shared API service for future backend
 2. Abstract localStorage into repository pattern
 3. Extract common UI components
 
 #### Phase 4: Clean Up
+
 1. Refactor `+page.svelte` to use new structure
 2. Remove redundant code
 3. Update imports and dependencies
@@ -201,15 +219,16 @@ src/
 
 ### Risks and Mitigation
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Over-engineering | High complexity for simple app | Start simple, evolve as needed |
+| Risk                 | Impact                          | Mitigation                           |
+| -------------------- | ------------------------------- | ------------------------------------ |
+| Over-engineering     | High complexity for simple app  | Start simple, evolve as needed       |
 | Migration disruption | Breaking existing functionality | Implement gradually, test thoroughly |
-| Team learning curve | Slower initial development | Document patterns, provide examples |
+| Team learning curve  | Slower initial development      | Document patterns, provide examples  |
 
 ### Decision Criteria
 
 Before proceeding, consider:
+
 1. Is the app expected to grow significantly?
 2. Will there be multiple developers?
 3. Is testability a priority?
@@ -255,6 +274,7 @@ Based on official documentation and community best practices:
 ## ViewModel Pattern for Components
 
 ### The Problem
+
 Components currently mix UI logic with business logic, making them hard to test and maintain. We need a pattern that separates these concerns while working naturally with Svelte's reactivity.
 
 ### Recommended Pattern: Stateless ViewModels with Closure
@@ -282,38 +302,41 @@ export function createTaskListViewModel(state: TaskListState) {
   return {
     // Computed properties as getters
     get viewTitle() {
-      if (state.currentView === 'all') return 'All';
-      if (state.currentView === 'project' && state.currentProjectId) {
-        const project = state.projects.find(p => p.id === state.currentProjectId);
-        return project?.name || 'Project';
+      if (state.currentView === "all") return "All";
+      if (state.currentView === "project" && state.currentProjectId) {
+        const project = state.projects.find(
+          (p) => p.id === state.currentProjectId,
+        );
+        return project?.name || "Project";
       }
       // ... more logic
     },
-    
+
     get activeTasks() {
-      return state.tasks.filter(t => 
-        !t.completed && 
-        t.workspaceId === state.currentWorkspace
+      return state.tasks.filter(
+        (t) => !t.completed && t.workspaceId === state.currentWorkspace,
       );
     },
-    
+
     get groupedTasks() {
       const workspaceTasks = this.filterWorkspaceTasks();
-      
-      if (state.currentView === 'perspective') {
+
+      if (state.currentView === "perspective") {
         return this.groupByProject(workspaceTasks);
       }
       // ... more logic
     },
-    
+
     // Private helper methods
     filterWorkspaceTasks() {
-      return state.tasks.filter(t => t.workspaceId === state.currentWorkspace);
+      return state.tasks.filter(
+        (t) => t.workspaceId === state.currentWorkspace,
+      );
     },
-    
+
     groupByProject(tasks: Task[]) {
       // grouping logic
-    }
+    },
   };
 }
 ```
@@ -339,11 +362,11 @@ export function createTaskListViewModel(state: TaskListState) {
 <!-- Clean template using ViewModel properties -->
 <div>
   <h1>{vm.viewTitle}</h1>
-  
+
   {#each vm.groupedTasks as group}
     <TaskGroup {group} />
   {/each}
-  
+
   <footer>
     Showing {vm.activeTasks.length} active tasks
   </footer>
@@ -388,21 +411,24 @@ export function createTaskListViewModel(state: TaskListState) {
 ### When to Use ViewModels
 
 **Use ViewModels when:**
+
 - Component has complex computed properties
 - Multiple derived values from stores
 - Business logic that needs testing
 - Grouping, filtering, or transforming data
 
 **Skip ViewModels when:**
+
 - Component is purely presentational
 - Logic is trivial (single line expressions)
 - Component just passes props through
 
 ### Why Not Shared Services for View Logic?
 
-Avoid creating generic services like `viewService.ts` that would mix logic from different components. This violates cohesion principles by spreading related logic across files. 
+Avoid creating generic services like `viewService.ts` that would mix logic from different components. This violates cohesion principles by spreading related logic across files.
 
 **Don't do this:**
+
 ```typescript
 // lib/services/viewService.ts - AVOID
 export function getTaskListTitle(...) { }
@@ -411,18 +437,23 @@ export function getHeaderTitle(...) { }
 ```
 
 **Do this instead:**
+
 ```typescript
 // lib/components/tasks/taskListViewModel.ts
 export function createTaskListViewModel(state) {
   return {
-    get viewTitle() { /* TaskList-specific logic */ }
+    get viewTitle() {
+      /* TaskList-specific logic */
+    },
   };
 }
 
-// lib/components/navigation/sidebarViewModel.ts  
+// lib/components/navigation/sidebarViewModel.ts
 export function createSidebarViewModel(state) {
   return {
-    get title() { /* Sidebar-specific logic */ }
+    get title() {
+      /* Sidebar-specific logic */
+    },
   };
 }
 ```
@@ -441,7 +472,7 @@ test('viewTitle shows project name', () => {
     projects: [{ id: 'p1', name: 'My Project', ... }],
     // ... other required state
   };
-  
+
   const vm = createTaskListViewModel(state);
   expect(vm.viewTitle).toBe('My Project');
 });
@@ -452,13 +483,15 @@ test('viewTitle shows project name', () => {
 After researching official and community recommendations, the **Domain-Organized MVC Pattern with lib/server** emerges as the best approach for Karma Tasker, enhanced with the **ViewModel pattern** for complex components.
 
 This combined approach:
+
 - Aligns with SvelteKit conventions
 - Provides clear separation of concerns at all levels
 - Makes business logic easily testable
 - Scales well as the application grows
 - Maintains excellent developer experience
 
-**Final Architecture Recommendation:** 
+**Final Architecture Recommendation:**
+
 1. Use Domain-Organized MVC for overall structure
 2. Implement stateless ViewModels for complex components
 3. Keep stores simple and focused on state management

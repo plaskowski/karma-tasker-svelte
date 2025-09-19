@@ -49,7 +49,7 @@ export interface WorkspaceData {
 }
 
 // UI-specific types can stay here
-export type ViewType = 'perspective' | 'project' | 'project-all' | 'all';
+export type ViewType = "perspective" | "project" | "project-all" | "all";
 
 // Navigation state - groups related navigation properties
 export interface NavigationState {
@@ -59,7 +59,7 @@ export interface NavigationState {
 }
 
 // Draft payload shape used when creating a new task
-export type TaskDraft = Omit<Task, 'id' | 'createdAt' | 'updatedAt'>;
+export type TaskDraft = Omit<Task, "id" | "createdAt" | "updatedAt">;
 
 export interface AppState {
   currentWorkspace: string;

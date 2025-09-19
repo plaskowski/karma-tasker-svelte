@@ -5,12 +5,14 @@ Based on the test strategy document, this plan outlines the step-by-step impleme
 ## Phase 1: Infrastructure Setup
 
 ### 1. Playwright Configuration
+
 - Install Playwright with Chromium browser
 - Configure fixed viewport: 1280×800
 - Set timezone: Europe/Warsaw
 - Lock browser version for consistency
 
 ### 2. Deterministic Environment
+
 - Freeze time using mock Date/timer functions
 - Control RNG with seeded random values
 - Disable animations via `prefers-reduced-motion` CSS media query
@@ -20,13 +22,17 @@ Based on the test strategy document, this plan outlines the step-by-step impleme
 ## Phase 2: Visual (Screenshot) Tests
 
 ### 3. Test Structure
+
 Organized test structure with one test per file:
+
 - File structure: `tests/visual/[category]/[test-name].spec.ts`
 - Each test in its own file for better isolation
 - Store baselines: `tests/visual/[category]/__screenshots__/[test-name].png`
 
 ### 4. Loaded State Coverage
+
 Focus on loaded state screenshots only (no interaction states):
+
 - Empty state: Views with no data
 - Full state: Views with mock data
 - Test key perspectives: Inbox, First, All
@@ -34,17 +40,20 @@ Focus on loaded state screenshots only (no interaction states):
 - Test search results
 
 Simplified coverage:
+
 - GTD perspectives (Inbox, First, All) - empty and full states
-- Projects view - empty and full states  
+- Projects view - empty and full states
 - Search view - with and without results
 - No hover states, modals, or interaction screenshots
 
 ## Phase 3: Interaction Tests
 
 ### 5. Core User Flows
+
 Implement Playwright tests for critical paths:
 
 #### Task Management Flow
+
 - Create new task
 - Edit task properties
 - Complete task
@@ -52,11 +61,13 @@ Implement Playwright tests for critical paths:
 - Bulk operations
 
 #### GTD Perspective Navigation
+
 - Switch between Inbox, Next, Waiting, Scheduled, Someday
 - Verify correct task filtering
 - Test perspective-specific actions
 
 #### Search and Filter Flow
+
 - Text search functionality
 - Filter combinations
 - Clear filters
@@ -68,7 +79,9 @@ Step screenshots: `tests/e2e/__steps__/[flow]/[NN]-[description].png`
 ## Phase 4: Test Readiness
 
 ### 6. Test IDs
+
 Add `data-testid` attributes to all interactive elements:
+
 - Buttons and links
 - Form inputs
 - Dropdowns and selects
@@ -77,6 +90,7 @@ Add `data-testid` attributes to all interactive elements:
 - Navigation elements
 
 ### 7. Baseline Management
+
 - Set up screenshot storage structure
 - Implement diff comparison tools
 - Configure update mechanisms for approved changes
@@ -85,13 +99,16 @@ Add `data-testid` attributes to all interactive elements:
 ## Phase 5: CI/CD Integration
 
 ### 8. Visual Regression Gates
+
 PR check configuration:
+
 - Fail on visual differences
 - Require manual approval with justification
 - Generate diff reports for review
 - Store approved baselines in version control
 
 ### 9. Interaction Test Gates
+
 - All interaction tests must pass
 - Generate trace on failure
 - Capture failure screenshots
@@ -100,7 +117,9 @@ PR check configuration:
 ## Phase 6: Documentation
 
 ### 10. Test Procedures
+
 Document the following:
+
 - How to run tests locally
 - Updating visual baselines
 - Debugging failed tests

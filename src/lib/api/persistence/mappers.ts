@@ -1,17 +1,17 @@
-import type { Task, Project, Workspace, Perspective } from '$lib/types';
-import type { 
-  TaskDto, 
-  ProjectDto, 
-  WorkspaceDto, 
+import type { Task, Project, Workspace, Perspective } from "$lib/types";
+import type {
+  TaskDto,
+  ProjectDto,
+  WorkspaceDto,
   PerspectiveDto,
   CreateTaskRequest,
   UpdateTaskRequest,
   CreateProjectRequest,
   UpdateProjectRequest,
   CreateWorkspaceRequest,
-  UpdateWorkspaceRequest
-} from './index';
-import { wrapFieldUpdate } from './fieldUpdates';
+  UpdateWorkspaceRequest,
+} from "./index";
+import { wrapFieldUpdate } from "./fieldUpdates";
 
 /**
  * Mappers to convert between API DTOs and domain models.
@@ -20,12 +20,15 @@ import { wrapFieldUpdate } from './fieldUpdates';
 
 // ===== To Domain =====
 
-export function toDomainWorkspace(dto: WorkspaceDto, perspectives: Perspective[]): Workspace {
+export function toDomainWorkspace(
+  dto: WorkspaceDto,
+  perspectives: Perspective[],
+): Workspace {
   return {
     id: dto.id,
     name: dto.name,
     perspectives,
-    createdAt: new Date(dto.created_at)
+    createdAt: new Date(dto.created_at),
   };
 }
 
@@ -36,7 +39,7 @@ export function toDomainProject(dto: ProjectDto, workspaceId: string): Project {
     name: dto.name,
     icon: dto.icon,
     order: dto.order,
-    createdAt: new Date(dto.created_at)
+    createdAt: new Date(dto.created_at),
   };
 }
 
@@ -50,7 +53,7 @@ export function toDomainTask(dto: TaskDto): Task {
     completed: dto.completed,
     order: dto.order,
     createdAt: new Date(dto.created_at),
-    updatedAt: new Date(dto.updated_at)
+    updatedAt: new Date(dto.updated_at),
   };
 }
 
@@ -69,7 +72,7 @@ export function toWorkspaceDto(workspace: Workspace): WorkspaceDto {
   return {
     id: workspace.id,
     name: workspace.name,
-    created_at: workspace.createdAt.toISOString()
+    created_at: workspace.createdAt.toISOString(),
   };
 }
 
@@ -79,7 +82,7 @@ export function toProjectDto(project: Project): ProjectDto {
     name: project.name,
     order: project.order,
     icon: project.icon,
-    created_at: project.createdAt.toISOString()
+    created_at: project.createdAt.toISOString(),
   };
 }
 
@@ -93,7 +96,7 @@ export function toTaskDto(task: Task): TaskDto {
     completed: task.completed,
     order: task.order,
     created_at: task.createdAt.toISOString(),
-    updated_at: task.updatedAt.toISOString()
+    updated_at: task.updatedAt.toISOString(),
   };
 }
 
@@ -102,85 +105,97 @@ export function toPerspectiveDto(perspective: Perspective): PerspectiveDto {
     id: perspective.id,
     name: perspective.name,
     icon: perspective.icon,
-    order: perspective.order
+    order: perspective.order,
   };
 }
 
 // ===== Request Builders =====
 
 export function toCreateWorkspaceRequest(
-  workspace: Omit<Workspace, 'id' | 'createdAt'>
+  workspace: Omit<Workspace, "id" | "createdAt">,
 ): CreateWorkspaceRequest {
   return {
-    name: workspace.name
+    name: workspace.name,
   };
 }
 
 export function toUpdateWorkspaceRequest(
-  updates: Partial<Workspace>
+  updates: Partial<Workspace>,
 ): UpdateWorkspaceRequest {
   return {
-    name: updates.name
+    name: updates.name,
   };
 }
 
 export function toCreateProjectRequest(
-  project: Omit<Project, 'id' | 'workspaceId'>
+  project: Omit<Project, "id" | "workspaceId">,
 ): CreateProjectRequest {
   return {
     name: project.name,
     order: project.order,
-    icon: project.icon
+    icon: project.icon,
   };
 }
 
 export function toUpdateProjectRequest(
-  updates: Partial<Project>
+  updates: Partial<Project>,
 ): UpdateProjectRequest {
   return {
     name: updates.name,
     order: updates.order,
-    icon: updates.icon
+    icon: updates.icon,
   };
 }
 
 export function toCreateTaskRequest(
-  task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>
+  task: Omit<Task, "id" | "createdAt" | "updatedAt" | "order">,
 ): CreateTaskRequest {
   return {
     title: task.title,
     description: task.description,
     project_id: task.projectId,
-    perspective: task.perspectiveId
+    perspective: task.perspectiveId,
   };
 }
 
 export function toUpdateTaskRequest(
   updates: Partial<Task>,
-  clearFields?: (keyof Task)[]
+  clearFields?: (keyof Task)[],
 ): UpdateTaskRequest {
   return {
     title: updates.title,
-    description: wrapFieldUpdate(updates.description, clearFields, 'description'),
+    description: wrapFieldUpdate(
+      updates.description,
+      clearFields,
+      "description",
+    ),
     project_id: updates.projectId,
     perspective: updates.perspectiveId,
     completed: updates.completed,
-    order: updates.order
+    order: updates.order,
   };
 }
 
 // ===== Batch Operations =====
 
-export function toDomainWorkspaces(dtos: WorkspaceDto[], perspectivesMap: Map<string, Perspective[]>): Workspace[] {
-  return dtos.map(dto => toDomainWorkspace(dto, perspectivesMap.get(dto.id) || []));
+export function toDomainWorkspaces(
+  dtos: WorkspaceDto[],
+  perspectivesMap: Map<string, Perspective[]>,
+): Workspace[] {
+  return dtos.map((dto) =>
+    toDomainWorkspace(dto, perspectivesMap.get(dto.id) || []),
+  );
 }
 
-export function toDomainProjects(dtos: ProjectDto[], workspaceId: string): Project[] {
-  return dtos.map(dto => toDomainProject(dto, workspaceId));
+export function toDomainProjects(
+  dtos: ProjectDto[],
+  workspaceId: string,
+): Project[] {
+  return dtos.map((dto) => toDomainProject(dto, workspaceId));
 }
 
 export function toDomainTasks(dtos: TaskDto[]): Task[] {
-  return dtos.map(dto => toDomainTask(dto));
+  return dtos.map((dto) => toDomainTask(dto));
 }
 
 export function toWorkspaceDtos(workspaces: Workspace[]): WorkspaceDto[] {

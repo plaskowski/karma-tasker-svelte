@@ -3,6 +3,7 @@
 This project follows specific development guidelines organized by category:
 
 ## Core Rules
+
 @.cursor/rules/architecture.mdc
 @.cursor/rules/code-quality.mdc
 @.cursor/rules/development-workflow.mdc

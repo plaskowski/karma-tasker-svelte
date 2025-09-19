@@ -1,9 +1,10 @@
 # Karma Tasker - Current TODO & Roadmap
 
-*Building what Nirvana couldn't deliver: workspace separation and family collaboration for GTD workflows.*
-*See [README.md](./README.md) for project overview and motivation.*
+_Building what Nirvana couldn't deliver: workspace separation and family collaboration for GTD workflows._
+_See [README.md](./README.md) for project overview and motivation._
 
 ### Next steps
+
 - [ ] reformat all files according to editorconfig
 - [ ] use ISO string instead of Date object (as it gets serialized)
 - [ ] fix remaining failing tests in e2e/keyboard-shortcuts.spec.ts
@@ -13,6 +14,7 @@
 - [ ] emit events instead of onXXXX props?
 
 ### Clean-ups
+
 - [ ] rename NewTaskDialog.svelte
 - [ ] get rid of all fallbaks on projectId and perspectiveId
 - [ ] should pageHandlers.ts be in services/ or next it its page.ts file?
@@ -21,6 +23,7 @@
 - [ ] ...
 
 ### Technical improvements
+
 - [ ] setup linter and formatter
 - [ ] consolidate all class attribute spagetti into semantic classes
 - [ ] Real backend API integration
@@ -29,6 +32,7 @@
 - [ ] Add semantic labels and test IDs for Playwright automation
 
 ### Advanced features
+
 - [ ] Drag & drop task reordering
 - [ ] special markup support in description
   - link in first line

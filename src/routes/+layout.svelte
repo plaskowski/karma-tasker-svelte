@@ -1,21 +1,21 @@
 <script lang="ts">
-	import '$lib/styles/global.css';
-	import favicon from '$lib/assets/favicon.svg';
-	import { initializeTestingFacade } from '$lib/testing/testingFacade';
-	import { onMount } from 'svelte';
+  import "$lib/styles/global.css";
+  import favicon from "$lib/assets/favicon.svg";
+  import { initializeTestingFacade } from "$lib/testing/testingFacade";
+  import { onMount } from "svelte";
 
-	let { children } = $props();
+  let { children } = $props();
 
-	// Initialize testing facade for test environments
-	onMount(() => {
-		initializeTestingFacade();
-	});
+  // Initialize testing facade for test environments
+  onMount(() => {
+    initializeTestingFacade();
+  });
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+  <link rel="icon" href={favicon} />
 </svelte:head>
 
 <div class="h-full">
-	{@render children?.()}
+  {@render children?.()}
 </div>

@@ -1,4 +1,4 @@
-import type { Task, Project, Perspective } from '$lib/types';
+import type { Task, Project, Perspective } from "$lib/types";
 
 /**
  * Task operations utilities for sorting and grouping tasks.
@@ -6,8 +6,8 @@ import type { Task, Project, Perspective } from '$lib/types';
  */
 
 export function sortTasksByPerspectiveThenOrder(
-  tasks: Task[], 
-  perspectives: readonly Perspective[]
+  tasks: Task[],
+  perspectives: readonly Perspective[],
 ): Task[] {
   return [...tasks].sort((a, b) => {
     const perspA = getPerspectiveOrder(a.perspectiveId, perspectives);
@@ -18,8 +18,8 @@ export function sortTasksByPerspectiveThenOrder(
 }
 
 export function sortTasksByProjectThenOrder(
-  tasks: Task[], 
-  projects: readonly Project[]
+  tasks: Task[],
+  projects: readonly Project[],
 ): Task[] {
   return [...tasks].sort((a, b) => {
     const projectA = getProject(a.projectId, projects);
@@ -33,46 +33,54 @@ export function sortTasksByProjectThenOrder(
 
 export function groupTasksByProject(tasks: Task[]): Map<string, Task[]> {
   const groups = new Map<string, Task[]>();
-  
-  tasks.forEach(task => {
+
+  tasks.forEach((task) => {
     const existing = groups.get(task.projectId) || [];
     existing.push(task);
     groups.set(task.projectId, existing);
   });
-  
+
   return groups;
 }
 
 export function groupTasksByPerspective(
-  tasks: Task[], 
-  perspectives: readonly Perspective[]
+  tasks: Task[],
+  perspectives: readonly Perspective[],
 ): Map<string, Task[]> {
   const groups = new Map<string, Task[]>();
-  
+
   // Initialize with all perspectives
-  perspectives.forEach(p => {
+  perspectives.forEach((p) => {
     groups.set(p.id, []);
   });
-  
-  tasks.forEach(task => {
+
+  tasks.forEach((task) => {
     const existing = groups.get(task.perspectiveId) || [];
     existing.push(task);
     groups.set(task.perspectiveId, existing);
   });
-  
+
   return groups;
 }
 
 // Helper functions
-function getPerspectiveOrder(id: string, perspectives: readonly Perspective[]): number {
-  const index = perspectives.findIndex(p => p.id === id);
+function getPerspectiveOrder(
+  id: string,
+  perspectives: readonly Perspective[],
+): number {
+  const index = perspectives.findIndex((p) => p.id === id);
   return index >= 0 ? index : Number.MAX_SAFE_INTEGER;
 }
 
-function getProject(id: string, projects: readonly Project[]): Project | undefined {
-  return projects.find(p => p.id === id);
+function getProject(
+  id: string,
+  projects: readonly Project[],
+): Project | undefined {
+  return projects.find((p) => p.id === id);
 }
 
-function getDefaultPerspective(perspectives: readonly Perspective[]): Perspective | undefined {
+function getDefaultPerspective(
+  perspectives: readonly Perspective[],
+): Perspective | undefined {
   return perspectives[0];
 }

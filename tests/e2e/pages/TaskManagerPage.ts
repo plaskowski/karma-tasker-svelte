@@ -1,301 +1,359 @@
-import { type Page, expect } from '@playwright/test';
+import { type Page, expect } from "@playwright/test";
 
 /**
  * Page Object for Task Management
  * High-level methods for interacting with tasks
  */
 export class TaskManagerPage {
-	constructor(
-		private page: Page,
-		private screenshotBasePath?: string
-	) {}
+  constructor(
+    private page: Page,
+    private screenshotBasePath?: string,
+  ) {}
 
-	/**
-	 * Navigate to the app
-	 */
-	async goto() {
-		await this.page.goto('/');
-		await this.page.waitForLoadState('networkidle');
-	}
+  /**
+   * Navigate to the app
+   */
+  async goto() {
+    await this.page.goto("/");
+    await this.page.waitForLoadState("networkidle");
+  }
 
-	/**
-	 * Create a new task with given title and optional description
-	 */
-	async createTask(title: string, description?: string, screenshotName?: string) {
-		// Click "New Item" button to open new task editor
-		const newItemButton = this.page.locator('button:has-text("New Item")');
-		await expect(newItemButton).toBeVisible({ timeout: 5000 });
-		await newItemButton.click();
+  /**
+   * Create a new task with given title and optional description
+   */
+  async createTask(
+    title: string,
+    description?: string,
+    screenshotName?: string,
+  ) {
+    // Click "New Item" button to open new task editor
+    const newItemButton = this.page.locator('button:has-text("New Item")');
+    await expect(newItemButton).toBeVisible({ timeout: 5000 });
+    await newItemButton.click();
 
-		// Wait for the task editor panel to appear
-		await this.page.waitForSelector('[role="dialog"][data-testid="task-editor-panel"]', { state: 'visible', timeout: 5000 });
+    // Wait for the task editor panel to appear
+    await this.page.waitForSelector(
+      '[role="dialog"][data-testid="task-editor-panel"]',
+      { state: "visible", timeout: 5000 },
+    );
 
-		// Take screenshot after opening editor if name provided
-		if (screenshotName) {
-			await this.screenshot(screenshotName);
-		}
+    // Take screenshot after opening editor if name provided
+    if (screenshotName) {
+      await this.screenshot(screenshotName);
+    }
 
-		// Fill in title
-		const titleInput = this.page.locator('input[type="text"]').first();
-		await expect(titleInput).toBeVisible({ timeout: 5000 });
-		await titleInput.fill(title);
+    // Fill in title
+    const titleInput = this.page.locator('input[type="text"]').first();
+    await expect(titleInput).toBeVisible({ timeout: 5000 });
+    await titleInput.fill(title);
 
-		// Fill in description if provided
-		if (description) {
-			const descriptionInput = this.page.locator('textarea').first();
-			if (await descriptionInput.isVisible()) {
-				await descriptionInput.fill(description);
-			}
-		}
+    // Fill in description if provided
+    if (description) {
+      const descriptionInput = this.page.locator("textarea").first();
+      if (await descriptionInput.isVisible()) {
+        await descriptionInput.fill(description);
+      }
+    }
 
-		// Save the task - be more specific with the button selector
-		const saveButton = this.page.locator('button:has-text("Save")');
-		await expect(saveButton).toBeVisible();
-		await saveButton.click();
+    // Save the task - be more specific with the button selector
+    const saveButton = this.page.locator('button:has-text("Save")');
+    await expect(saveButton).toBeVisible();
+    await saveButton.click();
 
-		// Wait for either the editor to close OR the task to appear
-		// This handles the race condition where the task might appear before the editor closes
-		await Promise.race([
-			// Wait for editor panel to close
-			this.page.waitForSelector('[role="dialog"][data-testid="task-editor-panel"]', { state: 'hidden', timeout: 10000 }),
-			// Or wait for the task to appear (which also means save succeeded)
-			this.page.waitForSelector(`text="${title}"`, { state: 'visible', timeout: 10000 })
-		]);
+    // Wait for either the editor to close OR the task to appear
+    // This handles the race condition where the task might appear before the editor closes
+    await Promise.race([
+      // Wait for editor panel to close
+      this.page.waitForSelector(
+        '[role="dialog"][data-testid="task-editor-panel"]',
+        { state: "hidden", timeout: 10000 },
+      ),
+      // Or wait for the task to appear (which also means save succeeded)
+      this.page.waitForSelector(`text="${title}"`, {
+        state: "visible",
+        timeout: 10000,
+      }),
+    ]);
 
-		// Give a small delay to ensure UI has settled
-		await this.page.waitForTimeout(500);
+    // Give a small delay to ensure UI has settled
+    await this.page.waitForTimeout(500);
 
-		// Then verify task was created
-		await expect(this.page.locator(`text="${title}"`)).toBeVisible({ timeout: 5000 });
-	}
+    // Then verify task was created
+    await expect(this.page.locator(`text="${title}"`)).toBeVisible({
+      timeout: 5000,
+    });
+  }
 
-	/**
-	 * Edit an existing task
-	 */
-	async editTask(oldTitle: string, newTitle: string, newDescription?: string, screenshotName?: string) {
-		// Click on the task to open inline editor
-		await this.page.locator(`text="${oldTitle}"`).first().click();
-		
-		// Wait for inline editor to appear
-		await this.page.waitForTimeout(500);
-		
-		// Take screenshot after opening editor if name provided
-		if (screenshotName) {
-			await this.screenshot(screenshotName);
-		}
-		
-		// Find the inline editor that appears after clicking the task
-		// The editor will be in the same container as the task
-		const titleInput = this.page.locator('input[type="text"]').first();
-		await expect(titleInput).toBeVisible({ timeout: 5000 });
-		
-		// Update title
-		await titleInput.clear();
-		await titleInput.fill(newTitle);
-		
-		// Update description if provided
-		if (newDescription) {
-			const descriptionInput = this.page.locator('textarea').first();
-			if (await descriptionInput.isVisible()) {
-				await descriptionInput.clear();
-				await descriptionInput.fill(newDescription);
-			}
-		}
-		
-		// Save changes
-		const saveButton = this.page.locator('button').filter({ hasText: /save|update/i }).first();
-		if (await saveButton.isVisible()) {
-			await saveButton.click();
-		} else {
-			// Try pressing Enter as alternative
-			await titleInput.press('Enter');
-		}
-		
-		// Wait for editor to close
-		await this.page.waitForTimeout(1000);
-		
-		// Verify update
-		await expect(this.page.locator(`text="${newTitle}"`)).toBeVisible({ timeout: 5000 });
-	}
+  /**
+   * Edit an existing task
+   */
+  async editTask(
+    oldTitle: string,
+    newTitle: string,
+    newDescription?: string,
+    screenshotName?: string,
+  ) {
+    // Click on the task to open inline editor
+    await this.page.locator(`text="${oldTitle}"`).first().click();
 
-	/**
-	 * Complete a task by title
-	 */
-	async completeTask(title: string) {
-		// Find the task
-		const task = this.page.locator('[role="button"]').filter({ hasText: title }).first();
-		
-		// Find the checkbox button within this task
-		const checkbox = task.locator('button').first();
-		await checkbox.click();
-		
-		// Wait for completion
-		await this.page.waitForTimeout(500);
-		
-		// Verify task is completed (usually has line-through style)
-		await expect(task.locator('.line-through, [class*="completed"]')).toBeVisible({ timeout: 5000 });
-	}
+    // Wait for inline editor to appear
+    await this.page.waitForTimeout(500);
 
-	/**
-	 * Delete a task
-	 */
-	async deleteTask(title: string) {
-		// Click on task to open inline editor
-		await this.page.locator(`text="${title}"`).first().click();
-		
-		// Wait for inline editor to appear
-		await this.page.waitForTimeout(500);
-		
-		// Look for delete button in the inline editor
-		const deleteButton = this.page.locator('button').filter({ hasText: /delete|remove/i }).first();
-		if (await deleteButton.isVisible()) {
-			await deleteButton.click();
-			
-			// Handle confirmation if present
-			const confirmButton = this.page.locator('button').filter({ hasText: /confirm|yes|delete/i }).first();
-			if (await confirmButton.isVisible()) {
-				await confirmButton.click();
-			}
-		} else {
-			// Close editor if no delete option
-			await this.page.keyboard.press('Escape');
-		}
-		
-		await this.page.waitForTimeout(500);
-		
-		// Verify task is gone
-		await expect(this.page.locator(`text="${title}"`)).not.toBeVisible({ timeout: 5000 });
-	}
+    // Take screenshot after opening editor if name provided
+    if (screenshotName) {
+      await this.screenshot(screenshotName);
+    }
 
-	/**
-	 * Switch to a different perspective
-	 */
-	async switchPerspective(perspectiveName: string) {
-		const perspectiveButton = this.page.locator('button').filter({ hasText: perspectiveName });
-		await expect(perspectiveButton).toBeVisible({ timeout: 5000 });
-		await perspectiveButton.first().click();
+    // Find the inline editor that appears after clicking the task
+    // The editor will be in the same container as the task
+    const titleInput = this.page.locator('input[type="text"]').first();
+    await expect(titleInput).toBeVisible({ timeout: 5000 });
 
-		// Wait for URL to be updated with the new perspective
-		const expectedParam = perspectiveName.toLowerCase();
-		await this.page.waitForURL(`**/?*perspective=${expectedParam}*`, { timeout: 5000 });
-	}
+    // Update title
+    await titleInput.clear();
+    await titleInput.fill(newTitle);
 
-	/**
-	 * Switch to All view
-	 */
-	async switchToAllView() {
-		const viewsSection = this.page.locator('h3:has-text("Views")').locator('..');
-		await viewsSection.locator('button:has-text("All")').click();
+    // Update description if provided
+    if (newDescription) {
+      const descriptionInput = this.page.locator("textarea").first();
+      if (await descriptionInput.isVisible()) {
+        await descriptionInput.clear();
+        await descriptionInput.fill(newDescription);
+      }
+    }
 
-		// Wait for URL to be updated with the All view
-		await this.page.waitForURL('**/?*view=all*', { timeout: 5000 });
-	}
+    // Save changes
+    const saveButton = this.page
+      .locator("button")
+      .filter({ hasText: /save|update/i })
+      .first();
+    if (await saveButton.isVisible()) {
+      await saveButton.click();
+    } else {
+      // Try pressing Enter as alternative
+      await titleInput.press("Enter");
+    }
 
-	/**
-	 * Check if URL contains expected parameters
-	 */
-	async expectUrlToContain(expectedParams: string[]) {
-		const url = this.page.url();
-		for (const param of expectedParams) {
-			expect(url).toContain(param);
-		}
-	}
+    // Wait for editor to close
+    await this.page.waitForTimeout(1000);
 
-	/**
-	 * Check if perspective badges are visible
-	 */
-	async expectBadgesVisible() {
-		await expect(this.page.getByTestId('badge').first()).toBeVisible();
-	}
+    // Verify update
+    await expect(this.page.locator(`text="${newTitle}"`)).toBeVisible({
+      timeout: 5000,
+    });
+  }
 
+  /**
+   * Complete a task by title
+   */
+  async completeTask(title: string) {
+    // Find the task
+    const task = this.page
+      .locator('[role="button"]')
+      .filter({ hasText: title })
+      .first();
 
-	/**
-	 * Switch to a different workspace
-	 */
-	async switchWorkspace(workspaceName: string) {
-		// Click the workspace selector button
-		const workspaceSelector = this.page.locator('button[title="Switch workspace"]');
-		await expect(workspaceSelector).toBeVisible({ timeout: 5000 });
-		await workspaceSelector.click();
+    // Find the checkbox button within this task
+    const checkbox = task.locator("button").first();
+    await checkbox.click();
 
-		// Wait for dropdown to appear
-		await this.page.waitForTimeout(300);
+    // Wait for completion
+    await this.page.waitForTimeout(500);
 
-		// Click on the workspace option
-		const workspaceOption = this.page.locator('button').filter({ hasText: workspaceName });
-		await expect(workspaceOption).toBeVisible({ timeout: 5000 });
-		await workspaceOption.click();
+    // Verify task is completed (usually has line-through style)
+    await expect(
+      task.locator('.line-through, [class*="completed"]'),
+    ).toBeVisible({ timeout: 5000 });
+  }
 
-		// Wait for URL to update with the workspace parameter
-		const expectedWorkspace = workspaceName.toLowerCase();
-		await this.page.waitForURL(`**/?*workspace=${expectedWorkspace}*`, { timeout: 5000 });
-	}
+  /**
+   * Delete a task
+   */
+  async deleteTask(title: string) {
+    // Click on task to open inline editor
+    await this.page.locator(`text="${title}"`).first().click();
 
-	/**
-	 * Get count of visible tasks
-	 */
-	async getTaskCount(): Promise<number> {
-		const tasks = this.page.locator('[role="button"]').filter({ has: this.page.locator('button') });
-		return await tasks.count();
-	}
+    // Wait for inline editor to appear
+    await this.page.waitForTimeout(500);
 
-	/**
-	 * Check if a task exists
-	 */
-	async taskExists(title: string): Promise<boolean> {
-		const task = this.page.locator(`text="${title}"`);
-		return await task.isVisible();
-	}
+    // Look for delete button in the inline editor
+    const deleteButton = this.page
+      .locator("button")
+      .filter({ hasText: /delete|remove/i })
+      .first();
+    if (await deleteButton.isVisible()) {
+      await deleteButton.click();
 
-	/**
-	 * Click the Clear Completed button
-	 */
-	async clearCompleted() {
-		const clearButton = this.page.locator('button').filter({ hasText: 'Clear' });
-		await expect(clearButton).toBeVisible({ timeout: 5000 });
+      // Handle confirmation if present
+      const confirmButton = this.page
+        .locator("button")
+        .filter({ hasText: /confirm|yes|delete/i })
+        .first();
+      if (await confirmButton.isVisible()) {
+        await confirmButton.click();
+      }
+    } else {
+      // Close editor if no delete option
+      await this.page.keyboard.press("Escape");
+    }
 
-		// Get initial count of completed tasks before clearing
-		const initialCompletedCount = await this.getCompletedTaskCount();
+    await this.page.waitForTimeout(500);
 
-		await clearButton.click();
+    // Verify task is gone
+    await expect(this.page.locator(`text="${title}"`)).not.toBeVisible({
+      timeout: 5000,
+    });
+  }
 
-		// Wait for completed tasks to be removed from DOM
-		if (initialCompletedCount > 0) {
-			await this.page.waitForFunction(() => {
-				const completedTasks = document.querySelectorAll('span.line-through');
-				return completedTasks.length === 0;
-			}, { timeout: 10000 });
-		}
+  /**
+   * Switch to a different perspective
+   */
+  async switchPerspective(perspectiveName: string) {
+    const perspectiveButton = this.page
+      .locator("button")
+      .filter({ hasText: perspectiveName });
+    await expect(perspectiveButton).toBeVisible({ timeout: 5000 });
+    await perspectiveButton.first().click();
 
-		// Small additional wait to ensure UI has fully settled
-		await this.page.waitForTimeout(500);
-	}
+    // Wait for URL to be updated with the new perspective
+    const expectedParam = perspectiveName.toLowerCase();
+    await this.page.waitForURL(`**/?*perspective=${expectedParam}*`, {
+      timeout: 5000,
+    });
+  }
 
-	/**
-	 * Get count of completed tasks (tasks with line-through style)
-	 */
-	async getCompletedTaskCount(): Promise<number> {
-		// Look for task titles that have line-through (completed tasks)
-		const completedTasks = this.page.locator('span.line-through').filter({ hasText: /.+/ });
-		return await completedTasks.count();
-	}
+  /**
+   * Switch to All view
+   */
+  async switchToAllView() {
+    const viewsSection = this.page
+      .locator('h3:has-text("Views")')
+      .locator("..");
+    await viewsSection.locator('button:has-text("All")').click();
 
-	/**
-	 * Check if there are any tasks with completed styling
-	 */
-	async hasCompletedTasks(): Promise<boolean> {
-		const completedTasks = this.page.locator('span.line-through');
-		const count = await completedTasks.count();
-		return count > 0;
-	}
+    // Wait for URL to be updated with the All view
+    await this.page.waitForURL("**/?*view=all*", { timeout: 5000 });
+  }
 
-	/**
-	 * Take a screenshot
-	 */
-	async screenshot(filename: string) {
-		const path = this.screenshotBasePath 
-			? `${this.screenshotBasePath}/${filename}`
-			: filename;
-		await this.page.screenshot({ path, fullPage: true });
-	}
+  /**
+   * Check if URL contains expected parameters
+   */
+  async expectUrlToContain(expectedParams: string[]) {
+    const url = this.page.url();
+    for (const param of expectedParams) {
+      expect(url).toContain(param);
+    }
+  }
+
+  /**
+   * Check if perspective badges are visible
+   */
+  async expectBadgesVisible() {
+    await expect(this.page.getByTestId("badge").first()).toBeVisible();
+  }
+
+  /**
+   * Switch to a different workspace
+   */
+  async switchWorkspace(workspaceName: string) {
+    // Click the workspace selector button
+    const workspaceSelector = this.page.locator(
+      'button[title="Switch workspace"]',
+    );
+    await expect(workspaceSelector).toBeVisible({ timeout: 5000 });
+    await workspaceSelector.click();
+
+    // Wait for dropdown to appear
+    await this.page.waitForTimeout(300);
+
+    // Click on the workspace option
+    const workspaceOption = this.page
+      .locator("button")
+      .filter({ hasText: workspaceName });
+    await expect(workspaceOption).toBeVisible({ timeout: 5000 });
+    await workspaceOption.click();
+
+    // Wait for URL to update with the workspace parameter
+    const expectedWorkspace = workspaceName.toLowerCase();
+    await this.page.waitForURL(`**/?*workspace=${expectedWorkspace}*`, {
+      timeout: 5000,
+    });
+  }
+
+  /**
+   * Get count of visible tasks
+   */
+  async getTaskCount(): Promise<number> {
+    const tasks = this.page
+      .locator('[role="button"]')
+      .filter({ has: this.page.locator("button") });
+    return await tasks.count();
+  }
+
+  /**
+   * Check if a task exists
+   */
+  async taskExists(title: string): Promise<boolean> {
+    const task = this.page.locator(`text="${title}"`);
+    return await task.isVisible();
+  }
+
+  /**
+   * Click the Clear Completed button
+   */
+  async clearCompleted() {
+    const clearButton = this.page
+      .locator("button")
+      .filter({ hasText: "Clear" });
+    await expect(clearButton).toBeVisible({ timeout: 5000 });
+
+    // Get initial count of completed tasks before clearing
+    const initialCompletedCount = await this.getCompletedTaskCount();
+
+    await clearButton.click();
+
+    // Wait for completed tasks to be removed from DOM
+    if (initialCompletedCount > 0) {
+      await this.page.waitForFunction(
+        () => {
+          const completedTasks = document.querySelectorAll("span.line-through");
+          return completedTasks.length === 0;
+        },
+        { timeout: 10000 },
+      );
+    }
+
+    // Small additional wait to ensure UI has fully settled
+    await this.page.waitForTimeout(500);
+  }
+
+  /**
+   * Get count of completed tasks (tasks with line-through style)
+   */
+  async getCompletedTaskCount(): Promise<number> {
+    // Look for task titles that have line-through (completed tasks)
+    const completedTasks = this.page
+      .locator("span.line-through")
+      .filter({ hasText: /.+/ });
+    return await completedTasks.count();
+  }
+
+  /**
+   * Check if there are any tasks with completed styling
+   */
+  async hasCompletedTasks(): Promise<boolean> {
+    const completedTasks = this.page.locator("span.line-through");
+    const count = await completedTasks.count();
+    return count > 0;
+  }
+
+  /**
+   * Take a screenshot
+   */
+  async screenshot(filename: string) {
+    const path = this.screenshotBasePath
+      ? `${this.screenshotBasePath}/${filename}`
+      : filename;
+    await this.page.screenshot({ path, fullPage: true });
+  }
 }

@@ -3,7 +3,7 @@
  * These define the shape of data for create/update operations.
  */
 
-import type { FieldUpdate } from './fieldUpdates';
+import type { FieldUpdate } from "./fieldUpdates";
 
 // Workspace requests
 export interface CreateWorkspaceRequest {

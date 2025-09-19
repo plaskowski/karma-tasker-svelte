@@ -2,7 +2,7 @@
  * Persistence API exports
  */
 
-export * from './dto';
-export * from './requests';
-export * from './interfaces';
-export * from './fieldUpdates';
+export * from "./dto";
+export * from "./requests";
+export * from "./interfaces";
+export * from "./fieldUpdates";

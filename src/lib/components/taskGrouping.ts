@@ -1,11 +1,21 @@
-import type { Task, WorkspaceData, NavigationState, ViewType } from '$lib/types';
-import { findProject, findPerspective, getPerspectives, getProjects } from '$lib/helpers/workspaceHelpers';
-import { 
-  sortTasksByPerspectiveThenOrder, 
-  sortTasksByProjectThenOrder, 
-  groupTasksByProject, 
-  groupTasksByPerspective 
-} from './taskOperations';
+import type {
+  Task,
+  WorkspaceData,
+  NavigationState,
+  ViewType,
+} from "$lib/types";
+import {
+  findProject,
+  findPerspective,
+  getPerspectives,
+  getProjects,
+} from "$lib/helpers/workspaceHelpers";
+import {
+  sortTasksByPerspectiveThenOrder,
+  sortTasksByProjectThenOrder,
+  groupTasksByProject,
+  groupTasksByPerspective,
+} from "./taskOperations";
 
 export interface TaskGroup {
   id: string;
@@ -13,21 +23,21 @@ export interface TaskGroup {
   tasks: Task[];
 }
 
-export type GroupingType = 'project' | 'perspective' | 'none';
+export type GroupingType = "project" | "perspective" | "none";
 
 /**
  * Determines the grouping type based on the current view
  */
 export function getGroupingType(view: ViewType): GroupingType {
   switch (view) {
-    case 'perspective':
-    case 'all':
-      return 'project';
-    case 'project':
-    case 'project-all':
-      return 'perspective';
+    case "perspective":
+    case "all":
+      return "project";
+    case "project":
+    case "project-all":
+      return "perspective";
     default:
-      return 'none';
+      return "none";
   }
 }
 
@@ -37,21 +47,23 @@ export function getGroupingType(view: ViewType): GroupingType {
 export function getTaskGroups(
   activeTasks: Task[],
   navigation: NavigationState,
-  workspace: WorkspaceData
+  workspace: WorkspaceData,
 ): TaskGroup[] {
   const groups: TaskGroup[] = [];
   const groupingType = getGroupingType(navigation.currentView);
 
-  if (groupingType === 'project') {
+  if (groupingType === "project") {
     // Group by project (used in perspective and all views)
     const tasksByProject = groupTasksByProject(activeTasks);
-    
+
     // Sort projects by their order
-    const sortedProjects = [...tasksByProject.entries()].sort(([idA], [idB]) => {
-      const projectA = findProject(workspace, idA);
-      const projectB = findProject(workspace, idB);
-      return (projectA?.order ?? 0) - (projectB?.order ?? 0);
-    });
+    const sortedProjects = [...tasksByProject.entries()].sort(
+      ([idA], [idB]) => {
+        const projectA = findProject(workspace, idA);
+        const projectB = findProject(workspace, idB);
+        return (projectA?.order ?? 0) - (projectB?.order ?? 0);
+      },
+    );
 
     sortedProjects.forEach(([projectId, tasks]) => {
       const project = findProject(workspace, projectId);
@@ -61,26 +73,33 @@ export function getTaskGroups(
       groups.push({
         id: `project-${projectId}`,
         title: project.name,
-        tasks: sortTasksByPerspectiveThenOrder(tasks, getPerspectives(workspace))
+        tasks: sortTasksByPerspectiveThenOrder(
+          tasks,
+          getPerspectives(workspace),
+        ),
       });
     });
-  } else if (groupingType === 'perspective') {
+  } else if (groupingType === "perspective") {
     // Group by perspective (used in project and project-all views)
-    const tasksByPerspective = groupTasksByPerspective(activeTasks, getPerspectives(workspace));
-    
+    const tasksByPerspective = groupTasksByPerspective(
+      activeTasks,
+      getPerspectives(workspace),
+    );
+
     // Add perspective groups in order
-    getPerspectives(workspace).forEach(perspective => {
+    getPerspectives(workspace).forEach((perspective) => {
       const tasks = tasksByPerspective.get(perspective.id) || [];
       if (tasks.length > 0) {
         // Sort differently based on specific view
-        const sortedTasks = navigation.currentView === 'project-all' 
-          ? sortTasksByProjectThenOrder(tasks, getProjects(workspace))
-          : tasks.sort((a, b) => a.order - b.order);
-        
+        const sortedTasks =
+          navigation.currentView === "project-all"
+            ? sortTasksByProjectThenOrder(tasks, getProjects(workspace))
+            : tasks.sort((a, b) => a.order - b.order);
+
         groups.push({
           id: `perspective-${perspective.id}`,
           title: perspective.name,
-          tasks: sortedTasks
+          tasks: sortedTasks,
         });
       }
     });
@@ -88,9 +107,9 @@ export function getTaskGroups(
     // No grouping - just show all tasks
     if (activeTasks.length > 0) {
       groups.push({
-        id: 'all',
-        title: 'Tasks',
-        tasks: activeTasks.sort((a, b) => a.order - b.order)
+        id: "all",
+        title: "Tasks",
+        tasks: activeTasks.sort((a, b) => a.order - b.order),
       });
     }
   }
@@ -103,24 +122,28 @@ export function getTaskGroups(
  */
 export function shouldShowProjectBadge(navigation: NavigationState): boolean {
   const groupingType = getGroupingType(navigation.currentView);
-  return groupingType !== 'project' && navigation.currentView !== 'project';
+  return groupingType !== "project" && navigation.currentView !== "project";
 }
 
 /**
  * Determines whether to show perspective badges based on current view
  */
-export function shouldShowPerspectiveBadge(navigation: NavigationState): boolean {
+export function shouldShowPerspectiveBadge(
+  navigation: NavigationState,
+): boolean {
   const groupingType = getGroupingType(navigation.currentView);
-  return groupingType !== 'perspective' && navigation.currentView !== 'perspective';
+  return (
+    groupingType !== "perspective" && navigation.currentView !== "perspective"
+  );
 }
 
 /**
  * Gets badge text for a task based on current navigation state
  */
 export function getBadgeText(
-  task: Task, 
-  navigation: NavigationState, 
-  workspace: WorkspaceData
+  task: Task,
+  navigation: NavigationState,
+  workspace: WorkspaceData,
 ): string | undefined {
   const showPerspectiveBadge = shouldShowPerspectiveBadge(navigation);
   const showProjectBadge = shouldShowProjectBadge(navigation);
