@@ -5,7 +5,7 @@ _See [README.md](./README.md) for project overview and motivation._
 
 ### Next steps
 
-- [ ] reformat all files according to editorconfig
+- [X] reformat all files according to editorconfig
 - [ ] use ISO string instead of Date object (as it gets serialized)
 - [ ] fix remaining failing tests in e2e/keyboard-shortcuts.spec.ts
 - [ ] rewrite all interaction tests to use dedicated Page object (have dedicated test() wrapper)
@@ -35,8 +35,8 @@ _See [README.md](./README.md) for project overview and motivation._
 
 - [ ] Drag & drop task reordering
 - [ ] special markup support in description
-  - link in first line
-  - checklist
+    - link in first line
+    - checklist
 - [ ] Custom perspective creation per workspace
 - [ ] Project-specific perspective filtering
 - [ ] User authentication and accounts
