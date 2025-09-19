@@ -1,11 +1,8 @@
 <script lang="ts">
 	import Sidebar from '$lib/components/Sidebar.svelte';
-	import { 
-		handleNavigate as handleNavigateService,
-		handleWorkspaceChange as handleWorkspaceChangeService
-	} from '$lib/services/pageHandlers';
 	import type { ViewType } from '$lib/types';
 	import type { PageData } from './$types';
+    import {handleNavigate, handleWorkspaceChange} from "$lib/services/pageHandlers";
 	
 	let { data }: { data: PageData } = $props();
 	
@@ -13,12 +10,12 @@
 	let allWorkspaces = $derived(data.workspaces);
 	let currentNavigation = $derived(data.navigation);
 	
-	function handleNavigate(view: ViewType, options?: { perspectiveId?: string; projectId?: string }) {
-		handleNavigateService(view, workspaceContext, options);
+	function handleNavigateInWorkspace(view: ViewType, options?: { perspectiveId?: string; projectId?: string }) {
+		handleNavigate(view, workspaceContext, options);
 	}
 	
-	function handleWorkspaceChange(workspaceId: string) {
-		handleWorkspaceChangeService(workspaceId, workspaceContext, currentNavigation);
+	function handleWorkspaceChangeFromWorkspace(workspaceId: string) {
+		handleWorkspaceChange(workspaceId, workspaceContext, currentNavigation);
 	}
 </script>
 
@@ -26,6 +23,6 @@
 	navigation={currentNavigation}
 	workspace={workspaceContext}
 	workspaces={allWorkspaces}
-	onNavigate={handleNavigate}
-	onWorkspaceChange={handleWorkspaceChange}
+	onNavigate={handleNavigateInWorkspace}
+	onWorkspaceChange={handleWorkspaceChangeFromWorkspace}
 />

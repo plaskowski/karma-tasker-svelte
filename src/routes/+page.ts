@@ -11,23 +11,10 @@ export const load: PageLoad = async ({ url }) => {
 	
 	// Load all workspaces first
     const allWorkspaces = await workspaceService.getAllWorkspaces();
-	
+
 	// Handle empty state - no workspaces
 	if (allWorkspaces.length === 0) {
-		return {
-			workspaces: [],
-			workspaceContext: {
-				workspace: { id: '', name: '', createdAt: new Date() },
-				perspectives: [],
-				projects: []
-			},
-			tasks: [],
-			navigation: {
-				currentView: 'all' as const,
-				currentPerspectiveId: null,
-				currentProjectId: null
-			}
-		};
+        throw new Error("No workspaces found. This should not happen.");
 	}
 	
 	// Determine current workspace ID from URL, localStorage, or default to first
