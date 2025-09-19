@@ -2,6 +2,30 @@ import { goto } from '$app/navigation';
 import type { ViewType, NavigationState, WorkspaceData } from '$lib/types';
 
 export class NavigationService {
+    /**
+     * Determines the effective project ID based on navigation state
+     */
+    static getCurrentProjectId(
+        navigation: NavigationState
+    ): string | undefined {
+        if (navigation.currentView === 'project' && navigation.currentProjectId) {
+            return navigation.currentProjectId;
+        }
+        return undefined;
+    }
+
+    /**
+     * Determines the effective perspective ID based on navigation state
+     */
+    static getCurrentPerspectiveId(
+        navigation: NavigationState
+    ): string | undefined {
+        if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
+            return navigation.currentPerspectiveId;
+        }
+        return undefined;
+    }
+
 	/**
 	 * Updates the URL with the given navigation parameters
 	 */

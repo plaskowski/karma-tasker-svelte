@@ -1,5 +1,5 @@
 import type { ViewType, WorkspaceData, NavigationState } from '$lib/types';
-import { getDefaultPerspective, hasPerspective } from '$lib/helpers/workspaceHelpers';
+import { getRequiredDefaultPerspective, hasPerspective } from '$lib/helpers/workspaceHelpers';
 import type { WorkspaceInfo } from '$lib/types';
 import { NavigationService } from './navigation';
 
@@ -48,25 +48,21 @@ export function handleWorkspaceChange(
 	// Directly update URL based on current view
 	// If we're in project view, switch to first perspective since projects are workspace-specific
 	if (currentNavigation.currentView === 'project' || currentNavigation.currentView === 'project-all') {
-        const firstPerspective = getDefaultPerspective(workspaceContext);
-		if (firstPerspective) {
-            NavigationService.updateURL(
-                { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
-                { workspaceId }
-            );
-		}
+        const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
+        NavigationService.updateURL(
+            { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
+            { workspaceId }
+        );
 	} else if (currentNavigation.currentView === 'perspective') {
 		// Keep current perspective if it exists in new workspace, otherwise use first
         const perspectiveExists = currentNavigation.currentPerspectiveId ? 
             hasPerspective(workspaceContext, currentNavigation.currentPerspectiveId) : false;
 		if (!perspectiveExists) {
-            const firstPerspective = getDefaultPerspective(workspaceContext);
-			if (firstPerspective) {
-                NavigationService.updateURL(
-                    { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
-                    { workspaceId }
-                );
-			}
+            const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
+            NavigationService.updateURL(
+                { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
+                { workspaceId }
+            );
 		} else {
             NavigationService.updateURL(
                 { currentView: 'perspective', currentPerspectiveId: currentNavigation.currentPerspectiveId },
@@ -145,11 +141,9 @@ export function handleRefresh(
 		throw new Error('No workspaces defined. At least one workspace is required.');
 	}
 	const firstWorkspaceId = workspaces[0].id;
-    const firstPerspective = getDefaultPerspective(workspaceContext);
-	if (firstPerspective) {
-        NavigationService.updateURL(
-            { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
-            { workspaceId: firstWorkspaceId }
-        );
-	}
+    const firstPerspective = getRequiredDefaultPerspective(workspaceContext);
+    NavigationService.updateURL(
+        { currentView: 'perspective', currentPerspectiveId: firstPerspective.id },
+        { workspaceId: firstWorkspaceId }
+    );
 }

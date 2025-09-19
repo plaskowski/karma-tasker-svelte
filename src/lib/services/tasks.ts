@@ -1,6 +1,7 @@
-import type { Task, NavigationState, WorkspaceData } from '$lib/types';
-import { getDefaultPerspective, getDefaultProject, getWorkspaceId } from '$lib/helpers/workspaceHelpers';
-import { db } from '$lib/api/persistence/localStorageAdapter';
+import type {NavigationState, Task, WorkspaceData} from '$lib/types';
+import {getRequiredTaskDefaults} from '$lib/helpers/workspaceHelpers';
+import {db} from '$lib/api/persistence/localStorageAdapter';
+import {NavigationService} from "$lib/services/navigation";
 
 export class TaskService {
 	/**
@@ -10,13 +11,14 @@ export class TaskService {
         workspaceContext: WorkspaceData,
 		navigation: NavigationState
 	): Task {
+        const workspaceDefaults = getRequiredTaskDefaults(workspaceContext);
 		return {
 			id: 'new',
 			title: '',
 			description: '',
 			completed: false,
-			projectId: TaskService.getEffectiveProjectId(navigation, workspaceContext),
-			perspectiveId: TaskService.getEffectivePerspectiveId(navigation, workspaceContext),
+			projectId: NavigationService.getCurrentProjectId(navigation) || workspaceDefaults.projectId,
+			perspectiveId: NavigationService.getCurrentPerspectiveId(navigation) || workspaceDefaults.perspectiveId,
 			order: 0, // Will be calculated when task is actually saved
 			createdAt: new Date(),
 			updatedAt: new Date()
@@ -81,46 +83,12 @@ export class TaskService {
 	}
 
 	/**
-	 * Determines the effective project ID based on navigation state
-	 */
-    static getEffectiveProjectId(
-        navigation: NavigationState,
-        workspaceContext: WorkspaceData
-    ): string {
-		if (navigation.currentView === 'project' && navigation.currentProjectId) {
-			return navigation.currentProjectId;
-		}
-        const defaultProject = getDefaultProject(workspaceContext);
-		if (!defaultProject) {
-            throw new Error(`No default project found for workspace ${getWorkspaceId(workspaceContext)}`);
-		}
-		return defaultProject.id;
-	}
-
-	/**
-	 * Determines the effective perspective ID based on navigation state
-	 */
-    static getEffectivePerspectiveId(
-        navigation: NavigationState,
-        workspaceContext: WorkspaceData
-    ): string {
-		if (navigation.currentView === 'perspective' && navigation.currentPerspectiveId) {
-			return navigation.currentPerspectiveId;
-		}
-        const defaultPerspective = getDefaultPerspective(workspaceContext);
-        if (!defaultPerspective) {
-            throw new Error('No default perspective configured for current workspace');
-        }
-        return defaultPerspective.id;
-	}
-
-	/**
 	 * Clear all completed tasks from a workspace
 	 */
 	static async clearCompletedTasks(workspaceId: string, tasks: Task[]): Promise<void> {
 		const wsApi = db.forWorkspace(workspaceId);
 		const completedTasks = tasks.filter(task => task.completed);
-		
+
 		// Delete all completed tasks
 		for (const task of completedTasks) {
 			await wsApi.deleteTask(task.id);

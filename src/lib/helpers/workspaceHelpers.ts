@@ -1,18 +1,4 @@
-import type { Project, Perspective, WorkspaceData } from '$lib/types';
-
-/**
- * Pure helper functions for working with WorkspaceData.
- * These replace methods previously provided by WorkspaceContextImpl.
- */
-
-// Identity
-export function getWorkspaceId(workspace: WorkspaceData): string {
-  return workspace.id;
-}
-
-export function getWorkspaceName(workspace: WorkspaceData): string {
-  return workspace.name;
-}
+import type {Perspective, Project, WorkspaceData} from '$lib/types';
 
 // Projects
 export function getProjects(workspace: WorkspaceData): readonly Project[] {
@@ -27,8 +13,11 @@ export function getProjectsSortedByOrder(workspace: WorkspaceData): readonly Pro
   return [...workspace.projects].sort((a, b) => (a.order || 0) - (b.order || 0));
 }
 
-export function getDefaultProject(workspace: WorkspaceData): Project | undefined {
+export function getRequiredDefaultProject(workspace: WorkspaceData): Project {
   const sorted = getProjectsSortedByOrder(workspace);
+  if (!sorted) {
+    throw new Error(`No default project found for workspace ${(workspace.id)}`);
+  }
   return sorted[0];
 }
 
@@ -45,7 +34,10 @@ export function findPerspective(workspace: WorkspaceData, perspectiveId: string)
   return workspace.perspectives.find(perspective => perspective.id === perspectiveId);
 }
 
-export function getDefaultPerspective(workspace: WorkspaceData): Perspective | undefined {
+export function getRequiredDefaultPerspective(workspace: WorkspaceData): Perspective {
+  if (!workspace.perspectives) {
+    throw new Error(`No default perspective found for workspace ${(workspace.id)}`);
+  }
   return workspace.perspectives[0];
 }
 
@@ -56,4 +48,14 @@ export function hasPerspective(workspace: WorkspaceData, perspectiveId: string):
 export function getPerspectiveOrder(workspace: WorkspaceData, perspectiveId: string): number {
   const index = workspace.perspectives.findIndex(perspective => perspective.id === perspectiveId);
   return index >= 0 ? index : Number.MAX_SAFE_INTEGER;
+}
+
+export function getRequiredTaskDefaults(workspace: WorkspaceData): {
+  perspectiveId: string;
+  projectId: string
+} {
+  return {
+    perspectiveId: getRequiredDefaultPerspective(workspace)?.id,
+    projectId: getRequiredDefaultProject(workspace)?.id
+  };
 }
